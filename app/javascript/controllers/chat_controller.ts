@@ -82,18 +82,13 @@ export default class extends BaseChannelController {
   protected handleStatusResponse(data: any): void {
     console.log("Status response:", data)
     
-    const statusText = `
-Status: ${data.online ? 'Online' : 'Offline'}
-Active Sessions: ${data.active_sessions}
-Total Sessions: ${data.total_sessions}
-Uptime: ${this.formatDuration(data.uptime || 0)}
-    `.trim()
-    
-    this.addBotMessage(statusText, "code")
-    
+    // Only update UI status text if target exists, don't add to chat messages
     if (this.hasStatusTextTarget) {
       this.statusTextTarget.textContent = data.online ? 'Bot is online' : 'Bot is offline'
     }
+    
+    // Silently update connection status without showing message
+    // (status_response is triggered by bot management page polling, not user action)
   }
 
   // Handle pong responses
@@ -127,10 +122,10 @@ Uptime: ${this.formatDuration(data.uptime || 0)}
 
   // Handle streaming message chunks
   protected handleStreamChunk(data: any): void {
-    const { type, stream_id, chunk } = data
-    console.log(`Stream event: ${type}, ID: ${stream_id}, chunk length: ${chunk?.length || 0}`)
+    const { stream_type, stream_id, chunk } = data
+    console.log(`Stream event: ${stream_type}, ID: ${stream_id}, chunk length: ${chunk?.length || 0}`)
 
-    switch (type) {
+    switch (stream_type) {
       case 'stream_start':
         this.startStreamingMessage(stream_id)
         break

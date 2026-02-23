@@ -110,6 +110,21 @@ class BotChannel < ApplicationCable::Channel
     )
   end
 
+  # Handle streaming chunks from OpenClaw Agent
+  def stream_chunk(data)
+    # Broadcast streaming chunks to dashboard clients
+    ActionCable.server.broadcast(
+      @stream_name,
+      {
+        type: 'stream_chunk',
+        stream_type: data['type'], # stream_start, stream_chunk, stream_end, stream_error
+        stream_id: data['stream_id'],
+        chunk: data['chunk'],
+        timestamp: data['timestamp'] || Time.current.iso8601
+      }
+    )
+  end
+
   private
 
   # Remove obsolete current_user override - now handled at connection level
