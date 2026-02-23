@@ -1,0 +1,132 @@
+<div class="container mx-auto px-4 py-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center gap-4">
+      <%= link_to bot_path(@bot), class: "btn-outline" do %>
+        <%= lucide_icon "arrow-left", class: "w-4 h-4" %>
+      <% end %>
+      <div>
+        <h1 class="text-2xl font-bold text-primary"><%= @bot.name %></h1>
+        <div class="flex items-center gap-2 mt-1">
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full <%= @bot.online? ? 'bg-success' : 'bg-muted' %> animate-pulse"></div>
+            <span class="text-sm text-muted" data-chat-target="statusText">
+              <%= @bot.online? ? 'Bot is online' : 'Bot is offline' %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Container -->
+  <div 
+    class="max-w-4xl mx-auto"
+    data-controller="chat"
+    data-chat-bot-id-value="<%= @bot.id %>"
+    data-chat-stream-name-value="bot_<%= @bot.id %>"
+  >
+    <!-- Chat Messages -->
+    <div class="card card-elevated mb-4">
+      <div class="card-body p-0">
+        <div 
+          data-chat-target="messages" 
+          class="h-[600px] overflow-y-auto p-6 space-y-4"
+        >
+          <!-- Welcome message -->
+          <div class="text-center py-8 text-muted">
+            <%= lucide_icon "message-circle", class: "w-12 h-12 mx-auto mb-3 opacity-50" %>
+            <p>Start a conversation with <%= @bot.name %></p>
+            <p class="text-xs mt-2">Messages will appear here</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Form -->
+    <div class="card card-elevated">
+      <div class="card-body">
+        <form data-action="submit->chat#sendMessage" class="flex gap-3">
+          <input
+            type="text"
+            data-chat-target="input"
+            placeholder="Type your message..."
+            class="form-input flex-1"
+            autocomplete="off"
+          />
+          <button 
+            type="submit"
+            data-chat-target="sendButton"
+            class="btn-primary"
+          >
+            <%= lucide_icon "send", class: "w-4 h-4" %>
+            Send
+          </button>
+        </form>
+        
+        <!-- Connection Status -->
+        <div class="mt-3 flex items-center justify-between text-xs text-muted">
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-muted" data-chat-target="connectionIndicator"></div>
+            <span data-chat-target="connectionStatus">Connecting...</span>
+          </div>
+          <button
+            type="button"
+            data-action="click->chat#clearMessages"
+            class="text-muted hover:text-primary transition-colors"
+          >
+            <%= lucide_icon "trash-2", class: "w-3 h-3 inline" %>
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test Commands -->
+    <div class="card card-elevated mt-4">
+      <div class="card-header">
+        <h3 class="font-bold text-primary">Quick Test Commands</h3>
+      </div>
+      <div class="card-body">
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            data-action="click->chat#sendTestCommand"
+            data-command="ping"
+            class="btn-outline text-sm"
+          >
+            <%= lucide_icon "activity", class: "w-3 h-3" %>
+            Test Ping
+          </button>
+          <button
+            type="button"
+            data-action="click->chat#sendTestCommand"
+            data-command="status"
+            class="btn-outline text-sm"
+          >
+            <%= lucide_icon "info", class: "w-3 h-3" %>
+            Get Status
+          </button>
+          <button
+            type="button"
+            data-action="click->chat#sendTestCommand"
+            data-command="echo:Hello from web!"
+            class="btn-outline text-sm"
+          >
+            <%= lucide_icon "message-square", class: "w-3 h-3" %>
+            Echo Test
+          </button>
+          <button
+            type="button"
+            data-action="click->chat#sendTestCommand"
+            data-command="help"
+            class="btn-outline text-sm"
+          >
+            <%= lucide_icon "help-circle", class: "w-3 h-3" %>
+            Help
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

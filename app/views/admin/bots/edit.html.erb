@@ -1,0 +1,70 @@
+<% content_for :title, "Edit Bot" %>
+
+<div class="container-md">
+  <div class="flex items-center space-x-4">
+    <%= link_to admin_bots_path, class: "btn-ghost text-sm py-1 px-3" do %>
+      <%= lucide_icon "arrow-left", class: "w-4 h-4 mr-2" %>
+      Back to Bots
+    <% end %>
+  </div>
+
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50 mt-4 mb-8">Edit Bot</h1>
+
+  <!-- Form -->
+  <div class="card bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+    <div class="card-body">
+      <%= form_with model: [:admin, @bot], local: true, class: "space-y-6" do |form| %>
+        <!-- Name -->
+        <div class="form-group">
+          <%= form.label :name %>
+          <%= form.text_field :name, placeholder: "Enter name..." %>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <%= form.label :description %>
+          <%= form.text_area :description, rows: 5, placeholder: "Enter description..." %>
+        </div>
+
+        <!-- Status -->
+        <div class="form-group">
+          <%= form.label :status %>
+          <%= form.text_field :status, placeholder: "Enter status..." %>
+        </div>
+
+        <!-- Mcp url -->
+        <div class="form-group">
+          <%= form.label :mcp_url %>
+          <%= form.text_field :mcp_url, placeholder: "Enter mcp url..." %>
+        </div>
+
+        <!-- Webhook url -->
+        <div class="form-group">
+          <%= form.label :webhook_url %>
+          <%= form.text_field :webhook_url, placeholder: "Enter webhook url..." %>
+        </div>
+
+        <!-- Config -->
+        <div class="form-group">
+          <%= form.label :config %>
+          <%= form.text_field :config, placeholder: "Enter config..." %>
+        </div>
+
+        <!-- User -->
+        <div class="form-group">
+          <%= form.label :user_id, "User" %>
+          <%= form.select :user_id,
+              options_for_select([['Select User', '']] + User.all.map { |item| [item.name, item.id] }, @bot.user_id) %>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-3">
+          <%= link_to admin_bot_path(@bot.id), class: "btn-ghost" do %>
+            Cancel
+          <% end %>
+          <%= form.submit "Update Bot", class: "btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+{
+  "name": "@eyeclaw/eyeclaw",
+  "version": "2.0.0",
+  "description": "EyeClaw channel plugin for OpenClaw - Connect your local OpenClaw instance to EyeClaw platform",
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "files": [
+    "index.ts",
+    "src",
+    "README.md",
+    "LICENSE",
+    "openclaw.plugin.json"
+  ],
+  "keywords": [
+    "openclaw",
+    "eyeclaw",
+    "plugin",
+    "channel",
+    "mcp",
+    "websocket"
+  ],
+  "author": "EyeClaw Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eyeclaw/eyeclaw.git",
+    "directory": "sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/eyeclaw/eyeclaw/issues"
+  },
+  "homepage": "https://eyeclaw.io",
+  "openclaw": {
+    "extensions": ["./index.ts"],
+    "channel": {
+      "id": "eyeclaw",
+      "label": "EyeClaw",
+      "selectionLabel": "EyeClaw Platform",
+      "blurb": "Connect local OpenClaw to EyeClaw platform via WebSocket.",
+      "order": 100
+    },
+    "install": {
+      "npmSpec": "@eyeclaw/eyeclaw",
+      "localPath": ".",
+      "defaultChoice": "npm"
+    }
+  },
+  "dependencies": {
+    "ws": "^8.16.0",
+    "@types/ws": "^8.5.10",
+    "zod": "^3.22.4"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.2.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.11.0",
+    "openclaw": ">=2026.2.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

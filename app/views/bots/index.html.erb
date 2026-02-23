@@ -1,0 +1,82 @@
+<div class="container-xl mx-auto px-6 py-8">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold gradient-text">My Bots</h1>
+      <p class="text-muted mt-2">Manage your intelligent bots and integrations</p>
+    </div>
+    <%= link_to new_bot_path, class: "btn-primary" do %>
+      <%= lucide_icon "plus", class: "w-5 h-5" %>
+      Create New Bot
+    <% end %>
+  </div>
+
+  <% if @bots.any? %>
+    <!-- Bot Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @bots.each do |bot| %>
+        <%= link_to bot_path(bot), class: "card card-elevated hover:shadow-xl transition-all duration-300 group block" do %>
+          <div class="card-body space-y-4">
+            <!-- Header with Status -->
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold text-primary group-hover:gradient-text transition-all">
+                  <%= bot.name %>
+                </h3>
+                <p class="text-sm text-muted mt-1 line-clamp-2">
+                  <%= bot.description.presence || "No description" %>
+                </p>
+              </div>
+              <% if bot.online? %>
+                <span class="badge-success flex items-center gap-1">
+                  <%= lucide_icon "signal", class: "w-3 h-3" %>
+                  Online
+                </span>
+              <% else %>
+                <span class="badge-neutral flex items-center gap-1">
+                  <%= lucide_icon "signal-zero", class: "w-3 h-3" %>
+                  Offline
+                </span>
+              <% end %>
+            </div>
+
+            <!-- Stats -->
+            <div class="flex items-center gap-4 text-sm text-muted">
+              <div class="flex items-center gap-1">
+                <%= lucide_icon "activity", class: "w-4 h-4" %>
+                <%= bot.bot_sessions.count %> sessions
+              </div>
+              <div class="flex items-center gap-1">
+                <%= lucide_icon "clock", class: "w-4 h-4" %>
+                <%= time_ago_in_words(bot.created_at) %> ago
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-2 pt-2">
+              <span class="text-xs font-mono text-muted truncate flex-1">
+                <%= bot.sdk_token.first(16) %>...
+              </span>
+              <%= lucide_icon "chevron-right", class: "w-5 h-5 text-muted group-hover:text-primary transition-all" %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <!-- Empty State -->
+    <div class="card card-elevated text-center py-16">
+      <div class="w-16 h-16 rounded-full gradient-primary/10 flex items-center justify-center mx-auto mb-6">
+        <%= lucide_icon "bot", class: "w-8 h-8 text-primary" %>
+      </div>
+      <h2 class="text-2xl font-bold text-primary mb-3">No Bots Yet</h2>
+      <p class="text-secondary mb-6 max-w-md mx-auto">
+        Create your first bot to start building intelligent AI integrations
+      </p>
+      <%= link_to new_bot_path, class: "btn-primary btn-lg" do %>
+        <%= lucide_icon "plus", class: "w-5 h-5" %>
+        Create Your First Bot
+      <% end %>
+    </div>
+  <% end %>
+</div>

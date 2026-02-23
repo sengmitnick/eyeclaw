@@ -1,0 +1,329 @@
+<!-- EyeClaw Platform Landing Page -->
+
+<!-- Hero Section - Split Layout -->
+<section class="relative min-h-screen flex items-center overflow-hidden">
+  <!-- Gradient Background -->
+  <div class="absolute inset-0 gradient-primary opacity-10"></div>
+  
+  <div class="container-xl mx-auto px-6 py-20">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <!-- Left: Text Content -->
+      <div class="space-y-8">
+        <h1 class="text-5xl lg:text-6xl font-bold leading-tight">
+          <span class="gradient-text">EyeClaw</span>
+          <br>
+          <span class="text-primary">Connect Your AI</span>
+          <br>
+          <span class="text-secondary">To The World</span>
+        </h1>
+        
+        <p class="text-xl text-secondary leading-relaxed">
+          Build, deploy, and manage intelligent bots with seamless integration to your local OpenClaw instance. Connect to any MCP-compatible platform like Coze with just one click.
+        </p>
+        
+        <div class="flex flex-wrap gap-4">
+          <% if current_user %>
+            <%= link_to bots_path, class: "btn-primary btn-lg" do %>
+              <%= lucide_icon "bot", class: "w-5 h-5" %>
+              My Bots
+            <% end %>
+          <% else %>
+            <%= link_to sign_up_path, class: "btn-primary btn-lg" do %>
+              <%= lucide_icon "rocket", class: "w-5 h-5" %>
+              Get Started
+            <% end %>
+          <% end %>
+          <a href="#how-it-works" class="btn-outline btn-lg">
+            <%= lucide_icon "play-circle", class: "w-5 h-5" %>
+            Watch Demo
+          </a>
+        </div>
+        
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-6 pt-8">
+          <div>
+            <div class="text-3xl font-bold gradient-text">500+</div>
+            <div class="text-sm text-muted font-mono">Active Bots</div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold gradient-text">50k+</div>
+            <div class="text-sm text-muted font-mono">API Calls/Day</div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold gradient-text">99.9%</div>
+            <div class="text-sm text-muted font-mono">Uptime</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right: Hero Image -->
+      <div class="relative">
+        <div class="relative rounded-xl overflow-hidden shadow-xl glow-primary">
+          <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800&h=600&fit=crop" 
+               alt="AI Bot Dashboard" 
+               class="w-full h-auto">
+          <div class="absolute inset-0 gradient-primary opacity-20"></div>
+        </div>
+        
+        <!-- Floating Card -->
+        <div class="absolute -bottom-6 -left-6 glass-effect rounded-lg p-4 shadow-lg">
+          <div class="flex items-center gap-3">
+            <%= lucide_icon "zap", class: "w-8 h-8 text-primary" %>
+            <div>
+              <div class="text-sm font-mono text-muted">Response Time</div>
+              <div class="text-lg font-bold text-primary">< 100ms</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section - Sticky Visual + Scrolling Content -->
+<section id="features" class="py-24 bg-surface-elevated">
+  <div class="container-xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold mb-4">
+        <span class="gradient-text">Powerful Features</span>
+      </h2>
+      <p class="text-xl text-secondary max-w-2xl mx-auto">
+        Everything you need to build and manage intelligent bots at scale
+      </p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Feature 1: Bot Management -->
+      <div class="card card-elevated hover:shadow-xl transition-all duration-300 group">
+        <div class="card-body space-y-4">
+          <div class="w-12 h-12 rounded-lg gradient-primary flex items-center justify-center group-hover:glow-primary transition-all">
+            <%= lucide_icon "bot", class: "w-6 h-6 text-surface" %>
+          </div>
+          <h3 class="text-xl font-bold text-primary">Bot Management</h3>
+          <p class="text-secondary">
+            Create, configure, and deploy unlimited bots with intuitive dashboard controls. Monitor performance in real-time.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Feature 2: SDK Integration -->
+      <div class="card card-elevated hover:shadow-xl transition-all duration-300 group">
+        <div class="card-body space-y-4">
+          <div class="w-12 h-12 rounded-lg gradient-purple flex items-center justify-center group-hover:glow-secondary transition-all">
+            <%= lucide_icon "plug", class: "w-6 h-6 text-surface" %>
+          </div>
+          <h3 class="text-xl font-bold text-primary">SDK Integration</h3>
+          <p class="text-secondary">
+            Connect your local OpenClaw instance via @eyeclaw/eyeclaw. Seamless WebSocket communication for instant control.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Feature 3: MCP Plugin Support -->
+      <div class="card card-elevated hover:shadow-xl transition-all duration-300 group">
+        <div class="card-body space-y-4">
+          <div class="w-12 h-12 rounded-lg gradient-primary flex items-center justify-center group-hover:glow-primary transition-all">
+            <%= lucide_icon "puzzle", class: "w-6 h-6 text-surface" %>
+          </div>
+          <h3 class="text-xl font-bold text-primary">MCP Plugin</h3>
+          <p class="text-secondary">
+            Export bots as SSE-based MCP plugins. Compatible with Coze, Claude, and other AI platforms.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Feature 4: Real-time Control -->
+      <div class="card card-elevated hover:shadow-xl transition-all duration-300 group">
+        <div class="card-body space-y-4">
+          <div class="w-12 h-12 rounded-lg gradient-purple flex items-center justify-center group-hover:glow-secondary transition-all">
+            <%= lucide_icon "radio", class: "w-6 h-6 text-surface" %>
+          </div>
+          <h3 class="text-xl font-bold text-primary">Real-time Control</h3>
+          <p class="text-secondary">
+            Control your local OpenClaw from anywhere. Live status updates via ActionCable WebSocket connections.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Feature 5: Security First -->
+      <div class="card card-elevated hover:shadow-xl transition-all duration-300 group">
+        <div class="card-body space-y-4">
+          <div class="w-12 h-12 rounded-lg gradient-primary flex items-center justify-center group-hover:glow-primary transition-all">
+            <%= lucide_icon "shield-check", class: "w-6 h-6 text-surface" %>
+          </div>
+          <h3 class="text-xl font-bold text-primary">Security First</h3>
+          <p class="text-secondary">
+            End-to-end encryption, token-based authentication, and secure WebSocket connections protect your data.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Feature 6: Developer Friendly -->
+      <div class="card card-elevated hover:shadow-xl transition-all duration-300 group">
+        <div class="card-body space-y-4">
+          <div class="w-12 h-12 rounded-lg gradient-purple flex items-center justify-center group-hover:glow-secondary transition-all">
+            <%= lucide_icon "code-2", class: "w-6 h-6 text-surface" %>
+          </div>
+          <h3 class="text-xl font-bold text-primary">Developer Friendly</h3>
+          <p class="text-secondary">
+            Clean REST APIs, comprehensive SDK documentation, and TypeScript support for rapid development.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section - Scroll Storytelling -->
+<section id="how-it-works" class="py-24">
+  <div class="container-xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold mb-4">
+        <span class="gradient-text">How It Works</span>
+      </h2>
+      <p class="text-xl text-secondary max-w-2xl mx-auto">
+        Get started in three simple steps
+      </p>
+    </div>
+    
+    <div class="space-y-24">
+      <!-- Step 1 -->
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6">
+          <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full glass-effect">
+            <span class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-surface font-bold">1</span>
+            <span class="font-mono text-sm text-muted">Step One</span>
+          </div>
+          <h3 class="text-3xl font-bold text-primary">Create Your Bot</h3>
+          <p class="text-lg text-secondary leading-relaxed">
+            Sign up and create your first bot in seconds. Configure settings, set up webhooks, and define your bot's personality and capabilities.
+          </p>
+          <div class="flex gap-3">
+            <span class="badge-primary font-mono">User Auth</span>
+            <span class="badge-secondary font-mono">Bot Config</span>
+            <span class="badge-success font-mono">Dashboard</span>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="rounded-xl overflow-hidden shadow-xl">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop" 
+                 alt="Bot Creation Dashboard" 
+                 class="w-full h-auto">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Step 2 -->
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="lg:order-2 space-y-6">
+          <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full glass-effect">
+            <span class="w-8 h-8 rounded-full gradient-purple flex items-center justify-center text-surface font-bold">2</span>
+            <span class="font-mono text-sm text-muted">Step Two</span>
+          </div>
+          <h3 class="text-3xl font-bold text-primary">Connect OpenClaw</h3>
+          <p class="text-lg text-secondary leading-relaxed">
+            Install @eyeclaw/eyeclaw as OpenClaw plugin and connect your local instance. Secure WebSocket connection establishes instant communication.
+          </p>
+          <div class="card p-4 bg-surface-elevated font-mono text-sm space-y-2">
+            <code class="text-primary">openclaw plugins install @eyeclaw/eyeclaw</code><br>
+            <code class="text-secondary">openclaw config set channels.eyeclaw.botId "YOUR_BOT_ID"</code><br>
+            <code class="text-secondary">openclaw config set channels.eyeclaw.sdkToken "YOUR_TOKEN"</code><br>
+            <code class="text-success">openclaw config set channels.eyeclaw.enabled true</code>
+          </div>
+        </div>
+        <div class="lg:order-1 relative">
+          <div class="rounded-xl overflow-hidden shadow-xl">
+            <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=600&h=400&fit=crop" 
+                 alt="SDK Integration" 
+                 class="w-full h-auto">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Step 3 -->
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6">
+          <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full glass-effect">
+            <span class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-surface font-bold">3</span>
+            <span class="font-mono text-sm text-muted">Step Three</span>
+          </div>
+          <h3 class="text-3xl font-bold text-primary">Deploy Everywhere</h3>
+          <p class="text-lg text-secondary leading-relaxed">
+            Export your bot as an MCP plugin URL. Integrate with Coze, Claude, or any MCP-compatible platform in one click.
+          </p>
+          <div class="flex gap-3">
+            <span class="badge-info font-mono">SSE Stream</span>
+            <span class="badge-warning font-mono">MCP Protocol</span>
+            <span class="badge-success font-mono">Universal</span>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="rounded-xl overflow-hidden shadow-xl">
+            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop" 
+                 alt="MCP Integration" 
+                 class="w-full h-auto">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section - Sticky Footer Bar -->
+<section class="py-24 bg-surface-elevated">
+  <div class="container-xl mx-auto px-6">
+    <div class="glass-effect rounded-2xl p-12 text-center space-y-8 glow-primary">
+      <h2 class="text-4xl font-bold">
+        <span class="gradient-text">Ready to Get Started?</span>
+      </h2>
+      <p class="text-xl text-secondary max-w-2xl mx-auto">
+        Join hundreds of developers building the next generation of intelligent bots with EyeClaw.
+      </p>
+      <div class="flex flex-wrap gap-4 justify-center">
+        <% if current_user %>
+          <%= link_to new_bot_path, class: "btn-primary btn-xl" do %>
+            <%= lucide_icon "plus", class: "w-5 h-5" %>
+            Create New Bot
+          <% end %>
+        <% else %>
+          <%= link_to sign_up_path, class: "btn-primary btn-xl" do %>
+            <%= lucide_icon "user-plus", class: "w-5 h-5" %>
+            Create Free Account
+          <% end %>
+        <% end %>
+        <a href="#docs" class="btn-outline btn-xl">
+          <%= lucide_icon "book-open", class: "w-5 h-5" %>
+          Read Documentation
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-12 border-t border-border">
+  <div class="container-xl mx-auto px-6">
+    <div class="flex flex-col items-center space-y-6">
+      <!-- Logo -->
+      <div class="text-2xl font-bold gradient-text">EyeClaw</div>
+      
+      <!-- Copyright -->
+      <p class="text-sm text-muted font-mono">
+        &copy; 2024 EyeClaw. All rights reserved.
+      </p>
+      
+      <!-- Social Icons -->
+      <div class="flex gap-4">
+        <a href="#github" class="w-10 h-10 rounded-full bg-surface-elevated hover:bg-primary/10 flex items-center justify-center transition-all">
+          <%= lucide_icon "github", class: "w-5 h-5 text-muted hover:text-primary" %>
+        </a>
+        <a href="#twitter" class="w-10 h-10 rounded-full bg-surface-elevated hover:bg-primary/10 flex items-center justify-center transition-all">
+          <%= lucide_icon "twitter", class: "w-5 h-5 text-muted hover:text-primary" %>
+        </a>
+        <a href="#discord" class="w-10 h-10 rounded-full bg-surface-elevated hover:bg-primary/10 flex items-center justify-center transition-all">
+          <%= lucide_icon "message-circle", class: "w-5 h-5 text-muted hover:text-primary" %>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

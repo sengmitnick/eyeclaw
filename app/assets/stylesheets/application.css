@@ -1,0 +1,172 @@
+/*
+ * AI MUST READ - AVAILABLE COMPONENTS (DO NOT RECREATE THESE)
+ *
+ * Buttons: .btn-primary, .btn-secondary, .btn-success, .btn-warning, .btn-danger, .btn-ghost, .btn-outline, .btn-outline-primary
+ *          Sizes: .btn-xs, .btn-sm, .btn-md, .btn-lg, .btn-xl
+ * Cards: .card, .card-elevated, .card-flat + .card-header, .card-body, .card-footer
+ * Alerts: .alert-success, .alert-warning, .alert-danger, .alert-info
+ * Badges: .badge-primary, .badge-secondary, .badge-success, .badge-warning, .badge-danger, .badge-neutral
+ * Forms: .form-input, .form-textarea, .form-select, .form-label, .form-error, .form-help
+ * Enhanced Forms: Tom Select (searchable select), Flatpickr (date/time picker)
+ * Tables: .table, .table-header, .table-row, .table-cell, .table-header-cell
+ * Containers: .container-sm (login), .container-md (forms), .container-lg (detail), .container-xl (lists)
+ * Utils: .loading-spinner, .skeleton, .text-balance, .transition-default, .focus-ring
+ *
+ * All components defined in components.css - READ ONLY, DO NOT MODIFY
+ * Custom components go in "CUSTOM COMPONENTS" section at bottom of this file
+ */
+/* Import Google Fonts - Exo + Roboto Mono */
+@import url('https://fonts.googleapis.com/css2?family=Exo:wght@300;400;500;600;700&family=Roboto+Mono:wght@300;400;500;700&display=swap');
+
+/* Import design system components - DO NOT MODIFY components.css */
+@import "components";
+
+/* Import third-party CSS libraries */
+@import "tom-select/dist/css/tom-select.css";
+@import "flatpickr/dist/flatpickr.css";
+@import "vendors"; /* Custom themes for third-party libraries */
+
+@tailwind base;
+@tailwind components;
+@layer components {
+
+  /*
+   * Design System Variables
+   *
+   * Usage:
+   * - Text: text-primary/secondary/muted
+   * - Surface: surface/surface-elevated
+   * - Brand: primary/secondary
+   * - Status: success/warning/danger/info
+   *
+   * NEVER use direct colors: text-white, bg-white, text-black, bg-black, etc.
+   * Use semantic variables only for maintainability and theme consistency.
+   */
+  :root {
+    /* EyeClaw Brand - Blue primary, Purple secondary */
+    --color-primary: 240 100% 65%;
+    --color-primary-light: 242 100% 75%;
+    --color-primary-dark: 238 90% 55%;
+
+    --color-secondary: 270 80% 60%;
+    --color-secondary-light: 273 85% 70%;
+    --color-secondary-dark: 267 75% 50%;
+
+    /* Text colors - high contrast for readability */
+    --color-text-primary: 0 0% 15%;    /* Main headings, important text */
+    --color-text-secondary: 0 0% 35%;  /* Body text, descriptions */
+    --color-text-muted: 0 0% 64%;      /* Captions, helper text */
+
+    /* Surface colors - for backgrounds and borders */
+    --color-surface: 0 0% 100%;        /* Main background (white) */
+    --color-surface-elevated: 0 0% 92%; /* Cards, elevated surfaces */
+    --color-border: 0 0% 90%;          /* Borders, dividers */
+
+    /*  Neutral color - use only in special cases, avoid for text */
+    --color-neutral: 0 0% 64%;
+
+    --color-success: 142 76% 36%;
+    --color-warning: 38 92% 50%;
+    --color-danger: 0 84% 60%;
+    --color-info: 188 94% 42%;
+
+    --color-success-bg: 138 76% 97%;
+    --color-warning-bg: 48 100% 96%;
+    --color-danger-bg: 0 93% 97%;
+    --color-info-bg: 204 100% 97%;
+
+    --font-family-sans: 'Exo', 'Helvetica Neue', 'Arial', sans-serif;
+    --font-family-mono: 'Roboto Mono', 'Fira Code', 'Consolas', monospace;
+
+    --border-radius-sm: 0.375rem;
+    --border-radius: 0.5rem;
+    --border-radius-md: 0.75rem;
+    --border-radius-lg: 1rem;
+    --border-radius-xl: 1.5rem;
+
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  }
+
+  /*
+   * Dark Mode - Comprehensive optimization for contrast and visual effects
+   * Follows WCAG AA standards with minimum 4.5:1 text contrast ratio
+   */
+  .dark {
+    /* EyeClaw Dark Mode - Brighter brand colors */
+    --color-primary: 240 100% 72%;     /* Brighter blue for dark backgrounds */
+    --color-primary-light: 242 100% 82%; /* Light variant */
+    --color-primary-dark: 238 90% 62%; /* Dark variant */
+
+    --color-secondary: 270 80% 68%;    /* Brighter purple */
+    --color-secondary-light: 273 85% 78%;
+    --color-secondary-dark: 267 75% 58%;
+
+    /* Text colors - high contrast for readability */
+    --color-text-primary: 0 0% 95%;    /* Near white, optimal contrast */
+    --color-text-secondary: 0 0% 80%;  /* Secondary text, still clear */
+    --color-text-muted: 0 0% 60%;      /* Muted text, moderate contrast */
+
+    /* Surface colors - layered dark system */
+    --color-surface: 0 0% 8%;          /* Very dark background, near black */
+    --color-surface-elevated: 0 0% 12%; /* Card background, slightly lighter */
+    --color-border: 0 0% 20%;          /* Borders, adequate contrast */
+
+    /* Status colors optimization for dark mode - brighter and more saturated */
+    --color-success: 145 80% 50%;      /* Brighter green */
+    --color-warning: 45 95% 60%;       /* Brighter yellow */
+    --color-danger: 0 85% 65%;         /* Brighter red */
+    --color-info: 200 95% 55%;         /* Brighter blue */
+
+    /* Status background colors - semi-transparent for dark mode */
+    --color-success-bg: 145 80% 50% / 0.15; /* Semi-transparent green background */
+    --color-warning-bg: 45 95% 60% / 0.15;  /* Semi-transparent yellow background */
+    --color-danger-bg: 0 85% 65% / 0.15;    /* Semi-transparent red background */
+    --color-info-bg: 200 95% 55% / 0.15;    /* Semi-transparent blue background */
+
+    /* Neutral color adjustment for dark mode */
+    --color-neutral: 0 0% 70%;         /* Brighter neutral for dark backgrounds */
+
+    /* Shadows for dark mode - softer to avoid being too heavy */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.5);
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
+    --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+    --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.7);
+  }
+
+  /* Add your custom components here */
+
+  /* EyeClaw Gradient Components */
+  .gradient-primary {
+    @apply bg-gradient-to-br from-primary via-primary-light to-secondary;
+  }
+
+  .gradient-purple {
+    @apply bg-gradient-to-br from-secondary via-secondary-light to-primary;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+
+  .glass-effect {
+    @apply bg-surface/80 backdrop-blur-xl border border-border/50;
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 30px hsl(var(--color-primary) / 0.3);
+  }
+
+  .glow-secondary {
+    box-shadow: 0 0 30px hsl(var(--color-secondary) / 0.3);
+  }
+
+} /* End of @layer components */
+
+@tailwind utilities;

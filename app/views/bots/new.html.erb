@@ -1,0 +1,81 @@
+<div class="container-md mx-auto px-6 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <%= link_to bots_path, class: "inline-flex items-center gap-2 text-muted hover:text-primary transition-all mb-3" do %>
+      <%= lucide_icon "arrow-left", class: "w-4 h-4" %>
+      Back to Bots
+    <% end %>
+    <h1 class="text-3xl font-bold gradient-text">Create New Bot</h1>
+    <p class="text-muted mt-2">Set up a new bot integration for your OpenClaw instance</p>
+  </div>
+
+  <!-- Form Card -->
+  <div class="card card-elevated max-w-2xl">
+    <div class="card-body">
+      <%= form_with(model: @bot, local: true, class: "space-y-6") do |f| %>
+        <!-- Name Field -->
+        <div>
+          <%= f.label :name, class: "form-label required" %>
+          <%= f.text_field :name, 
+              placeholder: "My Awesome Bot",
+              class: "form-input #{'border-danger' if @bot.errors[:name].any?}",
+              autofocus: true %>
+          <% if @bot.errors[:name].any? %>
+            <p class="form-error"><%= @bot.errors[:name].first %></p>
+          <% else %>
+            <p class="form-help">Choose a memorable name for your bot</p>
+          <% end %>
+        </div>
+
+        <!-- Description Field -->
+        <div>
+          <%= f.label :description, class: "form-label" %>
+          <%= f.text_area :description, 
+              rows: 4,
+              placeholder: "Describe what your bot does...",
+              class: "form-textarea #{'border-danger' if @bot.errors[:description].any?}" %>
+          <% if @bot.errors[:description].any? %>
+            <p class="form-error"><%= @bot.errors[:description].first %></p>
+          <% else %>
+            <p class="form-help">Optional: Add a description to help you identify this bot</p>
+          <% end %>
+        </div>
+
+        <!-- Webhook URL Field -->
+        <div>
+          <%= f.label :webhook_url, "Webhook URL (Optional)", class: "form-label" %>
+          <%= f.text_field :webhook_url, 
+              placeholder: "https://your-server.com/webhooks/bot",
+              class: "form-input font-mono #{'border-danger' if @bot.errors[:webhook_url].any?}" %>
+          <% if @bot.errors[:webhook_url].any? %>
+            <p class="form-error"><%= @bot.errors[:webhook_url].first %></p>
+          <% else %>
+            <p class="form-help">Optional: Receive event notifications at this URL</p>
+          <% end %>
+        </div>
+
+        <!-- Info Box -->
+        <div class="alert-info">
+          <div class="flex gap-3">
+            <%= lucide_icon "info", class: "w-5 h-5 flex-shrink-0 mt-0.5" %>
+            <div class="text-sm">
+              <strong>What happens next?</strong><br>
+              After creation, you'll receive:
+              <ul class="list-disc list-inside mt-2 space-y-1">
+                <li>SDK Token for connecting your local OpenClaw</li>
+                <li>API Key for webhook authentication</li>
+                <li>MCP Plugin URL for platform integrations</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3 pt-4">
+          <%= f.submit "Create Bot", class: "btn-primary" %>
+          <%= link_to "Cancel", bots_path, class: "btn-outline" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
