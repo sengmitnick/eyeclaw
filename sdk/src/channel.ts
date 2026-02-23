@@ -180,29 +180,28 @@ export const eyeclawPlugin: ChannelPlugin<ResolvedEyeClawAccount> = {
       
       // Register OpenClaw Agent callback for chat messages
       client.setSendAgentCallback(async (message: string) => {
+        const { spawn } = await import('child_process')
+        const streamId = Date.now().toString()
+        
         try {
           ctx.log?.info(`🤖 Sending message to OpenClaw Agent: ${message}`)
           
-          // Call OpenClaw Agent via spawn for streaming output
-          const { spawn } = await import('child_process')
+          // Spawn openclaw agent process for streaming output
+          const agentProcess = spawn('openclaw', [
+            'agent',
+            '--session-id', 'eyeclaw-web-chat',
+            '--message', message,
+            '--json'
+          ])
           
-          try {
-            // Spawn openclaw agent process for streaming output
-            const agentProcess = spawn('openclaw', [
-              'agent',
-              '--session-id', 'eyeclaw-web-chat',
-              '--message', message,
-              '--json'
-            ])
-            
-            let outputBuffer = ''
-            let streamId = Date.now().toString()
-            
-            // Send stream_start event
-            client.sendStreamChunk('stream_start', streamId, '')
-            
-            // Handle stdout (streaming response)
-            agentProcess.stdout?.on('data', (data: Buffer) => {
+          let outputBuffer = ''
+          
+          // Send stream_start event
+          client.sendStreamChunk('stream_start', streamId, '')
+          
+          // Handle stdout (streaming response)
+          agentProcess.stdout?.on('data', (data: Buffer) => {
+            try {
               const text = data.toString()
               outputBuffer += text
               
@@ -234,35 +233,51 @@ export const eyeclawPlugin: ChannelPlugin<ResolvedEyeClawAccount> = {
                   outputBuffer = lines[lines.length - 1]
                 }
               }
-            })
-            
-            // Handle stderr (errors)
-            agentProcess.stderr?.on('data', (data: Buffer) => {
-              const errorText = data.toString()
-              ctx.log?.error(`Agent stderr: ${errorText}`)
-            })
-            
+            } catch (error) {
+              // Catch any errors in data processing to prevent WebSocket disconnect
+              const errorMsg = error instanceof Error ? error.message : String(error)
+              ctx.log?.error(`Error processing stdout data: ${errorMsg}`)
+            }
+          })
+          
+          // Handle stderr (errors)
+          agentProcess.stderr?.on('data', (data: Buffer) => {
+            const errorText = data.toString()
+            ctx.log?.error(`Agent stderr: ${errorText}`)
+          })
+          
+          // Wait for process to complete
+          await new Promise<void>((resolve, reject) => {
             // Handle process completion
             agentProcess.on('close', (code: number) => {
-              // Send any remaining buffered content
-              if (outputBuffer.trim()) {
-                try {
-                  const parsed = JSON.parse(outputBuffer)
-                  const response = parsed.result?.payloads?.[0]?.text || outputBuffer.trim()
-                  client.sendStreamChunk('stream_chunk', streamId, response)
-                } catch (e) {
-                  client.sendStreamChunk('stream_chunk', streamId, outputBuffer.trim())
+              try {
+                // Send any remaining buffered content
+                if (outputBuffer.trim()) {
+                  try {
+                    const parsed = JSON.parse(outputBuffer)
+                    const response = parsed.result?.payloads?.[0]?.text || outputBuffer.trim()
+                    client.sendStreamChunk('stream_chunk', streamId, response)
+                  } catch (e) {
+                    client.sendStreamChunk('stream_chunk', streamId, outputBuffer.trim())
+                  }
                 }
-              }
-              
-              // Send stream_end event
-              client.sendStreamChunk('stream_end', streamId, '')
-              
-              if (code === 0) {
-                ctx.log?.info(`✅ Agent completed successfully`)
-              } else {
-                ctx.log?.error(`Agent exited with code ${code}`)
-                client.sendLog('error', `❌ Agent error: process exited with code ${code}`)
+                
+                // Send stream_end event
+                client.sendStreamChunk('stream_end', streamId, '')
+                
+                if (code === 0) {
+                  ctx.log?.info(`✅ Agent completed successfully`)
+                  resolve()
+                } else {
+                  ctx.log?.error(`Agent exited with code ${code}`)
+                  client.sendLog('error', `❌ Agent error: process exited with code ${code}`)
+                  reject(new Error(`Agent exited with code ${code}`))
+                }
+              } catch (error) {
+                // Prevent errors in close handler from crashing
+                const errorMsg = error instanceof Error ? error.message : String(error)
+                ctx.log?.error(`Error in close handler: ${errorMsg}`)
+                reject(error)
               }
             })
             
@@ -271,17 +286,20 @@ export const eyeclawPlugin: ChannelPlugin<ResolvedEyeClawAccount> = {
               ctx.log?.error(`Failed to start agent process: ${error.message}`)
               client.sendStreamChunk('stream_error', streamId, error.message)
               client.sendLog('error', `❌ Failed to start agent: ${error.message}`)
+              reject(error)
             })
-            
-          } catch (error) {
-            const errorMsg = error instanceof Error ? error.message : String(error)
-            ctx.log?.error(`Failed to execute openclaw agent: ${errorMsg}`)
-            client.sendLog('error', `❌ Agent error: ${errorMsg}`)
-          }
+          })
+          
         } catch (error) {
           const errorMsg = error instanceof Error ? error.message : String(error)
           ctx.log?.error(`Failed to call OpenClaw Agent: ${errorMsg}`)
-          client.sendLog('error', `❌ Failed to call agent: ${errorMsg}`)
+          // Send error notification but don't crash the WebSocket connection
+          try {
+            client.sendStreamChunk('stream_error', streamId, errorMsg)
+            client.sendLog('error', `❌ Agent error: ${errorMsg}`)
+          } catch (sendError) {
+            ctx.log?.error(`Failed to send error notification: ${sendError}`)
+          }
         }
       })
       
