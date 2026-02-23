@@ -105,6 +105,16 @@ export class EyeClawClient {
         this.logger.info(`Command received by server: ${message.command}`)
         break
 
+      case 'execute_command':
+        this.handleExecuteCommand(message)
+        break
+
+      case 'ping':
+        this.logger.debug('Received ping from dashboard')
+        // Send pong response
+        this.sendLog('info', '🏓 Pong! Bot is alive.')
+        break
+
       case 'log':
         this.logger.info(`[Server Log] ${message.level}: ${message.message}`)
         break
@@ -112,6 +122,80 @@ export class EyeClawClient {
       default:
         this.logger.warn(`Unknown message type: ${type}`)
     }
+  }
+
+  private handleExecuteCommand(message: Record<string, unknown>): void {
+    const command = message.command as string
+    const params = (message.params as Record<string, unknown>) || {}
+
+    this.logger.info(`📥 Executing command: ${command}`)
+
+    switch (command) {
+      case 'chat': {
+        const userMessage = params.message as string
+        this.logger.info(`💬 Chat message: ${userMessage}`)
+        
+        // Send user message acknowledgment
+        this.sendLog('info', `收到消息: ${userMessage}`)
+        
+        // Call OpenClaw Agent via callback
+        this.handleChatMessage(userMessage)
+        break
+      }
+
+      case 'ping': {
+        this.sendLog('info', '🏓 Pong! Bot is responding.')
+        break
+      }
+
+      case 'status': {
+        this.requestStatus()
+        break
+      }
+
+      case 'echo': {
+        const echoMessage = params.message as string
+        this.sendLog('info', `Echo: ${echoMessage}`)
+        break
+      }
+
+      case 'help': {
+        const helpMessage = [
+          '🤖 Available Commands:',
+          '• chat - Send a chat message',
+          '• ping - Test connection',
+          '• status - Get bot status',
+          '• echo - Echo a message',
+          '• help - Show this help',
+        ].join('\n')
+        this.sendLog('info', helpMessage)
+        break
+      }
+
+      default:
+        this.logger.warn(`Unknown command: ${command}`)
+        this.sendLog('error', `❌ Unknown command: ${command}`)
+    }
+  }
+
+  private handleChatMessage(userMessage: string): void {
+    // This will be called by OpenClaw channel plugin via sendAgent
+    if (this.sendAgentCallback) {
+      this.logger.info('🤖 Calling OpenClaw Agent...')
+      this.sendAgentCallback(userMessage)
+    } else {
+      // Fallback: simple echo if not running in OpenClaw context
+      this.logger.warn('No OpenClaw Agent available, using echo mode')
+      this.sendLog('info', `💬 Echo: "${userMessage}" (OpenClaw Agent not connected)`)
+    }
+  }
+
+  // Callback to send message to OpenClaw Agent (injected by channel plugin)
+  private sendAgentCallback: ((message: string) => Promise<void>) | null = null
+
+  setSendAgentCallback(callback: (message: string) => Promise<void>): void {
+    this.sendAgentCallback = callback
+    this.logger.info('✅ OpenClaw Agent callback registered')
   }
 
   private handleStatusResponse(status: BotStatus): void {

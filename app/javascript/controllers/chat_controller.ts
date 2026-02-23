@@ -102,7 +102,18 @@ Uptime: ${this.formatDuration(data.uptime || 0)}
   // Handle log messages
   protected handleLog(data: any): void {
     console.log("Log received:", data)
-    this.addSystemMessage(`[${data.level.toUpperCase()}] ${data.message}`, "info")
+    const level = data.level || 'info'
+    const message = data.message
+
+    // Show info level messages as bot messages (regular conversation)
+    if (level === 'info') {
+      this.addBotMessage(message, "normal")
+    } else if (level === 'error') {
+      this.addBotMessage(message, "error")
+    } else {
+      // debug, warn, etc. as system messages
+      this.addSystemMessage(`[${level.toUpperCase()}] ${message}`, "info")
+    }
   }
 
   // Handle generic responses

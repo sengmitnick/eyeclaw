@@ -212,6 +212,112 @@ client.disconnect()
 - **Issues**: [https://github.com/eyeclaw/eyeclaw/issues](https://github.com/eyeclaw/eyeclaw/issues)
 - **Discord**: [https://discord.gg/eyeclaw](https://discord.gg/eyeclaw)
 
+## 💬 Chat Functionality
+
+The EyeClaw SDK includes built-in chat functionality that allows you to interact with your bot through the web dashboard.
+
+### Testing Chat
+
+1. Start your bot with the EyeClaw plugin installed
+2. Go to your bot's detail page on EyeClaw Dashboard
+3. Click **"Test Chat"** button
+4. Send messages - the bot will respond with smart replies
+5. Use quick test buttons:
+   - **Ping** - Test bot connectivity
+   - **Status** - Get bot status (online, sessions, uptime)
+   - **Echo** - Echo back a test message
+   - **Help** - Show available commands
+
+### Supported Commands
+
+The SDK automatically handles these commands from the web dashboard:
+
+- **`chat`** - Receive and respond to chat messages
+  - Params: `{ message: string }`
+  - The bot uses pattern matching to generate smart responses
+  - Supports greetings, questions, thanks, farewells in Chinese and English
+
+- **`ping`** - Test bot connectivity
+  - Response: "🏓 Pong! Bot is responding."
+
+- **`status`** - Get current bot status
+  - Returns: online status, active sessions, total sessions, uptime
+
+- **`echo`** - Echo back a message
+  - Params: `{ message: string }`
+  - Response: Echoes the message back
+
+- **`help`** - Show available commands
+  - Response: Lists all available commands and their usage
+
+### Customizing Bot Responses
+
+You can customize the bot's chat responses by modifying `generateBotReply()` in `sdk/src/client.ts`:
+
+```typescript
+private generateBotReply(userMessage: string): string {
+  const lowerMessage = userMessage.toLowerCase()
+
+  // Add your custom patterns
+  if (lowerMessage.includes('weather')) {
+    return '🌤️ The weather is great today!'
+  }
+
+  if (lowerMessage.includes('time')) {
+    return `🕐 Current time: ${new Date().toLocaleTimeString()}`
+  }
+
+  // Default response
+  return `💬 You said: "${userMessage}"`
+}
+```
+
+### Integrating AI/LLM Services
+
+For production use, integrate your preferred AI service:
+
+```typescript
+import OpenAI from 'openai'
+
+private async generateBotReply(userMessage: string): Promise<string> {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4',
+    messages: [
+      { role: 'system', content: 'You are a helpful assistant.' },
+      { role: 'user', content: userMessage }
+    ]
+  })
+  
+  return completion.choices[0].message.content || 'Sorry, I could not generate a response.'
+}
+```
+
+### Message Flow
+
+```
+User (Web Dashboard)
+     │
+     ▼
+DashboardChannel ──execute_command──► BotChannel
+     │                                      │
+     │                                      ▼
+     │                              SDK receives command
+     │                                      │
+     │                                      ▼
+     │                              handleExecuteCommand()
+     │                                      │
+     │                                      ▼
+     │                              generateBotReply()
+     │                                      │
+     │                                      ▼
+     │◄───────── sendLog() ──────────sendLog('info', reply)
+     │
+     ▼
+Chat Controller displays message
+```
+
 ## License
 
 MIT © EyeClaw Team

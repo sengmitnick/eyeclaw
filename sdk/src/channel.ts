@@ -178,6 +178,50 @@ export const eyeclawPlugin: ChannelPlugin<ResolvedEyeClawAccount> = {
       const client = new EyeClawClient(clientConfig, logger)
       clients.set(ctx.accountId, client)
       
+      // Register OpenClaw Agent callback for chat messages
+      client.setSendAgentCallback(async (message: string) => {
+        try {
+          ctx.log?.info(`🤖 Sending message to OpenClaw Agent: ${message}`)
+          
+          // Call OpenClaw Agent via CLI (since ctx.sendAgent doesn't exist)
+          const { spawn } = await import('child_process')
+          const { promisify } = await import('util')
+          const exec = promisify((await import('child_process')).exec)
+          
+          try {
+            // Call openclaw agent CLI to process the message
+            const result = await exec(
+              `openclaw agent --session-id eyeclaw-web-chat --message ${JSON.stringify(message)} --json`,
+              { timeout: 60000 }
+            )
+            
+            if (result.stdout) {
+              try {
+                const parsed = JSON.parse(result.stdout)
+                // OpenClaw CLI returns: { result: { payloads: [{ text: "...", mediaUrl: null }] } }
+                const response = parsed.result?.payloads?.[0]?.text || 'Agent completed (no text)'
+                ctx.log?.info(`✅ Agent response: ${response.substring(0, 100)}...`)
+                client.sendLog('info', response)
+              } catch (e) {
+                // If not JSON, just send the stdout
+                ctx.log?.info(`✅ Agent response (raw): ${result.stdout.substring(0, 100)}...`)
+                client.sendLog('info', result.stdout.trim())
+              }
+            } else {
+              client.sendLog('info', '✅ Agent completed successfully')
+            }
+          } catch (error) {
+            const errorMsg = error instanceof Error ? error.message : String(error)
+            ctx.log?.error(`Failed to execute openclaw agent: ${errorMsg}`)
+            client.sendLog('error', `❌ Agent error: ${errorMsg}`)
+          }
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : String(error)
+          ctx.log?.error(`Failed to call OpenClaw Agent: ${errorMsg}`)
+          client.sendLog('error', `❌ Failed to call agent: ${errorMsg}`)
+        }
+      })
+      
       try {
         await client.connect()
         ctx.log?.info('✅ Successfully connected to EyeClaw platform')
