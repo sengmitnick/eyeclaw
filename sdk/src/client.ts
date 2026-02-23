@@ -119,6 +119,12 @@ export class EyeClawClient {
         this.logger.info(`[Server Log] ${message.level}: ${message.message}`)
         break
 
+      case 'stream_chunk':
+        // Forward stream chunks to handler (will be handled by web UI)
+        const chunkPreview = typeof message.chunk === 'string' ? message.chunk.substring(0, 50) : String(message.chunk || '').substring(0, 50)
+        this.logger.debug(`Stream chunk: ${message.type} - ${chunkPreview}...`)
+        break
+
       default:
         this.logger.warn(`Unknown message type: ${type}`)
     }
@@ -270,6 +276,15 @@ export class EyeClawClient {
     this.sendChannelMessage('log', {
       level,
       message,
+      timestamp: new Date().toISOString(),
+    })
+  }
+
+  sendStreamChunk(type: string, streamId: string, chunk: string): void {
+    this.sendChannelMessage('stream_chunk', {
+      type,
+      stream_id: streamId,
+      chunk,
       timestamp: new Date().toISOString(),
     })
   }

@@ -183,33 +183,96 @@ export const eyeclawPlugin: ChannelPlugin<ResolvedEyeClawAccount> = {
         try {
           ctx.log?.info(`🤖 Sending message to OpenClaw Agent: ${message}`)
           
-          // Call OpenClaw Agent via CLI (since ctx.sendAgent doesn't exist)
+          // Call OpenClaw Agent via spawn for streaming output
           const { spawn } = await import('child_process')
-          const { promisify } = await import('util')
-          const exec = promisify((await import('child_process')).exec)
           
           try {
-            // Call openclaw agent CLI to process the message
-            const result = await exec(
-              `openclaw agent --session-id eyeclaw-web-chat --message ${JSON.stringify(message)} --json`,
-              { timeout: 60000 }
-            )
+            // Spawn openclaw agent process for streaming output
+            const agentProcess = spawn('openclaw', [
+              'agent',
+              '--session-id', 'eyeclaw-web-chat',
+              '--message', message,
+              '--json'
+            ])
             
-            if (result.stdout) {
+            let outputBuffer = ''
+            let streamId = Date.now().toString()
+            
+            // Send stream_start event
+            client.sendStreamChunk('stream_start', streamId, '')
+            
+            // Handle stdout (streaming response)
+            agentProcess.stdout?.on('data', (data: Buffer) => {
+              const text = data.toString()
+              outputBuffer += text
+              
+              // For streaming text output, send each chunk immediately
+              // Try to parse as JSON first
               try {
-                const parsed = JSON.parse(result.stdout)
-                // OpenClaw CLI returns: { result: { payloads: [{ text: "...", mediaUrl: null }] } }
-                const response = parsed.result?.payloads?.[0]?.text || 'Agent completed (no text)'
-                ctx.log?.info(`✅ Agent response: ${response.substring(0, 100)}...`)
-                client.sendLog('info', response)
+                const parsed = JSON.parse(outputBuffer)
+                // If we can parse the complete JSON, extract the text
+                const response = parsed.result?.payloads?.[0]?.text
+                if (response) {
+                  // Send the text in chunks
+                  const chunkSize = 50 // Send ~50 chars at a time
+                  for (let i = 0; i < response.length; i += chunkSize) {
+                    const chunk = response.substring(i, i + chunkSize)
+                    client.sendStreamChunk('stream_chunk', streamId, chunk)
+                  }
+                }
+                outputBuffer = '' // Clear buffer after successful parse
               } catch (e) {
-                // If not JSON, just send the stdout
-                ctx.log?.info(`✅ Agent response (raw): ${result.stdout.substring(0, 100)}...`)
-                client.sendLog('info', result.stdout.trim())
+                // Not valid JSON yet, check if we have complete lines to send
+                const lines = outputBuffer.split('\n')
+                // Keep last incomplete line in buffer
+                if (lines.length > 1) {
+                  for (let i = 0; i < lines.length - 1; i++) {
+                    if (lines[i].trim()) {
+                      client.sendStreamChunk('stream_chunk', streamId, lines[i] + '\n')
+                    }
+                  }
+                  outputBuffer = lines[lines.length - 1]
+                }
               }
-            } else {
-              client.sendLog('info', '✅ Agent completed successfully')
-            }
+            })
+            
+            // Handle stderr (errors)
+            agentProcess.stderr?.on('data', (data: Buffer) => {
+              const errorText = data.toString()
+              ctx.log?.error(`Agent stderr: ${errorText}`)
+            })
+            
+            // Handle process completion
+            agentProcess.on('close', (code: number) => {
+              // Send any remaining buffered content
+              if (outputBuffer.trim()) {
+                try {
+                  const parsed = JSON.parse(outputBuffer)
+                  const response = parsed.result?.payloads?.[0]?.text || outputBuffer.trim()
+                  client.sendStreamChunk('stream_chunk', streamId, response)
+                } catch (e) {
+                  client.sendStreamChunk('stream_chunk', streamId, outputBuffer.trim())
+                }
+              }
+              
+              // Send stream_end event
+              client.sendStreamChunk('stream_end', streamId, '')
+              
+              if (code === 0) {
+                ctx.log?.info(`✅ Agent completed successfully`)
+              } else {
+                ctx.log?.error(`Agent exited with code ${code}`)
+                client.sendLog('error', `❌ Agent error: process exited with code ${code}`)
+              }
+            })
+            
+            // Handle process errors
+            agentProcess.on('error', (error: Error) => {
+              ctx.log?.error(`Failed to start agent process: ${error.message}`)
+              client.sendStreamChunk('stream_error', streamId, error.message)
+              client.sendLog('error', `❌ Failed to start agent: ${error.message}`)
+            })
+            
           } catch (error) {
             const errorMsg = error instanceof Error ? error.message : String(error)
             ctx.log?.error(`Failed to execute openclaw agent: ${errorMsg}`)
