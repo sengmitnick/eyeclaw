@@ -191,7 +191,7 @@ export const eyeclawPlugin: ChannelPlugin<ResolvedEyeClawAccount> = {
             'agent',
             '--session-id', 'eyeclaw-web-chat',
             '--message', message,
-            '--json'
+            // No --json flag: use plain text streaming output
           ])
           
           let outputBuffer = ''
@@ -205,32 +205,13 @@ export const eyeclawPlugin: ChannelPlugin<ResolvedEyeClawAccount> = {
               const text = data.toString()
               outputBuffer += text
               
-              // For streaming text output, send each chunk immediately
-              // Try to parse as JSON first
-              try {
-                const parsed = JSON.parse(outputBuffer)
-                // If we can parse the complete JSON, extract the text
-                const response = parsed.result?.payloads?.[0]?.text
-                if (response) {
-                  // Send the text in chunks
-                  const chunkSize = 50 // Send ~50 chars at a time
-                  for (let i = 0; i < response.length; i += chunkSize) {
-                    const chunk = response.substring(i, i + chunkSize)
-                    client.sendStreamChunk('stream_chunk', streamId, chunk)
-                  }
-                }
-                outputBuffer = '' // Clear buffer after successful parse
-              } catch (e) {
-                // Not valid JSON yet, check if we have complete lines to send
-                const lines = outputBuffer.split('\n')
-                // Keep last incomplete line in buffer
-                if (lines.length > 1) {
-                  for (let i = 0; i < lines.length - 1; i++) {
-                    if (lines[i].trim()) {
-                      client.sendStreamChunk('stream_chunk', streamId, lines[i] + '\n')
-                    }
-                  }
-                  outputBuffer = lines[lines.length - 1]
+              // Send text chunks as they arrive (real-time streaming)
+              const lines = text.split('\n')
+              for (const line of lines) {
+                const trimmed = line.trim()
+                if (trimmed && !trimmed.startsWith('{') && !trimmed.startsWith('[')) {
+                  // Skip JSON-like lines, send only plain text
+                  client.sendStreamChunk('stream_chunk', streamId, line + '\n')
                 }
               }
             } catch (error) {
@@ -251,17 +232,6 @@ export const eyeclawPlugin: ChannelPlugin<ResolvedEyeClawAccount> = {
             // Handle process completion
             agentProcess.on('close', (code: number) => {
               try {
-                // Send any remaining buffered content
-                if (outputBuffer.trim()) {
-                  try {
-                    const parsed = JSON.parse(outputBuffer)
-                    const response = parsed.result?.payloads?.[0]?.text || outputBuffer.trim()
-                    client.sendStreamChunk('stream_chunk', streamId, response)
-                  } catch (e) {
-                    client.sendStreamChunk('stream_chunk', streamId, outputBuffer.trim())
-                  }
-                }
-                
                 // Send stream_end event
                 client.sendStreamChunk('stream_end', streamId, '')
                 
