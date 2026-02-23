@@ -1,6 +1,6 @@
 {
   "name": "@eyeclaw/eyeclaw",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "EyeClaw channel plugin for OpenClaw - Connect your local OpenClaw instance to EyeClaw platform",
   "type": "module",
   "main": "./index.ts",

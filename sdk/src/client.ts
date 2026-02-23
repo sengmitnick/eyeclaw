@@ -130,7 +130,7 @@ export class EyeClawClient {
     }
   }
 
-  private handleExecuteCommand(message: Record<string, unknown>): void {
+  private async handleExecuteCommand(message: Record<string, unknown>): Promise<void> {
     const command = message.command as string
     const params = (message.params as Record<string, unknown>) || {}
 
@@ -144,8 +144,8 @@ export class EyeClawClient {
         // Send user message acknowledgment
         this.sendLog('info', `收到消息: ${userMessage}`)
         
-        // Call OpenClaw Agent via callback
-        this.handleChatMessage(userMessage)
+        // Call OpenClaw Agent via callback and wait for completion
+        await this.handleChatMessage(userMessage)
         break
       }
 
@@ -184,11 +184,12 @@ export class EyeClawClient {
     }
   }
 
-  private handleChatMessage(userMessage: string): void {
+  private async handleChatMessage(userMessage: string): Promise<void> {
     // This will be called by OpenClaw channel plugin via sendAgent
     if (this.sendAgentCallback) {
       this.logger.info('🤖 Calling OpenClaw Agent...')
-      this.sendAgentCallback(userMessage)
+      await this.sendAgentCallback(userMessage)
+      this.logger.info('✅ OpenClaw Agent completed')
     } else {
       // Fallback: simple echo if not running in OpenClaw context
       this.logger.warn('No OpenClaw Agent available, using echo mode')
