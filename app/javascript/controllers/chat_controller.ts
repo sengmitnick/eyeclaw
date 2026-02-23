@@ -31,6 +31,9 @@ export default class extends BaseChannelController {
   declare readonly botIdValue: string
   declare readonly streamNameValue: string
 
+  // Streaming state
+  private streamingMessages: Map<string, { element: HTMLElement, content: string }> = new Map()
+
   connect(): void {
     console.log("Chat controller connected")
 
@@ -120,6 +123,30 @@ Uptime: ${this.formatDuration(data.uptime || 0)}
   protected handleResult(data: any): void {
     console.log("Result received:", data)
     this.addBotMessage(JSON.stringify(data, null, 2), "code")
+  }
+
+  // Handle streaming message chunks
+  protected handleStreamChunk(data: any): void {
+    const { type, stream_id, chunk } = data
+    console.log(`Stream event: ${type}, ID: ${stream_id}, chunk length: ${chunk?.length || 0}`)
+
+    switch (type) {
+      case 'stream_start':
+        this.startStreamingMessage(stream_id)
+        break
+      
+      case 'stream_chunk':
+        this.appendStreamingChunk(stream_id, chunk)
+        break
+      
+      case 'stream_end':
+        this.finishStreamingMessage(stream_id)
+        break
+      
+      case 'stream_error':
+        this.handleStreamError(stream_id, chunk)
+        break
+    }
   }
 
   // 💡 UI ACTIONS
@@ -270,6 +297,116 @@ Uptime: ${this.formatDuration(data.uptime || 0)}
       return `${minutes}m ${secs}s`
     } else {
       return `${secs}s`
+    }
+  }
+
+  // 💡 STREAMING MESSAGE HANDLERS
+
+  private startStreamingMessage(streamId: string): void {
+    console.log(`Starting stream: ${streamId}`)
+    
+    // Create a new bot message element for streaming
+    const messageEl = document.createElement("div")
+    messageEl.className = "flex justify-start"
+    messageEl.setAttribute("data-stream-id", streamId)
+    
+    const contentClass = "bg-surface-elevated text-primary"
+    
+    messageEl.innerHTML = `
+      <div class="max-w-[70%] ${contentClass} rounded-lg px-4 py-2">
+        <div class="text-sm" data-stream-content></div>
+        <div class="text-xs opacity-70 mt-1">
+          ${this.getCurrentTime()}
+          <span class="inline-block w-2 h-2 bg-primary rounded-full animate-pulse ml-2" data-stream-indicator></span>
+        </div>
+      </div>
+    `
+    
+    // Remove welcome message if present
+    const welcome = this.messagesTarget.querySelector(".text-center")
+    if (welcome) {
+      welcome.remove()
+    }
+    
+    this.messagesTarget.appendChild(messageEl)
+    
+    // Store reference
+    this.streamingMessages.set(streamId, {
+      element: messageEl,
+      content: ""
+    })
+    
+    // Scroll to bottom
+    this.messagesTarget.scrollTop = this.messagesTarget.scrollHeight
+  }
+
+  private appendStreamingChunk(streamId: string, chunk: string): void {
+    const stream = this.streamingMessages.get(streamId)
+    if (!stream) {
+      console.warn(`Stream ${streamId} not found, creating new one`)
+      this.startStreamingMessage(streamId)
+      return this.appendStreamingChunk(streamId, chunk)
+    }
+    
+    // Append chunk to content
+    stream.content += chunk
+    
+    // Update the content element
+    const contentEl = stream.element.querySelector("[data-stream-content]") as HTMLElement
+    if (contentEl) {
+      contentEl.textContent = stream.content
+    }
+    
+    // Scroll to bottom
+    this.messagesTarget.scrollTop = this.messagesTarget.scrollHeight
+  }
+
+  private finishStreamingMessage(streamId: string): void {
+    console.log(`Finishing stream: ${streamId}`)
+    
+    const stream = this.streamingMessages.get(streamId)
+    if (!stream) {
+      console.warn(`Stream ${streamId} not found`)
+      return
+    }
+    
+    // Remove streaming indicator
+    const indicator = stream.element.querySelector("[data-stream-indicator]")
+    if (indicator) {
+      indicator.remove()
+    }
+    
+    // Clean up streaming state
+    this.streamingMessages.delete(streamId)
+    
+    // Final scroll to bottom
+    this.messagesTarget.scrollTop = this.messagesTarget.scrollHeight
+  }
+
+  private handleStreamError(streamId: string, errorMessage: string): void {
+    console.error(`Stream error for ${streamId}: ${errorMessage}`)
+    
+    const stream = this.streamingMessages.get(streamId)
+    if (stream) {
+      // Append error message
+      stream.content += `\n\n[Error: ${errorMessage}]`
+      
+      const contentEl = stream.element.querySelector("[data-stream-content]") as HTMLElement
+      if (contentEl) {
+        contentEl.textContent = stream.content
+      }
+      
+      // Change styling to error
+      const containerEl = stream.element.querySelector(".bg-surface-elevated") as HTMLElement
+      if (containerEl) {
+        containerEl.classList.remove("bg-surface-elevated", "text-primary")
+        containerEl.classList.add("bg-danger/10", "text-danger")
+      }
+      
+      this.finishStreamingMessage(streamId)
+    } else {
+      // Show error as system message
+      this.addSystemMessage(`Stream error: ${errorMessage}`, "error")
     }
   }
 }
