@@ -1,36 +1,34 @@
 #!/usr/bin/env node
-import chalk from 'chalk'
 
 /**
  * EyeClaw SDK CLI
  * 
  * This file provides a minimal CLI interface for the plugin.
- * The actual installation is handled by: openclaw plugins install @eyeclaw/sdk
+ * The actual installation is handled by: openclaw plugins install @eyeclaw/eyeclaw
  */
 
 const USAGE = `
-${chalk.bold.blue('EyeClaw SDK')} - Connect your local OpenClaw to EyeClaw platform
+${'Use chalk.bold.blue'}(    'EyeClaw SDK')} - Connect your local OpenClaw to EyeClaw platform
 
-${chalk.bold('Installation:')}
-  ${chalk.cyan('openclaw plugins install @eyeclaw/sdk')}
+${'Use chalk.bold'}(    'Installation:')}
+  ${'Use chalk.cyan'}(    'openclaw plugins install @eyeclaw/eyeclaw')}
 
-${chalk.bold('Configuration:')}
-  ${chalk.cyan('openclaw config set channels.eyeclaw.enabled true')}
-  ${chalk.cyan('openclaw config set channels.eyeclaw.botId "your-bot-id"')}
-  ${chalk.cyan('openclaw config set channels.eyeclaw.sdkToken "your-sdk-token"')}
-  ${chalk.cyan('openclaw config set channels.eyeclaw.serverUrl "https://eyeclaw.io"')}
+${'Use chalk.bold'}(    'Configuration:')}
+  ${'Use chalk.cyan'}(    'openclaw config set plugins.eyeclaw.sdkToken "your-sdk-token"')}
 
-${chalk.bold('Upgrade:')}
-  ${chalk.cyan('openclaw plugins update eyeclaw')}
+${'Use chalk.bold'}(    'HTTP Endpoint:')}
+  ${'Use chalk.cyan'}(    'POST http://127.0.0.1:18789/eyeclaw/chat')}
+  Headers: Authorization: Bearer <sdkToken>
+  Body: { "message": "Hello" }
 
-${chalk.bold('Uninstall:')}
-  ${chalk.cyan('openclaw plugins uninstall eyeclaw')}
+${'Use chalk.bold'}(    'Upgrade:')}
+  ${'Use chalk.cyan'}(    'openclaw plugins update eyeclaw')}
 
-${chalk.bold('Documentation:')}
-  ${chalk.cyan('https://eyeclaw.io/docs')}
+${'Use chalk.bold'}(    'Uninstall:')}
+  ${'Use chalk.cyan'}(    'openclaw plugins uninstall eyeclaw')}
 
-${chalk.bold('Support:')}
-  ${chalk.cyan('https://github.com/eyeclaw/eyeclaw/issues')}
+${'Use chalk.bold'}(    'Documentation:')}
+  ${'Use chalk.cyan'}(    'https://eyeclaw.io/docs')}
 `
 
 function main() {
@@ -42,16 +40,14 @@ function main() {
   }
 
   if (args.includes('--version') || args.includes('-v')) {
-    // Read version from package.json
     const pkg = require('../package.json')
     console.log(`v${pkg.version}`)
     process.exit(0)
   }
 
-  // Default: show usage
   console.log(USAGE)
-  console.log(chalk.yellow('ℹ This is an OpenClaw plugin. Please install it using:'))
-  console.log(chalk.cyan('  openclaw plugins install @eyeclaw/eyeclaw\n'))
+  console.log('ℹ This is an OpenClaw plugin. Please install it using:')
+  console.log('  openclaw plugins install @eyeclaw/eyeclaw\n')
 }
 
 main()

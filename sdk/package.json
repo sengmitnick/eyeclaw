@@ -1,7 +1,7 @@
 {
   "name": "@eyeclaw/eyeclaw",
-  "version": "2.0.15",
-  "description": "EyeClaw channel plugin for OpenClaw - Connect your local OpenClaw instance to EyeClaw platform",
+  "version": "2.2.0",
+  "description": "EyeClaw plugin for OpenClaw - HTTP SSE streaming + WebSocket client",
   "type": "module",
   "main": "./index.ts",
   "types": "./index.ts",
@@ -16,9 +16,9 @@
     "openclaw",
     "eyeclaw",
     "plugin",
-    "channel",
-    "mcp",
-    "websocket"
+    "http",
+    "sse",
+    "streaming"
   ],
   "author": "EyeClaw Team",
   "license": "MIT",
@@ -35,23 +35,11 @@
     "extensions": [
       "./index.ts"
     ],
-    "channel": {
-      "id": "eyeclaw",
-      "label": "EyeClaw",
-      "selectionLabel": "EyeClaw Platform",
-      "blurb": "Connect local OpenClaw to EyeClaw platform via WebSocket.",
-      "order": 100
-    },
     "install": {
       "npmSpec": "@eyeclaw/eyeclaw",
       "localPath": ".",
       "defaultChoice": "npm"
     }
-  },
-  "dependencies": {
-    "ws": "^8.16.0",
-    "@types/ws": "^8.5.10",
-    "zod": "^3.22.4"
   },
   "peerDependencies": {
     "openclaw": ">=2026.2.3"

@@ -1,34 +1,21 @@
 {
   "id": "eyeclaw",
-  "channels": ["eyeclaw"],
   "configSchema": {
     "type": "object",
-    "additionalProperties": true,
     "properties": {
-      "enabled": {
-        "type": "boolean",
-        "description": "Enable/disable the plugin"
-      },
-      "botId": {
-        "type": ["string", "number"],
-        "description": "Bot ID from EyeClaw platform"
-      },
       "sdkToken": {
         "type": "string",
         "description": "SDK token for authentication"
       },
+      "botId": {
+        "type": "string",
+        "description": "Bot ID in EyeClaw Rails app"
+      },
       "serverUrl": {
         "type": "string",
-        "description": "EyeClaw server URL"
-      },
-      "reconnectInterval": {
-        "type": "number",
-        "description": "Reconnect interval in milliseconds"
-      },
-      "heartbeatInterval": {
-        "type": "number",
-        "description": "Heartbeat interval in milliseconds"
+        "description": "EyeClaw Rails server URL (e.g., http://localhost:3000)"
       }
-    }
+    },
+    "required": ["sdkToken", "botId", "serverUrl"]
   }
 }
