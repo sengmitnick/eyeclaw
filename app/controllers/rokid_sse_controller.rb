@@ -143,7 +143,7 @@ class RokidSseController < ApplicationController
       
       callback = ->(data) {
         begin
-          Rails.logger.debug "[RokidSSE] Received broadcast: #{data.inspect[0..200]}"
+          Rails.logger.info "[RokidSSE] ===== Received broadcast on #{subscription_channel}: #{data.inspect[0..300]}"
           
           # ActionCable async adapter 传递的是 JSON 字符串，需要解析
           parsed_data = if data.is_a?(String)

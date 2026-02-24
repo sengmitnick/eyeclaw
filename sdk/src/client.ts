@@ -39,24 +39,37 @@ export class EyeClawClient {
   }
 
   private handleOpen(): void {
-    this.logger.info('WebSocket connected, subscribing to BotChannel...')
+    this.logger.info('WebSocket connected, subscribing to channels...')
     this.connected = true
 
-    // Subscribe to BotChannel (token already passed in connection URL)
-    const subscribeMessage = {
+    // Subscribe to BotChannel (for responses back to EyeClaw platform)
+    const subscribeBotChannel = {
       command: 'subscribe',
       identifier: JSON.stringify({
         channel: 'BotChannel',
       }),
     }
+    this.send(subscribeBotChannel)
 
-    this.send(subscribeMessage)
+    // Subscribe to bot_{id}_commands channel (for commands from Rails)
+    // This is where /sse/rokid broadcasts commands
+    const botId = this.config.botId
+    const subscribeCommands = {
+      command: 'subscribe',
+      identifier: JSON.stringify({
+        channel: `bot_${botId}_commands`,
+      }),
+    }
+    this.logger.info(`Subscribing to bot_${botId}_commands channel...`)
+    this.send(subscribeCommands)
   }
 
   private handleMessage(data: WebSocket.Data): void {
     try {
-      const message = JSON.parse(data.toString())
-      this.logger.debug(`Received message: ${JSON.stringify(message)}`)
+      const rawMessage = data.toString()
+      const message = JSON.parse(rawMessage)
+      this.logger.debug(`Raw message: ${rawMessage.substring(0, 200)}`)
+      this.logger.debug(`Parsed message type: ${message.type}, identifier: ${message.identifier}`)
 
       // ActionCable protocol messages
       if (message.type === 'ping') {
@@ -70,14 +83,20 @@ export class EyeClawClient {
       }
 
       if (message.type === 'confirm_subscription') {
-        this.logger.info('✅ Successfully subscribed to BotChannel')
-        this.startHeartbeat()
+        const identifier = message.identifier ? JSON.parse(message.identifier) : {}
+        this.logger.info(`✅ Subscribed to channel: ${identifier.channel || 'unknown'}`)
+        if (identifier.channel === 'BotChannel') {
+          this.startHeartbeat()
+        }
         return
       }
 
-      // Channel messages
-      if (message.message) {
-        this.handleChannelMessage(message.message)
+      // Channel messages - handle both nested and direct formats
+      // BotChannel: message.message
+      // bot_X_commands: message.message or direct
+      const channelMessage = message.message || message
+      if (channelMessage && typeof channelMessage === 'object') {
+        this.handleChannelMessage(channelMessage)
       }
     } catch (error) {
       this.logger.error(`Failed to parse message: ${error}`)
@@ -86,6 +105,9 @@ export class EyeClawClient {
 
   private handleChannelMessage(message: Record<string, unknown>): void {
     const { type } = message
+
+    // Debug: log all message types
+    this.logger.debug(`📩 Channel message: ${JSON.stringify(message)}`)
 
     switch (type) {
       case 'connected':
@@ -274,19 +296,53 @@ export class EyeClawClient {
   }
 
   sendLog(level: string, message: string): void {
+    // Send to BotChannel
     this.sendChannelMessage('log', {
       level,
       message,
       timestamp: new Date().toISOString(),
     })
+    
+    // Also broadcast directly to bot_{id} stream as backup
+    this.send({
+      command: 'message',
+      identifier: JSON.stringify({
+        channel: `bot_${this.config.botId}`,
+      }),
+      data: JSON.stringify({
+        action: 'log',
+        level,
+        message,
+        timestamp: new Date().toISOString(),
+      }),
+    })
   }
 
   sendStreamChunk(type: string, streamId: string, chunk: string): void {
+    this.logger.info(`📤 Sending stream_chunk: type=${type}, streamId=${streamId}, chunk="${chunk.substring(0, 30)}..."`)
+    
+    // Send to BotChannel which will broadcast to bot_{id} for Rails to receive
     this.sendChannelMessage('stream_chunk', {
       type,
       stream_id: streamId,
       chunk,
       timestamp: new Date().toISOString(),
+    })
+    
+    // Also broadcast directly to bot_{id} stream as backup (Rails expects stream_type)
+    this.logger.info(`📤 Also sending to bot_${this.config.botId} channel`)
+    this.send({
+      command: 'message',
+      identifier: JSON.stringify({
+        channel: `bot_${this.config.botId}`,
+      }),
+      data: JSON.stringify({
+        action: 'stream_chunk',
+        stream_type: type,  // Rails expects 'stream_type'
+        stream_id: streamId,
+        chunk,
+        timestamp: new Date().toISOString(),
+      }),
     })
   }
 

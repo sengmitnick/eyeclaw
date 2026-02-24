@@ -1,6 +1,6 @@
 import type { OpenClawPluginApi } from 'openclaw/plugin-sdk'
 import { emptyPluginConfigSchema } from 'openclaw/plugin-sdk'
-import { eyeclawPlugin } from './src/channel.js'
+import { eyeclawPlugin, setRuntime } from './src/channel.js'
 
 /**
  * EyeClaw SDK - OpenClaw Channel Plugin
@@ -14,6 +14,10 @@ const plugin = {
   configSchema: emptyPluginConfigSchema(),
   
   register(api: OpenClawPluginApi) {
+    // Save runtime for message processing (like WeCom plugin does)
+    // This allows channel.ts to access runtime.channel.reply.dispatchReplyWithBufferedBlockDispatcher
+    setRuntime(api.runtime)
+    
     // Register EyeClaw as a channel plugin
     api.registerChannel({ plugin: eyeclawPlugin })
   },
