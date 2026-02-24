@@ -53,12 +53,25 @@
           <% end %>
         </div>
 
+        <!-- Rokid Device ID Field -->
+        <div>
+          <%= f.label :rokid_device_id, "Rokid Device ID (Optional)", class: "form-label" %>
+          <%= f.text_field :rokid_device_id, 
+              placeholder: "e.g., AR-G1-123456",
+              class: "form-input font-mono #{'border-danger' if @bot.errors[:rokid_device_id].any?}" %>
+          <% if @bot.errors[:rokid_device_id].any? %>
+            <p class="form-error"><%= @bot.errors[:rokid_device_id].first %></p>
+          <% else %>
+            <p class="form-help">Optional: Bind to specific Rokid glasses device for enhanced security</p>
+          <% end %>
+        </div>
+
         <!-- Warning Box -->
         <div class="alert-warning">
           <div class="flex gap-3">
             <%= lucide_icon "alert-triangle", class: "w-5 h-5 flex-shrink-0 mt-0.5" %>
             <div class="text-sm">
-              <strong>Note:</strong> SDK Token, API Key, and MCP URL cannot be changed. If you need to regenerate them, please delete this bot and create a new one.
+              <strong>Note:</strong> SDK Token and API Key cannot be changed. If you need to regenerate them, please delete this bot and create a new one.
             </div>
           </div>
         </div>

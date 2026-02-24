@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   resources :bots do
     member do
       get :chat
+      delete :unbind_rokid
     end
   end
   # End routes for bots
@@ -53,9 +54,15 @@ Rails.application.routes.draw do
 
   # write your business logic routes here
   
-  # MCP Integration routes
-  get 'mcp/:bot_id/metadata', to: 'mcp#metadata', as: :mcp_bot
-  post 'mcp/stream', to: 'mcp#stream', as: :mcp_stream
+  # Rokid Lingzhu MCP Integration (Old protocol - deprecated but kept for compatibility)
+  # SSE 连接端点
+  get 'mcp/rokid/sse', to: 'mcp#sse', as: :rokid_mcp_sse
+  # JSON-RPC 2.0 消息处理端点
+  post 'messages', to: 'mcp#messages', as: :mcp_messages
+  
+  # Rokid Lingzhu Platform SSE Integration (New protocol)
+  # 灵珠平台自定义智能体 SSE 接口
+  post 'sse/rokid', to: 'rokid_sse#sse', as: :rokid_lingzhu_sse
 
   # API routes
   namespace :api do
@@ -75,6 +82,7 @@ Rails.application.routes.draw do
 
   # Do not write business logic at admin dashboard
   namespace :admin do
+    resources :access_keys
     resources :bots
     resources :users, only: [:index, :show]
     resources :admin_oplogs, only: [:index, :show]

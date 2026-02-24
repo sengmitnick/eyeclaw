@@ -14,6 +14,8 @@ class BotChannel < ApplicationCable::Channel
     # stimulus-validator: disable-next-line
     # Commands stream for web dashboard (external integration, no frontend controller needed)
     stream_from "#{@stream_name}_commands"
+    
+    Rails.logger.info "[BotChannel] Bot #{@bot.id} subscribed to #{@stream_name} and #{@stream_name}_commands"
 
     # Send confirmation
     transmit({
@@ -47,6 +49,10 @@ class BotChannel < ApplicationCable::Channel
   def execute_command(data)
     command = data['command']
     params = data['params'] || {}
+    
+    Rails.logger.info "[BotChannel] execute_command called for bot #{@bot.id}"
+    Rails.logger.info "[BotChannel] Command: #{command}, params: #{params.inspect[0..200]}"
+    Rails.logger.info "[BotChannel] Source: #{data['metadata']&.[]('source') || 'unknown'}"
 
     # stimulus-validator: disable-next-line
     # Broadcast to MCP clients listening (external integration, no frontend controller needed)
@@ -60,12 +66,16 @@ class BotChannel < ApplicationCable::Channel
         timestamp: Time.current.iso8601
       }
     )
+    
+    Rails.logger.info "[BotChannel] Broadcasted to #{@stream_name}_mcp"
 
     transmit({
       type: 'command_received',
       command: command,
       status: 'processing'
     })
+    
+    Rails.logger.info "[BotChannel] Transmitted command_received to SDK"
   end
 
   # Get bot status
@@ -108,6 +118,22 @@ class BotChannel < ApplicationCable::Channel
         timestamp: Time.current.iso8601
       }
     )
+  end
+
+  # Handle bot responses (from openclaw) - legacy support
+  # Note: Rokid SSE now uses stream_chunk for real-time streaming
+  def response(data)
+    content = data['content']
+    session_id = data['session_id']
+    
+    unless content.present? && session_id.present?
+      Rails.logger.error "[BotChannel] Missing content or session_id in response"
+      return
+    end
+    
+    Rails.logger.info "[BotChannel] Received response for session #{session_id}: #{content[0..50]}..."
+    
+    transmit({ type: 'response_received', session_id: session_id, status: 'success' })
   end
 
   # Handle streaming chunks from OpenClaw Agent

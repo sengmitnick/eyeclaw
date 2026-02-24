@@ -1,7 +1,4 @@
-<div class="container-lg mx-auto px-6 py-8" 
-     data-controller="bot" 
-     data-bot-stream-name-value="bot_<%= @bot.id %>"
-     data-bot-bot-id-value="<%= @bot.id %>">
+<div class="container-lg mx-auto px-6 py-8">
   
   <!-- Header with Actions -->
   <div class="flex items-center justify-between mb-8">
@@ -12,10 +9,9 @@
       <% end %>
       <h1 class="text-3xl font-bold flex items-center gap-3">
         <span class="gradient-text"><%= @bot.name %></span>
-        <span class="<%= @bot.online? ? 'badge-success' : 'badge-neutral' %> flex items-center gap-1" 
-              data-bot-target="status">
+        <span class="<%= @bot.online? ? 'badge-success' : 'badge-neutral' %> flex items-center gap-1">
           <%= lucide_icon @bot.online? ? "signal" : "signal-zero", class: "w-3 h-3" %>
-          <span data-bot-target="statusText"><%= @bot.online? ? "Online" : "Offline" %></span>
+          <span><%= @bot.online? ? "Online" : "Offline" %></span>
         </span>
         <!-- Connection Indicator -->
         <span class="w-2 h-2 rounded-full <%= @bot.online? ? 'bg-success' : 'bg-danger' %>" 
@@ -48,7 +44,7 @@
               <span class="text-muted text-sm">Active Sessions</span>
               <%= lucide_icon "activity", class: "w-4 h-4 text-primary" %>
             </div>
-            <div class="text-3xl font-bold text-primary" data-bot-target="sessions">
+            <div class="text-3xl font-bold text-primary">
               <%= @bot.bot_sessions.active.count %>
             </div>
           </div>
@@ -60,7 +56,7 @@
               <span class="text-muted text-sm">Uptime</span>
               <%= lucide_icon "clock", class: "w-4 h-4 text-success" %>
             </div>
-            <div class="text-xl font-bold text-primary" data-bot-target="uptime">
+            <div class="text-xl font-bold text-primary">
               <%= @bot.active_session ? distance_of_time_in_words(@bot.active_session.duration) : "N/A" %>
             </div>
           </div>
@@ -117,20 +113,90 @@
             <p class="form-help">API key for webhook authentication</p>
           </div>
 
-          <!-- MCP Plugin URL -->
+          <!-- Rokid Device ID / 绑定二维码 -->
           <div>
-            <label class="form-label">MCP Plugin URL</label>
-            <div class="flex items-center gap-2" data-controller="clipboard">
-              <input type="text" 
-                     value="<%= @bot.mcp_url %>" 
-                     readonly 
-                     class="form-input font-mono text-sm"
-                     data-clipboard-target="source">
-              <button data-action="click->clipboard#copy" class="btn-outline btn-sm">
-                <%= lucide_icon "copy", class: "w-4 h-4" %>
-              </button>
+            <label class="form-label">Rokid 灵珠平台绑定</label>
+            <% if @bot.rokid_device_id.present? %>
+              <!-- 已绑定 -->
+              <div class="flex items-center gap-2">
+                <input type="text" 
+                       value="<%= @bot.rokid_device_id %>" 
+                       readonly 
+                       class="form-input font-mono text-sm flex-1">
+                <span class="badge-success">已绑定</span>
+                <%= button_to unbind_rokid_bot_path(@bot), method: :delete,
+                    data: { turbo_confirm: "确定要解除绑定吗？解除后需要重新扫码绑定。" },
+                    class: "btn-outline btn-sm whitespace-nowrap" do %>
+                  <%= lucide_icon "unlink", class: "w-4 h-4" %>
+                  重新绑定
+                <% end %>
+              </div>
+              <p class="form-help">Agent ID 已绑定到灵珠平台智能体</p>
+            <% else %>
+              <!-- 未绑定 - 显示二维码 -->
+              <div class="card border-2 border-warning bg-warning/5 p-4">
+                <div class="flex items-start gap-3">
+                  <%= lucide_icon "qr-code", class: "w-6 h-6 text-warning flex-shrink-0 mt-1" %>
+                  <div class="flex-1">
+                    <h3 class="font-bold text-warning mb-2">等待绑定</h3>
+                    <p class="text-sm text-secondary mb-3">
+                      首次使用时，在 Rokid 眼镜上说话，系统会引导您拍照此二维码完成绑定。
+                    </p>
+                    <!-- 二维码 -->
+                    <div class="flex justify-center py-4">
+                      <%= image_tag "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=BOT_#{@bot.id}", 
+                                    alt: "Bot Binding QR Code", 
+                                    class: "border-4 border-white rounded-lg shadow-lg" %>
+                    </div>
+                    <p class="text-xs text-center text-muted mt-2">
+                      <%= lucide_icon "info", class: "w-3 h-3 inline" %>
+                      二维码内容: BOT_<%= @bot.id %>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Rokid MCP Integration -->
+          <div class="card border-2 border-primary p-4">
+            <div class="flex items-start gap-3">
+              <%= lucide_icon "glasses", class: "w-6 h-6 text-primary flex-shrink-0 mt-1" %>
+              <div class="flex-1">
+                <h3 class="font-bold text-primary mb-2">Rokid Lingzhu Integration</h3>
+                <p class="text-sm text-secondary mb-3">
+                  Use this bot with Rokid Lingzhu platform for AR glasses integration.
+                </p>
+                <div class="bg-surface-elevated rounded-lg p-3 font-mono text-sm border border-muted">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-muted font-semibold">MCP Endpoint:</span>
+                  </div>
+                  <code class="text-primary font-bold break-all">
+                    POST <%= request.base_url %>/mcp/rokid
+                  </code>
+                  <div class="mt-3 pt-3 border-t border-muted">
+                    <div class="text-xs text-muted font-semibold mb-2">Required parameters:</div>
+                    <div class="space-y-1 text-secondary">
+                      <div class="flex items-start gap-2">
+                        <span class="text-primary">•</span>
+                        <div><span class="font-semibold text-primary">bot_id</span>: <%= @bot.id %></div>
+                      </div>
+                      <% if @bot.rokid_device_id.present? %>
+                        <div class="flex items-start gap-2">
+                          <span class="text-primary">•</span>
+                          <div><span class="font-semibold text-primary">device_id</span>: <%= @bot.rokid_device_id %></div>
+                        </div>
+                      <% else %>
+                        <div class="flex items-start gap-2">
+                          <span class="text-muted">•</span>
+                          <div><span class="font-semibold text-muted">device_id</span>: <span class="text-muted italic">(optional, not configured)</span></div>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p class="form-help">Use this URL to integrate with Coze, Claude, etc.</p>
           </div>
 
           <!-- Connection Command -->
@@ -139,7 +205,7 @@
             <div class="card p-4 bg-surface-elevated">
               <code class="text-sm font-mono text-secondary">
                 # Install the plugin<br>
-                openclaw plugins install @eyeclaw/sdk<br>
+                openclaw plugins install @eyeclaw/eyeclaw<br>
                 <br>
                 # Configure<br>
                 openclaw config set channels.eyeclaw.enabled true<br>
@@ -174,7 +240,7 @@
           <span class="text-xs text-muted font-mono">Real-time</span>
         </div>
         <div class="card-body">
-          <div data-bot-target="logs" class="space-y-3 max-h-96 overflow-y-auto">
+          <div class="space-y-3 max-h-96 overflow-y-auto">
             <!-- Logs will be inserted here by Stimulus controller -->
             <div class="text-center py-8 text-muted">
               <%= lucide_icon "inbox", class: "w-12 h-12 mx-auto mb-3 opacity-50" %>
@@ -278,10 +344,10 @@
             <%= lucide_icon "external-link", class: "w-4 h-4 text-muted" %>
           </a>
           <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-elevated transition-all group">
-            <%= lucide_icon "puzzle", class: "w-5 h-5 text-secondary" %>
+            <%= lucide_icon "glasses", class: "w-5 h-5 text-primary" %>
             <div class="flex-1">
-              <div class="font-medium text-primary group-hover:gradient-text">MCP Integration</div>
-              <div class="text-xs text-muted">Connect to AI platforms</div>
+              <div class="font-medium text-primary group-hover:gradient-text">Rokid Integration</div>
+              <div class="text-xs text-muted">Connect to Lingzhu platform</div>
             </div>
             <%= lucide_icon "external-link", class: "w-4 h-4 text-muted" %>
           </a>

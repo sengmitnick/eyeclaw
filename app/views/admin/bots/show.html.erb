@@ -53,11 +53,13 @@
           <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @bot.status %></div>
         </div>
 
-        <!-- Mcp url -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mcp url</label>
-          <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @bot.mcp_url %></div>
-        </div>
+        <!-- Rokid Device ID -->
+        <% if @bot.rokid_device_id.present? %>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Rokid Device ID</label>
+            <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @bot.rokid_device_id %></div>
+          </div>
+        <% end %>
 
         <!-- Webhook url -->
         <div>

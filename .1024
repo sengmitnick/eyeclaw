@@ -1,2 +1,3 @@
 run_commands: ['bin/dev']
 dependency_command: bundle install && npm install && rails db:migrate
+nginx_config: config/nginx_sse.conf

@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_23_034352) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_24_072635) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "access_keys", force: :cascade do |t|
+    t.string "name"
+    t.string "key"
+    t.text "description"
+    t.boolean "is_active", default: true
+    t.datetime "last_used_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_access_keys_on_key", unique: true
+  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -87,13 +98,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_23_034352) do
     t.string "status", default: "offline"
     t.string "api_key"
     t.string "sdk_token"
-    t.string "mcp_url"
     t.string "webhook_url"
     t.jsonb "config", default: {}
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "rokid_device_id"
     t.index ["api_key"], name: "index_bots_on_api_key", unique: true
+    t.index ["rokid_device_id"], name: "index_bots_on_rokid_device_id"
     t.index ["sdk_token"], name: "index_bots_on_sdk_token", unique: true
     t.index ["user_id"], name: "index_bots_on_user_id"
   end

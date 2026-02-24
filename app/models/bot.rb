@@ -8,21 +8,27 @@ class Bot < ApplicationRecord
   validates :status, inclusion: { in: %w[offline online connecting error] }
   validates :api_key, presence: true, uniqueness: true
   validates :sdk_token, presence: true, uniqueness: true
-  validates :mcp_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true }
   validates :webhook_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true }
+  validates :rokid_device_id, uniqueness: true, allow_blank: true
 
   # Callbacks
   before_validation :generate_api_key, on: :create, unless: :api_key?
   before_validation :generate_sdk_token, on: :create, unless: :sdk_token?
-  before_validation :generate_mcp_url, on: :create, unless: :mcp_url?
 
   # Scopes
   scope :online, -> { where(status: 'online') }
   scope :offline, -> { where(status: 'offline') }
 
   # Instance methods
+  
+  # agent_id 可以是 rokid_device_id（Rokid 眼镜）或 bot.id（Web Chat）
+  def agent_id
+    rokid_device_id.presence || id.to_s
+  end
+  
   def online?
-    status == 'online' && active_session.present?
+    # 只要有活跃的会话就认为是在线状态
+    active_session.present?
   end
 
   def offline?
@@ -59,9 +65,7 @@ class Bot < ApplicationRecord
     self.sdk_token = SecureRandom.hex(32)
   end
 
-  def generate_mcp_url
-    self.mcp_url = Rails.application.routes.url_helpers.mcp_bot_url(self, host: ENV.fetch('APP_HOST', 'localhost:3000'))
-  rescue
-    # URL generation might fail before save, will be updated after
+  def rokid_mcp_url
+    "#{ENV.fetch('APP_HOST', 'http://localhost:3000')}/mcp/rokid"
   end
 end

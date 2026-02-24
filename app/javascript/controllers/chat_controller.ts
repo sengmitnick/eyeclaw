@@ -1,12 +1,12 @@
-import BaseChannelController from "./base_channel_controller"
+import { Controller } from "@hotwired/stimulus"
 
 /**
- * Chat Controller - Handles WebSocket + UI for real-time bot chat
+ * Chat Controller - SSE-based real-time bot chat
  *
- * This controller manages the chat interface and WebSocket connection
- * for sending messages to and receiving responses from the bot.
+ * 统一使用 SSE 协议，发送 Rokid 格式请求到 /sse/rokid 端点
+ * 支持实时流式响应
  */
-export default class extends BaseChannelController {
+export default class extends Controller {
   static targets = [
     "messages",           // Messages container
     "input",             // Message input field
@@ -18,7 +18,7 @@ export default class extends BaseChannelController {
 
   static values = {
     botId: String,
-    streamName: String
+    accessKey: String  // Access Key for authentication
   }
 
   declare readonly messagesTarget: HTMLElement
@@ -29,119 +29,19 @@ export default class extends BaseChannelController {
   declare readonly hasStatusTextTarget: boolean
   declare readonly statusTextTarget: HTMLElement
   declare readonly botIdValue: string
-  declare readonly streamNameValue: string
+  declare readonly accessKeyValue: string
 
   // Streaming state
+  private currentEventSource: EventSource | null = null
   private streamingMessages: Map<string, { element: HTMLElement, content: string }> = new Map()
 
   connect(): void {
-    console.log("Chat controller connected")
-
-    // Use DashboardChannel for web UI (authenticated by user session)
-    this.createSubscription("DashboardChannel", {
-      stream_name: this.streamNameValue
-    })
+    console.log("Chat controller connected (SSE mode)")
+    this.updateConnectionStatus(true, "Ready to chat")
   }
 
   disconnect(): void {
-    this.destroySubscription()
-  }
-
-  protected channelConnected(): void {
-    console.log("Chat WebSocket connected")
-    this.updateConnectionStatus(true)
-    this.addSystemMessage("Connected to bot", "success")
-  }
-
-  protected channelDisconnected(): void {
-    console.log("Chat WebSocket disconnected")
-    this.updateConnectionStatus(false)
-    this.addSystemMessage("Disconnected from bot", "error")
-  }
-
-  // ⚡ AUTO-ROUTED HANDLERS
-
-  // Handle message responses from bot
-  protected handleMessage(data: any): void {
-    console.log("Received message:", data)
-    this.addBotMessage(data.message || data.text || JSON.stringify(data))
-  }
-
-  // Handle command responses
-  protected handleCommandResult(data: any): void {
-    console.log("Command result:", data)
-    
-    if (data.result) {
-      this.addBotMessage(JSON.stringify(data.result, null, 2), "code")
-    } else if (data.error) {
-      this.addBotMessage(`Error: ${data.error}`, "error")
-    }
-  }
-
-  // Handle status responses
-  protected handleStatusResponse(data: any): void {
-    console.log("Status response:", data)
-    
-    // Only update UI status text if target exists, don't add to chat messages
-    if (this.hasStatusTextTarget) {
-      this.statusTextTarget.textContent = data.online ? 'Bot is online' : 'Bot is offline'
-    }
-    
-    // Silently update connection status without showing message
-    // (status_response is triggered by bot management page polling, not user action)
-  }
-
-  // Handle pong responses
-  protected handlePong(data: any): void {
-    console.log("Pong received:", data)
-    this.addSystemMessage(`Pong! ${data.timestamp}`, "success")
-  }
-
-  // Handle log messages
-  protected handleLog(data: any): void {
-    console.log("Log received:", data)
-    const level = data.level || 'info'
-    const message = data.message
-
-    // Show info level messages as bot messages (regular conversation)
-    if (level === 'info') {
-      this.addBotMessage(message, "normal")
-    } else if (level === 'error') {
-      this.addBotMessage(message, "error")
-    } else {
-      // debug, warn, etc. as system messages
-      this.addSystemMessage(`[${level.toUpperCase()}] ${message}`, "info")
-    }
-  }
-
-  // Handle generic responses
-  protected handleResult(data: any): void {
-    console.log("Result received:", data)
-    this.addBotMessage(JSON.stringify(data, null, 2), "code")
-  }
-
-  // Handle streaming message chunks
-  protected handleStreamChunk(data: any): void {
-    const { stream_type, stream_id, chunk } = data
-    console.log(`Stream event: ${stream_type}, ID: ${stream_id}, chunk length: ${chunk?.length || 0}`)
-
-    switch (stream_type) {
-      case 'stream_start':
-        this.startStreamingMessage(stream_id)
-        break
-      
-      case 'stream_chunk':
-        this.appendStreamingChunk(stream_id, chunk)
-        break
-      
-      case 'stream_end':
-        this.finishStreamingMessage(stream_id)
-        break
-      
-      case 'stream_error':
-        this.handleStreamError(stream_id, chunk)
-        break
-    }
+    this.closeEventSource()
   }
 
   // 💡 UI ACTIONS
@@ -158,11 +58,8 @@ export default class extends BaseChannelController {
     // Clear input
     this.inputTarget.value = ""
 
-    // Send message through WebSocket
-    this.perform('execute_command', {
-      command: 'chat',
-      params: { message: message }
-    })
+    // Send message via SSE
+    this.sendViaSse(message)
   }
 
   sendTestCommand(event: Event): void {
@@ -173,12 +70,10 @@ export default class extends BaseChannelController {
 
     // Parse command (format: "command:params" or just "command")
     const [cmd, ...paramParts] = command.split(":")
-    const params = paramParts.join(":") || ""
+    const message = paramParts.join(":") || cmd
 
-    this.addSystemMessage(`Sending command: ${cmd}${params ? ` (${params})` : ''}`, "info")
-
-    // Send command through WebSocket
-    this.perform(cmd, params ? { message: params } : {})
+    this.addSystemMessage(`Sending command: ${cmd}`, "info")
+    this.sendViaSse(message)
   }
 
   clearMessages(): void {
@@ -187,6 +82,206 @@ export default class extends BaseChannelController {
         <p>Messages cleared</p>
       </div>
     `
+    this.streamingMessages.clear()
+  }
+
+  // 💡 SSE COMMUNICATION
+
+  private sendViaSse(message: string): void {
+    // Close any existing connection
+    this.closeEventSource()
+
+    // Disable send button
+    this.sendButtonTarget.disabled = true
+    this.updateConnectionStatus(true, "Sending...")
+
+    // Prepare Rokid format request
+    const messageId = Date.now().toString()
+    const requestBody = {
+      message_id: messageId,
+      agent_id: this.botIdValue,  // Use bot.id as agent_id
+      user_id: "web_user",
+      message: [
+        {
+          role: "user",
+          type: "text",
+          text: message,
+          image_url: null
+        }
+      ],
+      metadata: {
+        source: "web_chat",
+        timestamp: new Date().toISOString()
+      }
+    }
+
+    // Send POST request and establish SSE connection
+    // stimulus-validator: disable-next-line
+    fetch("/sse/rokid", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${this.accessKeyValue}`,
+        "Accept": "text/event-stream"
+      },
+      body: JSON.stringify(requestBody)
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+
+      // Create EventSource-like reader from Response body
+      this.handleSseResponse(response, messageId)
+    }).catch(error => {
+      console.error("SSE connection error:", error)
+      this.addBotMessage(`Error: ${error.message}`, "error")
+      this.updateConnectionStatus(true, "Error occurred")
+      this.sendButtonTarget.disabled = false
+    })
+  }
+
+  private async handleSseResponse(response: Response, messageId: string): Promise<void> {
+    const reader = response.body?.getReader()
+    const decoder = new TextDecoder()
+    
+    if (!reader) {
+      throw new Error("Response body is not readable")
+    }
+
+    let buffer = ""
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read()
+        
+        if (done) {
+          console.log("SSE stream completed")
+          break
+        }
+
+        buffer += decoder.decode(value, { stream: true })
+        
+        // Process complete SSE messages
+        const lines = buffer.split("\n")
+        buffer = lines.pop() || "" // Keep incomplete line in buffer
+
+        let currentEvent = ""
+        let currentData = ""
+
+        for (const line of lines) {
+          if (line.startsWith("event:")) {
+            currentEvent = line.substring(6).trim()
+          } else if (line.startsWith("data:")) {
+            currentData = line.substring(5).trim()
+          } else if (line === "") {
+            // Empty line marks end of SSE message
+            if (currentEvent && currentData) {
+              this.handleSseEvent(currentEvent, currentData, messageId)
+            }
+            currentEvent = ""
+            currentData = ""
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error reading SSE stream:", error)
+      this.addBotMessage(`Stream error: ${error}`, "error")
+    } finally {
+      this.sendButtonTarget.disabled = false
+      this.updateConnectionStatus(true, "Ready to chat")
+    }
+  }
+
+  private handleSseEvent(event: string, data: string, messageId: string): void {
+    console.log(`SSE Event: ${event}`, data.substring(0, 100))
+
+    try {
+      const parsed = JSON.parse(data)
+
+      switch (event) {
+        case "message":
+          this.handleMessageEvent(parsed, messageId)
+          break
+        
+        case "done":
+          this.handleDoneEvent(parsed, messageId)
+          break
+        
+        default:
+          console.log("Unknown SSE event:", event, parsed)
+      }
+    } catch (error) {
+      console.error("Error parsing SSE data:", error, data)
+    }
+  }
+
+  private handleMessageEvent(data: any, messageId: string): void {
+    const { role, type, answer_stream, is_finish } = data
+
+    if (role === "agent" && type === "answer") {
+      // 如果有内容，先显示内容
+      if (answer_stream) {
+        this.appendStreamingChunk(messageId, answer_stream)
+      }
+      
+      // 如果标记为完成，结束流式消息
+      if (is_finish) {
+        this.finishStreamingMessage(messageId)
+      }
+    }
+  }
+
+  private handleDoneEvent(data: any, messageId: string): void {
+    console.log("Stream done:", data)
+    this.finishStreamingMessage(messageId)
+  }
+
+  // 💡 STREAMING MESSAGE MANAGEMENT
+
+  private startStreamingMessage(streamId: string): void {
+    const messageEl = document.createElement("div")
+    messageEl.className = "flex justify-start"
+    messageEl.innerHTML = `
+      <div class="max-w-[70%] bg-surface-elevated text-primary rounded-lg px-4 py-2">
+        <div class="text-sm streaming-content"></div>
+        <div class="text-xs opacity-70 mt-1">${this.getCurrentTime()}</div>
+      </div>
+    `
+    this.appendMessage(messageEl)
+
+    const contentEl = messageEl.querySelector(".streaming-content") as HTMLElement
+    this.streamingMessages.set(streamId, { element: contentEl, content: "" })
+  }
+
+  private appendStreamingChunk(streamId: string, chunk: string): void {
+    let stream = this.streamingMessages.get(streamId)
+    
+    if (!stream) {
+      // First chunk - create streaming message
+      this.startStreamingMessage(streamId)
+      stream = this.streamingMessages.get(streamId)!
+    }
+
+    stream.content += chunk
+    stream.element.textContent = stream.content
+    
+    // Auto-scroll to bottom
+    this.scrollToBottom()
+  }
+
+  private finishStreamingMessage(streamId: string): void {
+    const stream = this.streamingMessages.get(streamId)
+    
+    if (stream) {
+      // Message complete, clean up
+      this.streamingMessages.delete(streamId)
+      this.scrollToBottom()
+    }
+  }
+
+  private handleStreamError(streamId: string, error: string): void {
+    this.finishStreamingMessage(streamId)
+    this.addBotMessage(`Error: ${error}`, "error")
   }
 
   // 💡 PRIVATE METHODS
@@ -250,24 +345,25 @@ export default class extends BaseChannelController {
     }
 
     this.messagesTarget.appendChild(messageEl)
-    
-    // Scroll to bottom
+    this.scrollToBottom()
+  }
+
+  private scrollToBottom(): void {
     this.messagesTarget.scrollTop = this.messagesTarget.scrollHeight
   }
 
-  private updateConnectionStatus(connected: boolean): void {
-    if (connected) {
-      this.connectionIndicatorTarget.classList.remove("bg-muted", "bg-danger")
-      this.connectionIndicatorTarget.classList.add("bg-success")
-      this.connectionStatusTarget.textContent = "Connected"
-      this.sendButtonTarget.disabled = false
-      this.inputTarget.disabled = false
-    } else {
-      this.connectionIndicatorTarget.classList.remove("bg-success")
-      this.connectionIndicatorTarget.classList.add("bg-danger")
-      this.connectionStatusTarget.textContent = "Disconnected"
-      this.sendButtonTarget.disabled = true
-      this.inputTarget.disabled = true
+  private updateConnectionStatus(connected: boolean, status: string = ""): void {
+    this.connectionIndicatorTarget.className = connected
+      ? "w-2 h-2 rounded-full bg-success"
+      : "w-2 h-2 rounded-full bg-danger"
+    
+    this.connectionStatusTarget.textContent = status || (connected ? "Connected" : "Disconnected")
+  }
+
+  private closeEventSource(): void {
+    if (this.currentEventSource) {
+      this.currentEventSource.close()
+      this.currentEventSource = null
     }
   }
 
@@ -279,129 +375,5 @@ export default class extends BaseChannelController {
     const div = document.createElement("div")
     div.textContent = text
     return div.innerHTML
-  }
-
-  private formatDuration(seconds: number): string {
-    const hours = Math.floor(seconds / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-    const secs = Math.floor(seconds % 60)
-    
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`
-    } else if (minutes > 0) {
-      return `${minutes}m ${secs}s`
-    } else {
-      return `${secs}s`
-    }
-  }
-
-  // 💡 STREAMING MESSAGE HANDLERS
-
-  private startStreamingMessage(streamId: string): void {
-    console.log(`Starting stream: ${streamId}`)
-    
-    // Create a new bot message element for streaming
-    const messageEl = document.createElement("div")
-    messageEl.className = "flex justify-start"
-    messageEl.setAttribute("data-stream-id", streamId)
-    
-    const contentClass = "bg-surface-elevated text-primary"
-    
-    messageEl.innerHTML = `
-      <div class="max-w-[70%] ${contentClass} rounded-lg px-4 py-2">
-        <div class="text-sm" data-stream-content></div>
-        <div class="text-xs opacity-70 mt-1">
-          ${this.getCurrentTime()}
-          <span class="inline-block w-2 h-2 bg-primary rounded-full animate-pulse ml-2" data-stream-indicator></span>
-        </div>
-      </div>
-    `
-    
-    // Remove welcome message if present
-    const welcome = this.messagesTarget.querySelector(".text-center")
-    if (welcome) {
-      welcome.remove()
-    }
-    
-    this.messagesTarget.appendChild(messageEl)
-    
-    // Store reference
-    this.streamingMessages.set(streamId, {
-      element: messageEl,
-      content: ""
-    })
-    
-    // Scroll to bottom
-    this.messagesTarget.scrollTop = this.messagesTarget.scrollHeight
-  }
-
-  private appendStreamingChunk(streamId: string, chunk: string): void {
-    const stream = this.streamingMessages.get(streamId)
-    if (!stream) {
-      console.warn(`Stream ${streamId} not found, creating new one`)
-      this.startStreamingMessage(streamId)
-      return this.appendStreamingChunk(streamId, chunk)
-    }
-    
-    // Append chunk to content
-    stream.content += chunk
-    
-    // Update the content element
-    const contentEl = stream.element.querySelector("[data-stream-content]") as HTMLElement
-    if (contentEl) {
-      contentEl.textContent = stream.content
-    }
-    
-    // Scroll to bottom
-    this.messagesTarget.scrollTop = this.messagesTarget.scrollHeight
-  }
-
-  private finishStreamingMessage(streamId: string): void {
-    console.log(`Finishing stream: ${streamId}`)
-    
-    const stream = this.streamingMessages.get(streamId)
-    if (!stream) {
-      console.warn(`Stream ${streamId} not found`)
-      return
-    }
-    
-    // Remove streaming indicator
-    const indicator = stream.element.querySelector("[data-stream-indicator]")
-    if (indicator) {
-      indicator.remove()
-    }
-    
-    // Clean up streaming state
-    this.streamingMessages.delete(streamId)
-    
-    // Final scroll to bottom
-    this.messagesTarget.scrollTop = this.messagesTarget.scrollHeight
-  }
-
-  private handleStreamError(streamId: string, errorMessage: string): void {
-    console.error(`Stream error for ${streamId}: ${errorMessage}`)
-    
-    const stream = this.streamingMessages.get(streamId)
-    if (stream) {
-      // Append error message
-      stream.content += `\n\n[Error: ${errorMessage}]`
-      
-      const contentEl = stream.element.querySelector("[data-stream-content]") as HTMLElement
-      if (contentEl) {
-        contentEl.textContent = stream.content
-      }
-      
-      // Change styling to error
-      const containerEl = stream.element.querySelector(".bg-surface-elevated") as HTMLElement
-      if (containerEl) {
-        containerEl.classList.remove("bg-surface-elevated", "text-primary")
-        containerEl.classList.add("bg-danger/10", "text-danger")
-      }
-      
-      this.finishStreamingMessage(streamId)
-    } else {
-      // Show error as system message
-      this.addSystemMessage(`Stream error: ${errorMessage}`, "error")
-    }
   }
 }

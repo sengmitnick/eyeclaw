@@ -8,9 +8,7 @@ import TomSelectController from "./tom_select_controller"
 import FlatpickrController from "./flatpickr_controller"
 import SystemMonitorController from "./system_monitor_controller"
 import FlashController from "./flash_controller"
-import BotController from "./bot_controller"
 import McpController from "./_mcp_controller"
-import DashboardController from "./dashboard_controller"
 import ChatController from "./chat_controller"
 
 const application = Application.start()
@@ -23,9 +21,7 @@ application.register("tom-select", TomSelectController)
 application.register("flatpickr", FlatpickrController)
 application.register("system-monitor", SystemMonitorController)
 application.register("flash", FlashController)
-application.register("bot", BotController)
 application.register("-mcp", McpController)
-application.register("dashboard", DashboardController)
 application.register("chat", ChatController)
 
 window.Stimulus = application

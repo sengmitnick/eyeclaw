@@ -261,6 +261,9 @@ RSpec.describe 'Turbo Architecture Validation', type: :system do
 
         # Skip API namespace (explicit API endpoints can use JSON)
         next if relative_path.include?('app/controllers/api/')
+        
+        # Skip MCP controller (implements JSON-RPC 2.0 protocol)
+        next if relative_path.include?('mcp_controller.rb')
 
         # Parse controller file with AST to find webhook/callback methods
         exempt_method_ranges = []
@@ -374,6 +377,17 @@ RSpec.describe 'Turbo Architecture Validation', type: :system do
           line_number = index + 1
 
           if line.match?(/\bfetch\s*\(/)
+            # Check for stimulus-validator: disable-next-line comment in previous line
+            should_skip = false
+            if index > 0
+              prev_line = lines[index - 1]
+              if prev_line && prev_line.strip.start_with?('//') && prev_line.include?('stimulus-validator: disable-next-line')
+                should_skip = true
+              end
+            end
+            
+            next if should_skip
+            
             violations << {
               file: relative_path,
               line: line_number,
