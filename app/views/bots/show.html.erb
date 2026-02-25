@@ -159,45 +159,7 @@
           </div>
 
           <!-- Rokid MCP Integration -->
-          <div class="card border-2 border-primary p-4">
-            <div class="flex items-start gap-3">
-              <%= lucide_icon "glasses", class: "w-6 h-6 text-primary flex-shrink-0 mt-1" %>
-              <div class="flex-1">
-                <h3 class="font-bold text-primary mb-2">Rokid Lingzhu Integration</h3>
-                <p class="text-sm text-secondary mb-3">
-                  Use this bot with Rokid Lingzhu platform for AR glasses integration.
-                </p>
-                <div class="bg-surface-elevated rounded-lg p-3 font-mono text-sm border border-muted">
-                  <div class="flex items-center justify-between mb-2">
-                    <span class="text-muted font-semibold">MCP Endpoint:</span>
-                  </div>
-                  <code class="text-primary font-bold break-all">
-                    POST <%= request.base_url %>/mcp/rokid
-                  </code>
-                  <div class="mt-3 pt-3 border-t border-muted">
-                    <div class="text-xs text-muted font-semibold mb-2">Required parameters:</div>
-                    <div class="space-y-1 text-secondary">
-                      <div class="flex items-start gap-2">
-                        <span class="text-primary">•</span>
-                        <div><span class="font-semibold text-primary">bot_id</span>: <%= @bot.id %></div>
-                      </div>
-                      <% if @bot.rokid_device_id.present? %>
-                        <div class="flex items-start gap-2">
-                          <span class="text-primary">•</span>
-                          <div><span class="font-semibold text-primary">device_id</span>: <%= @bot.rokid_device_id %></div>
-                        </div>
-                      <% else %>
-                        <div class="flex items-start gap-2">
-                          <span class="text-muted">•</span>
-                          <div><span class="font-semibold text-muted">device_id</span>: <span class="text-muted italic">(optional, not configured)</span></div>
-                        </div>
-                      <% end %>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          
 
           <!-- Connection Command -->
           <div>
@@ -236,68 +198,10 @@
       </div>
 
       <!-- Real-time Logs -->
-      <div class="card card-elevated">
-        <div class="card-header flex items-center justify-between">
-          <h2 class="text-xl font-bold text-primary">Activity Logs</h2>
-          <span class="text-xs text-muted font-mono">Real-time</span>
-        </div>
-        <div class="card-body">
-          <div class="space-y-3 max-h-96 overflow-y-auto">
-            <!-- Logs will be inserted here by Stimulus controller -->
-            <div class="text-center py-8 text-muted">
-              <%= lucide_icon "inbox", class: "w-12 h-12 mx-auto mb-3 opacity-50" %>
-              <p>Waiting for activity...</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      
 
       <!-- Session History -->
-      <div class="card card-elevated">
-        <div class="card-header">
-          <h2 class="text-xl font-bold text-primary">Session History</h2>
-        </div>
-        <div class="card-body">
-          <% if @bot_sessions.any? %>
-            <div class="space-y-3">
-              <% @bot_sessions.each do |session| %>
-                <div class="flex items-center justify-between p-4 rounded-lg bg-surface-elevated">
-                  <div class="flex items-center gap-3">
-                    <% if session.active? %>
-                      <%= lucide_icon "signal", class: "w-5 h-5 text-success" %>
-                    <% else %>
-                      <%= lucide_icon "signal-zero", class: "w-5 h-5 text-muted" %>
-                    <% end %>
-                    <div>
-                      <div class="font-mono text-sm text-primary">
-                        <%= session.session_id.first(16) %>...
-                      </div>
-                      <div class="text-xs text-muted">
-                        Connected <%= time_ago_in_words(session.connected_at) %> ago
-                      </div>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <% if session.active? %>
-                      <span class="badge-success">Active</span>
-                    <% else %>
-                      <span class="badge-neutral">Inactive</span>
-                    <% end %>
-                    <div class="text-xs text-muted mt-1">
-                      Duration: <%= distance_of_time_in_words(session.duration) %>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="text-center py-8 text-muted">
-              <%= lucide_icon "inbox", class: "w-12 h-12 mx-auto mb-3 opacity-50" %>
-              <p>No session history yet</p>
-            </div>
-          <% end %>
-        </div>
-      </div>
+      
     </div>
 
     <!-- Sidebar -->
@@ -332,37 +236,7 @@
       </div>
 
       <!-- Documentation -->
-      <div class="card card-elevated">
-        <div class="card-header">
-          <h3 class="font-bold text-primary">Documentation</h3>
-        </div>
-        <div class="card-body space-y-3">
-          <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-elevated transition-all group">
-            <%= lucide_icon "book-open", class: "w-5 h-5 text-primary" %>
-            <div class="flex-1">
-              <div class="font-medium text-primary group-hover:gradient-text">SDK Guide</div>
-              <div class="text-xs text-muted">Setup and integration</div>
-            </div>
-            <%= lucide_icon "external-link", class: "w-4 h-4 text-muted" %>
-          </a>
-          <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-elevated transition-all group">
-            <%= lucide_icon "glasses", class: "w-5 h-5 text-primary" %>
-            <div class="flex-1">
-              <div class="font-medium text-primary group-hover:gradient-text">Rokid Integration</div>
-              <div class="text-xs text-muted">Connect to Lingzhu platform</div>
-            </div>
-            <%= lucide_icon "external-link", class: "w-4 h-4 text-muted" %>
-          </a>
-          <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-elevated transition-all group">
-            <%= lucide_icon "code-2", class: "w-5 h-5 text-primary" %>
-            <div class="flex-1">
-              <div class="font-medium text-primary group-hover:gradient-text">API Reference</div>
-              <div class="text-xs text-muted">REST API documentation</div>
-            </div>
-            <%= lucide_icon "external-link", class: "w-4 h-4 text-muted" %>
-          </a>
-        </div>
-      </div>
+      
 
       <!-- Quick Actions -->
       <div class="card card-elevated">
@@ -370,10 +244,6 @@
           <h3 class="font-bold text-primary">Quick Actions</h3>
         </div>
         <div class="card-body space-y-2">
-          <%= link_to chat_bot_path(@bot), class: "btn-primary w-full justify-center" do %>
-            <%= lucide_icon "message-circle", class: "w-4 h-4" %>
-            Test Chat
-          <% end %>
           <button class="btn-outline w-full justify-center">
             <%= lucide_icon "refresh-cw", class: "w-4 h-4" %>
             Regenerate Tokens

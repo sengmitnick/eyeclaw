@@ -12,13 +12,13 @@
         <h1 class="text-5xl lg:text-6xl font-bold leading-tight">
           <span class="gradient-text">EyeClaw</span>
           <br>
-          <span class="text-primary">Connect Your AI</span>
+          <span class="text-primary">连接 OpenClaw</span>
           <br>
-          <span class="text-secondary">To The World</span>
+          <span class="text-secondary">到全世界</span>
         </h1>
         
         <p class="text-xl text-secondary leading-relaxed">
-          Build, deploy, and manage intelligent bots with seamless integration to your local OpenClaw instance. Connect to any MCP-compatible platform like Coze with just one click.
+          将本地 OpenClaw 实例连接到各个 AI 平台，目前支持 Rokid 灵珠平台。通过简单配置，让你的 OpenClaw 能力在任何地方都能被调用。
         </p>
         
         <div class="flex flex-wrap gap-4">
@@ -66,15 +66,7 @@
         </div>
         
         <!-- Floating Card -->
-        <div class="absolute -bottom-6 -left-6 glass-effect rounded-lg p-4 shadow-lg">
-          <div class="flex items-center gap-3">
-            <%= lucide_icon "zap", class: "w-8 h-8 text-primary" %>
-            <div>
-              <div class="text-sm font-mono text-muted">Response Time</div>
-              <div class="text-lg font-bold text-primary">< 100ms</div>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </div>
   </div>
@@ -88,7 +80,7 @@
         <span class="gradient-text">Powerful Features</span>
       </h2>
       <p class="text-xl text-secondary max-w-2xl mx-auto">
-        Everything you need to build and manage intelligent bots at scale
+        让 OpenClaw 连接到任何平台所需的一切能力
       </p>
     </div>
     
@@ -99,9 +91,9 @@
           <div class="w-12 h-12 rounded-lg gradient-primary flex items-center justify-center group-hover:glow-primary transition-all">
             <%= lucide_icon "bot", class: "w-6 h-6 text-surface" %>
           </div>
-          <h3 class="text-xl font-bold text-primary">Bot Management</h3>
+          <h3 class="text-xl font-bold text-primary">Bot 管理</h3>
           <p class="text-secondary">
-            Create, configure, and deploy unlimited bots with intuitive dashboard controls. Monitor performance in real-time.
+            创建、配置和部署无限数量的 Bot 连接器。通过直观的控制面板实时监控连接状态和性能。
           </p>
         </div>
       </div>
@@ -112,9 +104,9 @@
           <div class="w-12 h-12 rounded-lg gradient-purple flex items-center justify-center group-hover:glow-secondary transition-all">
             <%= lucide_icon "plug", class: "w-6 h-6 text-surface" %>
           </div>
-          <h3 class="text-xl font-bold text-primary">SDK Integration</h3>
+          <h3 class="text-xl font-bold text-primary">SDK 集成</h3>
           <p class="text-secondary">
-            Connect your local OpenClaw instance via @eyeclaw/eyeclaw. Seamless WebSocket communication for instant control.
+            通过 @eyeclaw/eyeclaw SDK 连接本地 OpenClaw 实例。使用 WebSocket 实现实时双向通信。
           </p>
         </div>
       </div>
@@ -125,9 +117,9 @@
           <div class="w-12 h-12 rounded-lg gradient-primary flex items-center justify-center group-hover:glow-primary transition-all">
             <%= lucide_icon "puzzle", class: "w-6 h-6 text-surface" %>
           </div>
-          <h3 class="text-xl font-bold text-primary">MCP Plugin</h3>
+          <h3 class="text-xl font-bold text-primary">灵珠平台支持</h3>
           <p class="text-secondary">
-            Export bots as SSE-based MCP plugins. Compatible with Coze, Claude, and other AI platforms.
+            完整支持 Rokid 灵珠平台的 SSE 流式接口。让你的 OpenClaw 能力在灵珠平台上无缝使用。
           </p>
         </div>
       </div>
@@ -138,9 +130,9 @@
           <div class="w-12 h-12 rounded-lg gradient-purple flex items-center justify-center group-hover:glow-secondary transition-all">
             <%= lucide_icon "radio", class: "w-6 h-6 text-surface" %>
           </div>
-          <h3 class="text-xl font-bold text-primary">Real-time Control</h3>
+          <h3 class="text-xl font-bold text-primary">实时远程控制</h3>
           <p class="text-secondary">
-            Control your local OpenClaw from anywhere. Live status updates via ActionCable WebSocket connections.
+            从任何地方控制本地 OpenClaw。通过 ActionCable WebSocket 实现实时状态更新和命令传输。
           </p>
         </div>
       </div>
@@ -151,9 +143,9 @@
           <div class="w-12 h-12 rounded-lg gradient-primary flex items-center justify-center group-hover:glow-primary transition-all">
             <%= lucide_icon "shield-check", class: "w-6 h-6 text-surface" %>
           </div>
-          <h3 class="text-xl font-bold text-primary">Security First</h3>
+          <h3 class="text-xl font-bold text-primary">安全优先</h3>
           <p class="text-secondary">
-            End-to-end encryption, token-based authentication, and secure WebSocket connections protect your data.
+            端到端加密、基于 Token 的身份验证和安全的 WebSocket 连接保护你的数据和通信。
           </p>
         </div>
       </div>
@@ -164,9 +156,9 @@
           <div class="w-12 h-12 rounded-lg gradient-purple flex items-center justify-center group-hover:glow-secondary transition-all">
             <%= lucide_icon "code-2", class: "w-6 h-6 text-surface" %>
           </div>
-          <h3 class="text-xl font-bold text-primary">Developer Friendly</h3>
+          <h3 class="text-xl font-bold text-primary">开发者友好</h3>
           <p class="text-secondary">
-            Clean REST APIs, comprehensive SDK documentation, and TypeScript support for rapid development.
+            简洁的 REST API、完整的 SDK 文档和 TypeScript 支持，让集成变得简单快速。
           </p>
         </div>
       </div>
@@ -182,7 +174,7 @@
         <span class="gradient-text">How It Works</span>
       </h2>
       <p class="text-xl text-secondary max-w-2xl mx-auto">
-        Get started in three simple steps
+        三个简单步骤即可开始使用
       </p>
     </div>
     
@@ -194,9 +186,9 @@
             <span class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-surface font-bold">1</span>
             <span class="font-mono text-sm text-muted">Step One</span>
           </div>
-          <h3 class="text-3xl font-bold text-primary">Create Your Bot</h3>
+          <h3 class="text-3xl font-bold text-primary">创建 Bot 连接器</h3>
           <p class="text-lg text-secondary leading-relaxed">
-            Sign up and create your first bot in seconds. Configure settings, set up webhooks, and define your bot's personality and capabilities.
+            注册账户并在几秒内创建第一个 Bot 连接器。配置设置、获取 SDK Token，准备连接你的 OpenClaw。
           </p>
           <div class="flex gap-3">
             <span class="badge-primary font-mono">User Auth</span>
@@ -220,9 +212,9 @@
             <span class="w-8 h-8 rounded-full gradient-purple flex items-center justify-center text-surface font-bold">2</span>
             <span class="font-mono text-sm text-muted">Step Two</span>
           </div>
-          <h3 class="text-3xl font-bold text-primary">Connect OpenClaw</h3>
+          <h3 class="text-3xl font-bold text-primary">连接 OpenClaw</h3>
           <p class="text-lg text-secondary leading-relaxed">
-            Install @eyeclaw/eyeclaw as OpenClaw plugin and connect your local instance. Secure WebSocket connection establishes instant communication.
+            安装 @eyeclaw/eyeclaw 作为 OpenClaw 插件，连接你的本地实例。安全的 WebSocket 连接建立后，即可实现实时通信。
           </p>
           <div class="card p-4 bg-surface-elevated font-mono text-sm space-y-2">
             <code class="text-primary">openclaw plugins install @eyeclaw/eyeclaw</code><br>
@@ -247,14 +239,14 @@
             <span class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-surface font-bold">3</span>
             <span class="font-mono text-sm text-muted">Step Three</span>
           </div>
-          <h3 class="text-3xl font-bold text-primary">Deploy Everywhere</h3>
+          <h3 class="text-3xl font-bold text-primary">集成到灵珠平台</h3>
           <p class="text-lg text-secondary leading-relaxed">
-            Export your bot as an MCP plugin URL. Integrate with Coze, Claude, or any MCP-compatible platform in one click.
+            将你的 Bot 连接到 Rokid 灵珠平台。通过 SSE 流式接口，实现实时流式响应。
           </p>
           <div class="flex gap-3">
             <span class="badge-info font-mono">SSE Stream</span>
-            <span class="badge-warning font-mono">MCP Protocol</span>
-            <span class="badge-success font-mono">Universal</span>
+            <span class="badge-warning font-mono">Rokid 灵珠</span>
+            <span class="badge-success font-mono">实时流式</span>
           </div>
         </div>
         <div class="relative">
@@ -274,26 +266,26 @@
   <div class="container-xl mx-auto px-6">
     <div class="glass-effect rounded-2xl p-12 text-center space-y-8 glow-primary">
       <h2 class="text-4xl font-bold">
-        <span class="gradient-text">Ready to Get Started?</span>
+        <span class="gradient-text">准备好开始了吗？</span>
       </h2>
       <p class="text-xl text-secondary max-w-2xl mx-auto">
-        Join hundreds of developers building the next generation of intelligent bots with EyeClaw.
+        加入我们，一起让 OpenClaw 连接到世界各地。
       </p>
       <div class="flex flex-wrap gap-4 justify-center">
         <% if current_user %>
           <%= link_to new_bot_path, class: "btn-primary btn-xl" do %>
             <%= lucide_icon "plus", class: "w-5 h-5" %>
-            Create New Bot
+            创建新 Bot
           <% end %>
         <% else %>
           <%= link_to sign_up_path, class: "btn-primary btn-xl" do %>
             <%= lucide_icon "user-plus", class: "w-5 h-5" %>
-            Create Free Account
+            注册账户
           <% end %>
         <% end %>
         <a href="#docs" class="btn-outline btn-xl">
           <%= lucide_icon "book-open", class: "w-5 h-5" %>
-          Read Documentation
+          查看文档
         </a>
       </div>
     </div>

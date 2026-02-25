@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16 16" aria-label="EyeClaw Pixel Logo">
+  <rect width="16" height="16" fill="none"/>
+  
+  <!-- 身体轮廓 (深红色) -->
+  <g fill="#3a0a0d">
+    <rect x="1" y="5" width="1" height="3"/>
+    <rect x="2" y="4" width="1" height="1"/>
+    <rect x="2" y="8" width="1" height="1"/>
+    <rect x="3" y="3" width="1" height="1"/>
+    <rect x="3" y="9" width="1" height="1"/>
+    <rect x="4" y="2" width="1" height="1"/>
+    <rect x="4" y="10" width="1" height="1"/>
+    <rect x="5" y="2" width="6" height="1"/>
+    <rect x="11" y="2" width="1" height="1"/>
+    <rect x="12" y="3" width="1" height="1"/>
+    <rect x="12" y="9" width="1" height="1"/>
+    <rect x="13" y="4" width="1" height="1"/>
+    <rect x="13" y="8" width="1" height="1"/>
+    <rect x="14" y="5" width="1" height="3"/>
+    <rect x="5" y="11" width="6" height="1"/>
+    <rect x="4" y="12" width="1" height="1"/>
+    <rect x="11" y="12" width="1" height="1"/>
+    <rect x="3" y="13" width="1" height="1"/>
+    <rect x="12" y="13" width="1" height="1"/>
+    <rect x="5" y="14" width="6" height="1"/>
+  </g>
+
+  <!-- 身体主体 (红色) -->
+  <g fill="#ff4f40">
+    <rect x="5" y="3" width="6" height="1"/>
+    <rect x="4" y="4" width="8" height="1"/>
+    <!-- 修改: 移除了眼镜覆盖区域的红色填充 -->
+    <rect x="3" y="5" width="1" height="1"/> <rect x="12" y="5" width="1" height="1"/>
+    <rect x="3" y="6" width="10" height="1"/>
+    <rect x="3" y="7" width="10" height="1"/>
+    <rect x="4" y="8" width="8" height="1"/>
+    <rect x="5" y="9" width="6" height="1"/>
+    <rect x="5" y="12" width="6" height="1"/>
+    <rect x="6" y="13" width="4" height="1"/>
+  </g>
+
+  <!-- 钳子尖端 (浅红色) -->
+  <g fill="#ff775f">
+    <rect x="1" y="6" width="2" height="1"/>
+    <rect x="2" y="5" width="1" height="1"/>
+    <rect x="2" y="7" width="1" height="1"/>
+    <rect x="13" y="6" width="2" height="1"/>
+    <rect x="13" y="5" width="1" height="1"/>
+    <rect x="13" y="7" width="1" height="1"/>
+  </g>
+
+
+  <!--新增部分：EyeClaw 智能眼镜 -->
+  
+  <!-- 眼镜框架/系带 (深科技灰 #263238) -->
+  <g fill="#263238">
+    <!-- 横跨脸部的框架底色 -->
+    <rect x="5" y="4" width="7" height="2"/>
+    <!-- 两侧连接到脑袋的铰链 -->
+    <rect x="4" y="5" width="1" height="1"/>
+    <rect x="12" y="5" width="1" height="1"/>
+  </g>
+  
+  <!-- 智能屏幕/镜片 (发光青色 #00bcd4) -->
+  <g fill="#00bcd4">
+      <!-- 中心的屏幕区域 -->
+     <rect x="6" y="4" width="5" height="2"/>
+  </g>
+  
+  <!-- 镜片反光/高光 (极亮青白 #e0f7fa)，增加玻璃质感 -->
+  <g fill="#e0f7fa">
+     <rect x="6" y="4" width="2" height="1"/>
+  </g>
+</svg>
