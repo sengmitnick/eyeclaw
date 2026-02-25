@@ -164,6 +164,8 @@ async function handleActionCableStream(wsUrl, accessKey, botId, sessionId, write
         
         // ActionCable ping（保持连接）
         if (data.type === 'ping') {
+          // 必须响应 pong 以保持连接
+          ws.send(JSON.stringify({ type: 'pong' }));
           return;
         }
         
