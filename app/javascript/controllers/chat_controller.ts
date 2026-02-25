@@ -253,6 +253,10 @@ export default class extends Controller {
     this.appendMessage(messageEl)
 
     const contentEl = messageEl.querySelector(".streaming-content") as HTMLElement
+    if (!contentEl) {
+      console.error("Failed to find .streaming-content element")
+      return
+    }
     this.streamingMessages.set(streamId, { element: contentEl, content: "" })
   }
 
@@ -262,7 +266,11 @@ export default class extends Controller {
     if (!stream) {
       // First chunk - create streaming message
       this.startStreamingMessage(streamId)
-      stream = this.streamingMessages.get(streamId)!
+      stream = this.streamingMessages.get(streamId)
+      if (!stream) {
+        console.error("Failed to create streaming message for", streamId)
+        return
+      }
     }
 
     // 直接更新 content 属性并立即同步到 Map
@@ -271,7 +279,9 @@ export default class extends Controller {
     this.streamingMessages.set(streamId, stream)
     
     // Use textContent to preserve original formatting without parsing
-    stream.element.textContent = newContent
+    if (stream.element) {
+      stream.element.textContent = newContent
+    }
     
     // Auto-scroll to bottom
     this.scrollToBottom()
