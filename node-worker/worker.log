@@ -1,0 +1,84 @@
+[2026-02-25T06:28:40.723Z] 🚀 Rokid SSE Worker starting...
+[2026-02-25T06:28:40.724Z]    Port: 8787
+[2026-02-25T06:28:40.724Z]    Rails WS: ws://localhost:3000/cable
+[2026-02-25T06:28:40.724Z]    Rails HTTP: http://localhost:3000
+[2026-02-25T06:28:40.727Z] ✅ Server running on http://localhost:8787
+[2026-02-25T06:28:40.727Z]    Test: curl -N -X POST http://localhost:8787/sse/rokid \
+[2026-02-25T06:28:40.728Z]          -H "Content-Type: application/json" \
+[2026-02-25T06:28:40.728Z]          -H "Authorization: Bearer YOUR_KEY" \
+[2026-02-25T06:28:40.728Z]          -d '{"message_id":"test","agent_id":"1","message":[{"role":"user","content":"hi"}]}'
+[2026-02-25T06:29:29.974Z] [Server] 🧪 TEST MODE: Starting interval test...
+[2026-02-25T06:29:30.995Z] [Server] [2026-02-25T06:29:30.995Z] SSE sent: event=message, content=测试数据片段 #1 - 当前时间：1:29:30 AM
+[2026-02-25T06:29:30.995Z] [Server] 📤 Test chunk #1 sent
+[2026-02-25T06:29:31.976Z] [Server] [2026-02-25T06:29:31.975Z] SSE sent: event=message, content=测试数据片段 #2 - 当前时间：1:29:31 AM
+[2026-02-25T06:29:31.976Z] [Server] 📤 Test chunk #2 sent
+[2026-02-25T06:29:32.976Z] [Server] [2026-02-25T06:29:32.976Z] SSE sent: event=message, content=测试数据片段 #3 - 当前时间：1:29:32 AM
+[2026-02-25T06:29:32.976Z] [Server] 📤 Test chunk #3 sent
+[2026-02-25T06:29:33.977Z] [Server] [2026-02-25T06:29:33.976Z] SSE sent: event=message, content=测试数据片段 #4 - 当前时间：1:29:33 AM
+[2026-02-25T06:29:33.977Z] [Server] 📤 Test chunk #4 sent
+[2026-02-25T06:29:34.978Z] [Server] [2026-02-25T06:29:34.978Z] SSE sent: event=message, content=测试数据片段 #5 - 当前时间：1:29:34 AM
+[2026-02-25T06:29:34.978Z] [Server] 📤 Test chunk #5 sent
+[2026-02-25T06:29:35.978Z] [Server] [2026-02-25T06:29:35.978Z] SSE sent: event=message, content=测试数据片段 #6 - 当前时间：1:29:35 AM
+[2026-02-25T06:29:35.978Z] [Server] 📤 Test chunk #6 sent
+[2026-02-25T06:29:36.978Z] [Server] [2026-02-25T06:29:36.978Z] SSE sent: event=message, content=测试数据片段 #7 - 当前时间：1:29:36 AM
+[2026-02-25T06:29:36.978Z] [Server] 📤 Test chunk #7 sent
+[2026-02-25T06:29:37.980Z] [Server] [2026-02-25T06:29:37.980Z] SSE sent: event=message, content=测试数据片段 #8 - 当前时间：1:29:37 AM
+[2026-02-25T06:29:37.980Z] [Server] 📤 Test chunk #8 sent
+[2026-02-25T06:29:38.981Z] [Server] [2026-02-25T06:29:38.980Z] SSE sent: event=message, content=测试数据片段 #9 - 当前时间：1:29:38 AM
+[2026-02-25T06:29:38.981Z] [Server] 📤 Test chunk #9 sent
+[2026-02-25T06:29:39.981Z] [Server] [2026-02-25T06:29:39.981Z] SSE sent: event=message, content=测试数据片段 #10 - 当前时间：1:29:39 AM
+[2026-02-25T06:29:39.981Z] [Server] 📤 Test chunk #10 sent
+[2026-02-25T06:29:39.981Z] [Server] [2026-02-25T06:29:39.981Z] SSE sent: event=message, content=N/A
+[2026-02-25T06:29:39.982Z] [Server] [2026-02-25T06:29:39.982Z] SSE sent: event=done, content=N/A
+[2026-02-25T06:29:39.982Z] [Server] ✅ Test completed, closing connection
+[2026-02-25T06:29:39.982Z] [Server] ❌ Client disconnected, interval cleared
+[2026-02-25T06:30:36.049Z] [Server] 🧪 TEST MODE: Starting interval test...
+[2026-02-25T06:30:37.050Z] [Server] [2026-02-25T06:30:37.050Z] SSE sent: event=message, content=测试数据片段 #1 - 当前时间：1:30:37 AM
+[2026-02-25T06:30:37.050Z] [Server] 📤 Test chunk #1 sent
+[2026-02-25T06:30:38.050Z] [Server] [2026-02-25T06:30:38.050Z] SSE sent: event=message, content=测试数据片段 #2 - 当前时间：1:30:38 AM
+[2026-02-25T06:30:38.050Z] [Server] 📤 Test chunk #2 sent
+[2026-02-25T06:30:39.051Z] [Server] [2026-02-25T06:30:39.051Z] SSE sent: event=message, content=测试数据片段 #3 - 当前时间：1:30:39 AM
+[2026-02-25T06:30:39.051Z] [Server] 📤 Test chunk #3 sent
+[2026-02-25T06:30:40.051Z] [Server] [2026-02-25T06:30:40.051Z] SSE sent: event=message, content=测试数据片段 #4 - 当前时间：1:30:40 AM
+[2026-02-25T06:30:40.051Z] [Server] 📤 Test chunk #4 sent
+[2026-02-25T06:30:41.052Z] [Server] [2026-02-25T06:30:41.052Z] SSE sent: event=message, content=测试数据片段 #5 - 当前时间：1:30:41 AM
+[2026-02-25T06:30:41.052Z] [Server] 📤 Test chunk #5 sent
+[2026-02-25T06:30:42.052Z] [Server] [2026-02-25T06:30:42.052Z] SSE sent: event=message, content=测试数据片段 #6 - 当前时间：1:30:42 AM
+[2026-02-25T06:30:42.052Z] [Server] 📤 Test chunk #6 sent
+[2026-02-25T06:30:43.052Z] [Server] [2026-02-25T06:30:43.052Z] SSE sent: event=message, content=测试数据片段 #7 - 当前时间：1:30:43 AM
+[2026-02-25T06:30:43.052Z] [Server] 📤 Test chunk #7 sent
+[2026-02-25T06:30:44.054Z] [Server] [2026-02-25T06:30:44.054Z] SSE sent: event=message, content=测试数据片段 #8 - 当前时间：1:30:44 AM
+[2026-02-25T06:30:44.054Z] [Server] 📤 Test chunk #8 sent
+[2026-02-25T06:30:45.054Z] [Server] [2026-02-25T06:30:45.054Z] SSE sent: event=message, content=测试数据片段 #9 - 当前时间：1:30:45 AM
+[2026-02-25T06:30:45.054Z] [Server] 📤 Test chunk #9 sent
+[2026-02-25T06:30:46.055Z] [Server] [2026-02-25T06:30:46.055Z] SSE sent: event=message, content=测试数据片段 #10 - 当前时间：1:30:46 AM
+[2026-02-25T06:30:46.055Z] [Server] 📤 Test chunk #10 sent
+[2026-02-25T06:30:46.055Z] [Server] [2026-02-25T06:30:46.055Z] SSE sent: event=message, content=N/A
+[2026-02-25T06:30:46.056Z] [Server] [2026-02-25T06:30:46.055Z] SSE sent: event=done, content=N/A
+[2026-02-25T06:30:46.056Z] [Server] ✅ Test completed, closing connection
+[2026-02-25T06:30:46.056Z] [Server] ❌ Client disconnected, interval cleared
+[2026-02-25T06:31:28.609Z] [Server] 🧪 TEST MODE: Starting interval test...
+[2026-02-25T06:31:29.610Z] [Server] [2026-02-25T06:31:29.610Z] SSE sent: event=message, content=测试数据片段 #1 - 当前时间：1:31:29 AM
+[2026-02-25T06:31:29.610Z] [Server] 📤 Test chunk #1 sent
+[2026-02-25T06:31:30.611Z] [Server] [2026-02-25T06:31:30.611Z] SSE sent: event=message, content=测试数据片段 #2 - 当前时间：1:31:30 AM
+[2026-02-25T06:31:30.611Z] [Server] 📤 Test chunk #2 sent
+[2026-02-25T06:31:31.612Z] [Server] [2026-02-25T06:31:31.612Z] SSE sent: event=message, content=测试数据片段 #3 - 当前时间：1:31:31 AM
+[2026-02-25T06:31:31.613Z] [Server] 📤 Test chunk #3 sent
+[2026-02-25T06:31:32.614Z] [Server] [2026-02-25T06:31:32.614Z] SSE sent: event=message, content=测试数据片段 #4 - 当前时间：1:31:32 AM
+[2026-02-25T06:31:32.614Z] [Server] 📤 Test chunk #4 sent
+[2026-02-25T06:31:33.614Z] [Server] [2026-02-25T06:31:33.614Z] SSE sent: event=message, content=测试数据片段 #5 - 当前时间：1:31:33 AM
+[2026-02-25T06:31:33.614Z] [Server] 📤 Test chunk #5 sent
+[2026-02-25T06:31:34.615Z] [Server] [2026-02-25T06:31:34.615Z] SSE sent: event=message, content=测试数据片段 #6 - 当前时间：1:31:34 AM
+[2026-02-25T06:31:34.615Z] [Server] 📤 Test chunk #6 sent
+[2026-02-25T06:31:35.616Z] [Server] [2026-02-25T06:31:35.616Z] SSE sent: event=message, content=测试数据片段 #7 - 当前时间：1:31:35 AM
+[2026-02-25T06:31:35.617Z] [Server] 📤 Test chunk #7 sent
+[2026-02-25T06:31:36.618Z] [Server] [2026-02-25T06:31:36.618Z] SSE sent: event=message, content=测试数据片段 #8 - 当前时间：1:31:36 AM
+[2026-02-25T06:31:36.618Z] [Server] 📤 Test chunk #8 sent
+[2026-02-25T06:31:37.618Z] [Server] [2026-02-25T06:31:37.618Z] SSE sent: event=message, content=测试数据片段 #9 - 当前时间：1:31:37 AM
+[2026-02-25T06:31:37.618Z] [Server] 📤 Test chunk #9 sent
+[2026-02-25T06:31:38.620Z] [Server] [2026-02-25T06:31:38.620Z] SSE sent: event=message, content=测试数据片段 #10 - 当前时间：1:31:38 AM
+[2026-02-25T06:31:38.620Z] [Server] 📤 Test chunk #10 sent
+[2026-02-25T06:31:38.620Z] [Server] [2026-02-25T06:31:38.620Z] SSE sent: event=message, content=N/A
+[2026-02-25T06:31:38.620Z] [Server] [2026-02-25T06:31:38.620Z] SSE sent: event=done, content=N/A
+[2026-02-25T06:31:38.620Z] [Server] ✅ Test completed, closing connection
+[2026-02-25T06:31:38.621Z] [Server] ❌ Client disconnected, interval cleared

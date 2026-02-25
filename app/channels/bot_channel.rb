@@ -139,7 +139,8 @@ class BotChannel < ApplicationCable::Channel
   # Handle streaming chunks from OpenClaw Agent
   def stream_chunk(data)
     content = data['content'] || data['chunk']
-    session_id = data['session_id']
+    # 使用消息中的 session_id，如果为空则使用连接时的 @session_id
+    session_id = data['session_id'].present? ? data['session_id'] : @session_id
     
     Rails.logger.info "[BotChannel] Received stream_chunk for session #{session_id}: #{content&.[](0..50)}..."
     

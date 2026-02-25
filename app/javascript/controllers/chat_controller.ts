@@ -87,8 +87,8 @@ export default class extends Controller {
 
   // 💡 SSE COMMUNICATION
 
-  // SSE Worker URL (Cloudflare Worker for real-time streaming)
-  private readonly SSE_WORKER_URL = "https://rokid-sse-worker.mitnickseng.workers.dev/sse/rokid"
+  // SSE local endpoint
+  private readonly SSE_ENDPOINT = "/sse/rokid"
 
   private sendViaSse(message: string): void {
     // Close any existing connection
@@ -118,9 +118,9 @@ export default class extends Controller {
       }
     }
 
-    // Send POST request to Worker and establish SSE connection
+    // Send POST request to local SSE endpoint and establish SSE connection
     // stimulus-validator: disable-next-line
-    fetch(this.SSE_WORKER_URL, {
+    fetch(this.SSE_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

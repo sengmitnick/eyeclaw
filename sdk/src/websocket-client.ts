@@ -310,6 +310,8 @@ export class EyeClawWebSocketClient {
    * 发送流式内容块到 Rails
    */
   private sendChunk(content: string, sessionId?: string) {
+    const timestamp = new Date().toISOString();
+    this.api.logger.info(`[EyeClaw] [${timestamp}] Sending chunk to Rails: "${content}"`);
     this.sendMessage('stream_chunk', {
       content,
       session_id: sessionId,

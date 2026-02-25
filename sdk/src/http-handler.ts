@@ -152,6 +152,8 @@ export function createHttpHandler(api: OpenClawPluginApi, getConfig: () => EyeCl
               const chunk = JSON.parse(data)
               const content = chunk.choices?.[0]?.delta?.content
               if (content) {
+                const timestamp = new Date().toISOString();
+                logger.info(`[EyeClaw] [${timestamp}] SSE chunk: "${content}"`);
                 res.write(formatSSE('stream_chunk', { stream_id: currentStreamId, content }))
               }
             } catch { /* ignore */ }

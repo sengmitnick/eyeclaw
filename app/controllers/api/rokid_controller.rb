@@ -48,12 +48,16 @@ class Api::RokidController < ApplicationController
     end
     
     # 构建command（复用现有BotChannel逻辑）
+    # 注意：SDK 从 metadata.session_id 提取 session_id
     command = {
-      command: 'send',
+      type: 'execute_command',  # SDK 期望的字段
+      command: 'chat',          # 实际命令类型
+      params: {
+        message: message.first&.dig('text') || message.first&.to_s
+      },
       message: message,
       user_id: user_id,
-      session_id: message_id,
-      metadata: metadata
+      metadata: metadata.merge({ session_id: message_id })  # session_id 必须放在 metadata 里！
     }
     
     # 广播到BotChannel（这会触发OpenClaw处理并广播chunks到 rokid_sse_#{bot.id}_#{message_id}）
