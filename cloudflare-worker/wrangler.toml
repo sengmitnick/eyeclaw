@@ -3,10 +3,10 @@ name = "rokid-sse-worker"
 main = "rokid-sse-worker.js"
 compatibility_date = "2024-01-01"
 
-# 环境变量（部署前修改为实际值）
+# 环境变量
 [vars]
-RAILS_WS_URL = "wss://yourapp.com/cable"
-RAILS_HTTP_URL = "https://yourapp.com"
+RAILS_WS_URL = "wss://3000-668001499240-web.clackypaas.com/cable"
+RAILS_HTTP_URL = "https://3000-668001499240-web.clackypaas.com"
 
 # 部署说明：
 # 1. 安装wrangler: npm install -g wrangler
