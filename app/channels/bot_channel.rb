@@ -54,6 +54,9 @@ class BotChannel < ApplicationCable::Channel
     Rails.logger.info "[BotChannel] Command: #{command}, params: #{params.inspect[0..200]}"
     Rails.logger.info "[BotChannel] Source: #{data['metadata']&.[]('source') || 'unknown'}"
 
+    # 从原始 metadata 中提取 openclaw_session_id，如果未指定则使用 bot_id
+    openclaw_session_id = data['metadata']&.[]('openclaw_session_id') || "bot_#{@bot.id}"
+    
     # stimulus-validator: disable-next-line
     # Broadcast to MCP clients listening (external integration, no frontend controller needed)
     ActionCable.server.broadcast(
@@ -63,6 +66,7 @@ class BotChannel < ApplicationCable::Channel
         session_id: @session_id,
         command: command,
         params: params,
+        openclaw_session_id: openclaw_session_id,
         timestamp: Time.current.iso8601
       }
     )

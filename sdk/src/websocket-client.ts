@@ -176,21 +176,26 @@ export class EyeClawWebSocketClient {
       return
     }
     
-    // 从 metadata 提取 session_id
+    // 从 metadata 提取 session_id (用于 Rails 内部追踪)
     const sessionId = metadata?.session_id
     
+    // 从 metadata 提取 openclaw_session_id (用于 OpenClaw 对话上下文)
+    // 如果未指定，使用 bot_id 作为默认值，这样同一个 Bot 的所有请求共享上下文
+    const openclawSessionId = metadata?.openclaw_session_id || `bot_${this.config.botId}`
+    
     this.api.logger.info(`[EyeClaw] Processing: ${userMessage.substring(0, 50)}...`)
-    this.api.logger.info(`[EyeClaw] Session ID: ${sessionId}`)
+    this.api.logger.info(`[EyeClaw] Rails Session ID: ${sessionId}`)
+    this.api.logger.info(`[EyeClaw] OpenClaw Session ID: ${openclawSessionId}`)
 
     // 通过 OpenClaw API 处理消息，获取流式响应
-    await this.processWithOpenClaw(userMessage, sessionId)
+    await this.processWithOpenClaw(userMessage, sessionId, openclawSessionId)
   }
 
   /**
    * 使用 OpenClaw API 处理消息（流式）
    * 调用自己的 HTTP 端点 /eyeclaw/chat
    */
-  private async processWithOpenClaw(message: string, sessionId?: string) {
+  private async processWithOpenClaw(message: string, sessionId?: string, openclawSessionId?: string) {
     // 重置 chunk 序号（每个新会话）
     this.chunkSequence = 0
     
@@ -201,6 +206,7 @@ export class EyeClawWebSocketClient {
     const requestBody = {
       message,
       session_id: sessionId,
+      openclaw_session_id: openclawSessionId,
     }
 
     const headers: Record<string, string> = {

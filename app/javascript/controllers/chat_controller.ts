@@ -266,7 +266,8 @@ export default class extends Controller {
     }
 
     stream.content += chunk
-    stream.element.textContent = stream.content
+    // Use innerHTML and preserve line breaks
+    stream.element.innerHTML = this.formatMessage(stream.content)
     
     // Auto-scroll to bottom
     this.scrollToBottom()
@@ -378,5 +379,27 @@ export default class extends Controller {
     const div = document.createElement("div")
     div.textContent = text
     return div.innerHTML
+  }
+
+  /**
+   * Format message with basic styling
+   * - Preserve line breaks
+   * - Support basic Markdown-like formatting (**bold**)
+   * - Escape HTML to prevent XSS
+   */
+  private formatMessage(text: string): string {
+    // First escape HTML
+    let formatted = this.escapeHtml(text)
+    
+    // Convert line breaks to <br>
+    formatted = formatted.replace(/\n/g, '<br>')
+    
+    // Support **bold** syntax
+    formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    
+    // Support *italic* syntax
+    formatted = formatted.replace(/\*(.+?)\*/g, '<em>$1</em>')
+    
+    return formatted
   }
 }

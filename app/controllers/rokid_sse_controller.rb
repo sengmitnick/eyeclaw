@@ -127,7 +127,8 @@ class RokidSseController < ApplicationController
           user_id: user_id,
           full_messages: messages,
           original_metadata: metadata,
-          session_id: message_id
+          session_id: message_id,
+          openclaw_session_id: metadata['openclaw_session_id'] || "bot_#{bot.id}"
         },
         timestamp: Time.current.iso8601
       }
@@ -385,7 +386,8 @@ class RokidSseController < ApplicationController
           user_id: user_id,
           full_messages: messages,
           original_metadata: metadata,
-          session_id: message_id  # 用于追踪响应
+          session_id: message_id,  # 用于追踪响应
+          openclaw_session_id: metadata['openclaw_session_id'] || "bot_#{bot.id}"
         },
         timestamp: Time.current.iso8601
       }

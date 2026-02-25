@@ -97,6 +97,8 @@ module.exports = [
       'spec/',
       'test/',
       'sdk/',
+      'cloudflare-worker/',
+      'node-worker/',
       '**/*.config.js',
       '**/*.min.js',
     ],

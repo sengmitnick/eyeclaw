@@ -74,7 +74,7 @@ export function createHttpHandler(api: OpenClawPluginApi, getConfig: () => EyeCl
     
     try {
       const body = await readJsonBody(req)
-      const { message, session_id, stream_id } = body
+      const { message, session_id, stream_id, openclaw_session_id } = body
       
       if (!message) {
         res.statusCode = 400
@@ -84,6 +84,7 @@ export function createHttpHandler(api: OpenClawPluginApi, getConfig: () => EyeCl
       }
       
       logger.info(`[EyeClaw] Chat: ${message.substring(0, 50)}...`)
+      logger.info(`[EyeClaw] OpenClaw Session: ${openclaw_session_id || 'default'}`)
       
       // SSE 响应头
       res.setHeader('Content-Type', 'text/event-stream')
@@ -94,7 +95,8 @@ export function createHttpHandler(api: OpenClawPluginApi, getConfig: () => EyeCl
       // 获取 Gateway 配置
       const gatewayPort = api.config?.gateway?.port ?? 18789
       const gatewayToken = api.config?.gateway?.auth?.token
-      const sessionKey = session_id ? `eyeclaw:${session_id}` : 'eyeclaw:default'
+      // 使用 openclaw_session_id 作为 OpenClaw 的会话标识，如果未提供则使用默认值
+      const sessionKey = openclaw_session_id || 'eyeclaw:default'
       
       // 调用 OpenClaw
       const openclawUrl = `http://127.0.0.1:${gatewayPort}/v1/chat/completions`
