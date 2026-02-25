@@ -139,17 +139,19 @@ class BotChannel < ApplicationCable::Channel
   # Handle streaming chunks from OpenClaw Agent
   def stream_chunk(data)
     content = data['content'] || data['chunk']
+    sequence = data['sequence'] # SDK 发送的序号
     # 使用消息中的 session_id，如果为空则使用连接时的 @session_id
     session_id = data['session_id'].present? ? data['session_id'] : @session_id
     
-    Rails.logger.info "[BotChannel] Received stream_chunk for session #{session_id}: #{content&.[](0..50)}..."
+    Rails.logger.info "[BotChannel] Received stream_chunk ##{sequence} for session #{session_id}: #{content&.[](0..50)}..."
     
-    # Broadcast streaming chunks to Rokid SSE clients
+    # Broadcast streaming chunks to Rokid SSE clients (with sequence)
     ActionCable.server.broadcast(
       "rokid_sse_#{@bot.id}_#{session_id}",
       {
         type: 'stream_chunk',
         content: content,
+        sequence: sequence, # 转发序号
         session_id: session_id,
         timestamp: Time.current.iso8601
       }
@@ -161,6 +163,7 @@ class BotChannel < ApplicationCable::Channel
       {
         type: 'stream_chunk',
         content: content,
+        sequence: sequence, # 转发序号
         session_id: session_id,
         timestamp: Time.current.iso8601
       }

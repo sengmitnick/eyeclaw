@@ -141,6 +141,10 @@ class RokidSseController < ApplicationController
       idle_timeout = 60
       last_message_time = Time.current
       
+      # 用于按序号输出的状态
+      next_expected_sequence = 0  # 下一个期望的序号
+      pending_chunks = {}  # 缓存乱序到达的 chunks: {sequence => content}
+      
       subscription_channel = "rokid_sse_#{bot.id}_#{message_id}"
       cable = ActionCable.server.pubsub
       message_queue = Queue.new
@@ -177,22 +181,68 @@ class RokidSseController < ApplicationController
           case data['type']
           when 'stream_chunk'
             content = data['content']
+            sequence = data['sequence']  # SDK 发送的序号
             chunk_session_id = data['session_id']
             
             if chunk_session_id == message_id && content.present?
-              Rails.logger.debug "[RokidSSE] Received stream chunk: #{content[0..50]}"
+              Rails.logger.debug "[RokidSSE] Received stream chunk ##{sequence}: #{content[0..50]}"
               
-              event_data = {
-                role: 'agent',
-                type: 'answer',
-                answer_stream: content,
-                message_id: message_id,
-                agent_id: agent_id,
-                is_finish: false
-              }
-              write_sse_event_direct(io, 'message', event_data)
-              accumulated_content += content
-              streaming_active = true
+              # 如果没有序号（旧版本 SDK），直接输出
+              if sequence.nil?
+                event_data = {
+                  role: 'agent',
+                  type: 'answer',
+                  answer_stream: content,
+                  message_id: message_id,
+                  agent_id: agent_id,
+                  is_finish: false
+                }
+                write_sse_event_direct(io, 'message', event_data)
+                accumulated_content += content
+                streaming_active = true
+              else
+                # 有序号，使用有序队列
+                if sequence == next_expected_sequence
+                  # 当前 chunk 是期望的，直接输出
+                  event_data = {
+                    role: 'agent',
+                    type: 'answer',
+                    answer_stream: content,
+                    message_id: message_id,
+                    agent_id: agent_id,
+                    is_finish: false
+                  }
+                  write_sse_event_direct(io, 'message', event_data)
+                  accumulated_content += content
+                  streaming_active = true
+                  next_expected_sequence += 1
+                  
+                  # 检查缓存中是否有后续的 chunks
+                  while pending_chunks.key?(next_expected_sequence)
+                    buffered_content = pending_chunks.delete(next_expected_sequence)
+                    Rails.logger.debug "[RokidSSE] Outputting buffered chunk ##{next_expected_sequence}"
+                    
+                    event_data = {
+                      role: 'agent',
+                      type: 'answer',
+                      answer_stream: buffered_content,
+                      message_id: message_id,
+                      agent_id: agent_id,
+                      is_finish: false
+                    }
+                    write_sse_event_direct(io, 'message', event_data)
+                    accumulated_content += buffered_content
+                    next_expected_sequence += 1
+                  end
+                elsif sequence > next_expected_sequence
+                  # 当前 chunk 来得太早，缓存起来
+                  Rails.logger.debug "[RokidSSE] Buffering chunk ##{sequence} (expecting ##{next_expected_sequence})"
+                  pending_chunks[sequence] = content
+                else
+                  # sequence < next_expected_sequence，说明是重复的，忽略
+                  Rails.logger.warn "[RokidSSE] Ignoring duplicate chunk ##{sequence} (already processed)"
+                end
+              end
             end
             
           when 'stream_end'
@@ -361,6 +411,10 @@ class RokidSseController < ApplicationController
       idle_timeout = 60  # 空闲超时：60秒内没有收到任何消息才超时
       last_message_time = Time.current
       
+      # 用于按序号输出的状态
+      next_expected_sequence = 0  # 下一个期望的序号
+      pending_chunks = {}  # 缓存乱序到达的 chunks: {sequence => content}
+      
       # 创建临时订阅以监听流式响应
       # BotChannel 广播到 rokid_sse_{bot_id}_{session_id} 频道
       subscription_channel = "rokid_sse_#{bot.id}_#{message_id}"
@@ -424,26 +478,71 @@ class RokidSseController < ApplicationController
           # 处理不同类型的消息
           case data['type']
           when 'stream_chunk'
-            # 新格式：{ type: 'stream_chunk', content: '...', session_id: '...' }
+            # 新格式：{ type: 'stream_chunk', content: '...', sequence: X, session_id: '...' }
             content = data['content']
+            sequence = data['sequence']  # SDK 发送的序号
             chunk_session_id = data['session_id']
             
             # 只处理匹配当前 message_id 的流式响应
             if chunk_session_id == message_id && content.present?
-              Rails.logger.debug "[RokidSSE] Received stream chunk: #{content[0..50]}"
+              Rails.logger.debug "[RokidSSE] Received stream chunk ##{sequence}: #{content[0..50]}"
               
-              # 实时发送 chunk 到 Rokid SSE
-              event_data = {
-                role: 'agent',
-                type: 'answer',
-                answer_stream: content,
-                message_id: message_id,
-                agent_id: agent_id,
-                is_finish: false
-              }
-              write_sse_event('message', event_data)
-              accumulated_content += content
-              streaming_active = true
+              # 如果没有序号（旧版本 SDK），直接输出
+              if sequence.nil?
+                event_data = {
+                  role: 'agent',
+                  type: 'answer',
+                  answer_stream: content,
+                  message_id: message_id,
+                  agent_id: agent_id,
+                  is_finish: false
+                }
+                write_sse_event('message', event_data)
+                accumulated_content += content
+                streaming_active = true
+              else
+                # 有序号，使用有序队列
+                if sequence == next_expected_sequence
+                  # 当前 chunk 是期望的，直接输出
+                  event_data = {
+                    role: 'agent',
+                    type: 'answer',
+                    answer_stream: content,
+                    message_id: message_id,
+                    agent_id: agent_id,
+                    is_finish: false
+                  }
+                  write_sse_event('message', event_data)
+                  accumulated_content += content
+                  streaming_active = true
+                  next_expected_sequence += 1
+                  
+                  # 检查缓存中是否有后续的 chunks
+                  while pending_chunks.key?(next_expected_sequence)
+                    buffered_content = pending_chunks.delete(next_expected_sequence)
+                    Rails.logger.debug "[RokidSSE] Outputting buffered chunk ##{next_expected_sequence}"
+                    
+                    event_data = {
+                      role: 'agent',
+                      type: 'answer',
+                      answer_stream: buffered_content,
+                      message_id: message_id,
+                      agent_id: agent_id,
+                      is_finish: false
+                    }
+                    write_sse_event('message', event_data)
+                    accumulated_content += buffered_content
+                    next_expected_sequence += 1
+                  end
+                elsif sequence > next_expected_sequence
+                  # 当前 chunk 来得太早，缓存起来
+                  Rails.logger.debug "[RokidSSE] Buffering chunk ##{sequence} (expecting ##{next_expected_sequence})"
+                  pending_chunks[sequence] = content
+                else
+                  # sequence < next_expected_sequence，说明是重复的，忽略
+                  Rails.logger.warn "[RokidSSE] Ignoring duplicate chunk ##{sequence} (already processed)"
+                end
+              end
             end
             
           when 'stream_end'

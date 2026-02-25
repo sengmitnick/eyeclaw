@@ -26,6 +26,7 @@ export class EyeClawWebSocketClient {
   private reconnectDelay = 3000
   private subscribed = false
   private pingInterval: any = null
+  private chunkSequence = 0 // 每个会话的 chunk 序号
 
   constructor(api: OpenClawPluginApi, config: EyeClawConfig, getState: () => any) {
     this.api = api
@@ -190,6 +191,9 @@ export class EyeClawWebSocketClient {
    * 调用自己的 HTTP 端点 /eyeclaw/chat
    */
   private async processWithOpenClaw(message: string, sessionId?: string) {
+    // 重置 chunk 序号（每个新会话）
+    this.chunkSequence = 0
+    
     const state = this.getState()
     const gatewayPort = state.gatewayPort
     const eyeclawUrl = `http://127.0.0.1:${gatewayPort}/eyeclaw/chat`
@@ -311,10 +315,12 @@ export class EyeClawWebSocketClient {
    */
   private sendChunk(content: string, sessionId?: string) {
     const timestamp = new Date().toISOString();
-    this.api.logger.info(`[EyeClaw] [${timestamp}] Sending chunk to Rails: "${content}"`);
+    const sequence = this.chunkSequence++;
+    this.api.logger.info(`[EyeClaw] [${timestamp}] Sending chunk #${sequence} to Rails: "${content}"`);
     this.sendMessage('stream_chunk', {
       content,
       session_id: sessionId,
+      sequence, // 添加序号
     })
   }
 
