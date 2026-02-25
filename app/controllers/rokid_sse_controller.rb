@@ -114,6 +114,35 @@ class RokidSseController < ApplicationController
       
       Rails.logger.info "[RokidSSE] Found bot: #{bot.name} (ID: #{bot.id})"
       
+      # 检查 Bot 是否在线（通过 BotSession 的 last_ping_at）
+      bot_session = BotSession.where(bot_id: bot.id).where('last_ping_at > ?', 5.minutes.ago).order(last_ping_at: :desc).first
+      unless bot_session
+        Rails.logger.warn "[RokidSSE] Bot #{bot.id} is offline (no active session)"
+        error_message = "Bot 已离线，请检查设备连接后重试。"
+        error_data = {
+          role: 'agent',
+          type: 'answer',
+          answer_stream: error_message,
+          message_id: message_id,
+          agent_id: agent_id,
+          is_finish: true
+        }
+        write_sse_event_direct(io, 'message', error_data)
+        
+        done_data = {
+          role: 'agent',
+          type: 'answer',
+          message_id: message_id,
+          agent_id: agent_id,
+          is_finish: true
+        }
+        write_sse_event_direct(io, 'done', done_data)
+        io.close
+        return
+      end
+      
+      Rails.logger.info "[RokidSSE] Bot #{bot.id} is online (last ping: #{bot_session.last_ping_at})"
+      
       # 提取最后一条用户消息
       last_user_message = extract_last_user_message(messages)
       
@@ -169,7 +198,28 @@ class RokidSseController < ApplicationController
       begin
         loop do
           if Time.current - last_message_time > idle_timeout
-            Rails.logger.warn "[RokidSSE] Idle timeout"
+            Rails.logger.warn "[RokidSSE] Idle timeout: no response from Bot after #{idle_timeout} seconds"
+            
+            # 发送超时错误消息
+            error_message = "请求超时，Bot 可能已离线或响应缓慢，请稍后重试。"
+            error_data = {
+              role: 'agent',
+              type: 'answer',
+              answer_stream: error_message,
+              message_id: message_id,
+              agent_id: agent_id,
+              is_finish: true
+            }
+            write_sse_event_direct(io, 'message', error_data)
+            
+            done_data = {
+              role: 'agent',
+              type: 'answer',
+              message_id: message_id,
+              agent_id: agent_id,
+              is_finish: true
+            }
+            write_sse_event_direct(io, 'done', done_data)
             break
           end
           
@@ -371,6 +421,18 @@ class RokidSseController < ApplicationController
       
       Rails.logger.info "[RokidSSE] Found bot: #{bot.name} (ID: #{bot.id})"
       
+      # 检查 Bot 是否在线（通过 BotSession 的 last_ping_at）
+      bot_session = BotSession.where(bot_id: bot.id).where('last_ping_at > ?', 5.minutes.ago).order(last_ping_at: :desc).first
+      unless bot_session
+        Rails.logger.warn "[RokidSSE] Bot #{bot.id} is offline (no active session)"
+        error_message = "Bot 已离线，请检查设备连接后重试。"
+        stream_response(message_id, agent_id, error_message, {})
+        send_done_event(message_id, agent_id)
+        return
+      end
+      
+      Rails.logger.info "[RokidSSE] Bot #{bot.id} is online (last ping: #{bot_session.last_ping_at})"
+      
       # 提取最后一条用户消息
       last_user_message = extract_last_user_message(messages)
       
@@ -465,7 +527,12 @@ class RokidSseController < ApplicationController
         loop do
           # 检查空闲超时（只有在没有收到任何消息的情况下才超时）
           if Time.current - last_message_time > idle_timeout
-            Rails.logger.warn "[RokidSSE] Idle timeout: no message received for #{idle_timeout} seconds"
+            Rails.logger.warn "[RokidSSE] Idle timeout: no response from Bot after #{idle_timeout} seconds"
+            
+            # 发送超时错误消息
+            error_message = "请求超时，Bot 可能已离线或响应缓慢，请稍后重试。"
+            stream_response(message_id, agent_id, error_message, {})
+            send_done_event(message_id, agent_id)
             break
           end
           
