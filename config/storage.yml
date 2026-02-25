@@ -14,5 +14,5 @@ storage_bucket:
   endpoint: <%= ENV.fetch("STORAGE_BUCKET_ENDPOINT", "") %>
   access_key_id: <%= ENV.fetch("STORAGE_BUCKET_ACCESS_KEY_ID", "") %>
   secret_access_key: <%= ENV.fetch("STORAGE_BUCKET_SECRET_ACCESS_KEY", "") %>
-  region: <%= ENV.fetch("STORAGE_BUCKET_REGION", "") %>
+  region: <%= ENV.fetch("STORAGE_BUCKET_REGION", "us-east-1") %>
   bucket: <%= ENV.fetch("STORAGE_BUCKET_NAME", "") %>

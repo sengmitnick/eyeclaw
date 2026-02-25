@@ -31,7 +31,12 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
   # Store uploaded files on the cloud storage bucket (S3/GCS)
-  config.active_storage.service = :storage_bucket
+  # Use local storage if S3 credentials are not configured
+  if ENV["STORAGE_BUCKET_ACCESS_KEY_ID"].present? && ENV["STORAGE_BUCKET_SECRET_ACCESS_KEY"].present?
+    config.active_storage.service = :storage_bucket
+  else
+    config.active_storage.service = :local
+  end
 
   # Mount Action Cable outside main process or domain.
   config.action_cable.disable_request_forgery_protection = true
