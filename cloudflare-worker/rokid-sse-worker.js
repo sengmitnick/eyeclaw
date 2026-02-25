@@ -18,10 +18,22 @@
  * 3. 部署: wrangler deploy
  */
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Max-Age': '86400',
+};
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    
+
+    // Handle CORS preflight
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: CORS_HEADERS });
+    }
+
     // 只处理 /sse/rokid 路径
     if (url.pathname !== '/sse/rokid' || request.method !== 'POST') {
       return new Response('Not Found', { status: 404 });
@@ -100,7 +112,8 @@ export default {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
           'Connection': 'keep-alive',
-          'X-Accel-Buffering': 'no'
+          'X-Accel-Buffering': 'no',
+          ...CORS_HEADERS
         }
       });
       
