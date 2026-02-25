@@ -134,6 +134,11 @@
               <p class="form-help">Agent ID 已绑定到灵珠平台智能体</p>
             <% else %>
               <!-- 未绑定 - 显示二维码 -->
+              <% 
+                # 生成或获取绑定令牌（5分钟有效期）
+                @binding_token = @bot.binding_tokens.where('expires_at > ?', Time.current).where(used_at: nil).first
+                @binding_token ||= @bot.binding_tokens.create!
+              %>
               <div class="card border-2 border-warning bg-warning/5 p-4">
                 <div class="flex items-start gap-3">
                   <%= lucide_icon "qr-code", class: "w-6 h-6 text-warning flex-shrink-0 mt-1" %>
@@ -144,13 +149,17 @@
                     </p>
                     <!-- 二维码 -->
                     <div class="flex justify-center py-4">
-                      <%= image_tag "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=BOT_#{@bot.id}", 
+                      <%= image_tag "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=#{@binding_token.token}", 
                                     alt: "Bot Binding QR Code", 
                                     class: "border-4 border-white rounded-lg shadow-lg" %>
                     </div>
                     <p class="text-xs text-center text-muted mt-2">
                       <%= lucide_icon "info", class: "w-3 h-3 inline" %>
-                      二维码内容: BOT_<%= @bot.id %>
+                      安全令牌 (有效期: <%= distance_of_time_in_words_to_now(@binding_token.expires_at) %>)
+                    </p>
+                    <p class="text-xs text-center text-warning mt-1">
+                      <%= lucide_icon "shield-check", class: "w-3 h-3 inline" %>
+                      此令牌仅用于一次性绑定，5分钟后自动失效
                     </p>
                   </div>
                 </div>

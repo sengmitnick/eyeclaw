@@ -9,6 +9,7 @@
 #   - event: message (内容输出)
 #   - event: done (结束)
 #   - data: JSON 包含 role, message_id, agent_id, answer_stream, is_finish, type
+
 class RokidSseController < ApplicationController
   include ActionController::Live
   
@@ -691,45 +692,56 @@ class RokidSseController < ApplicationController
     
     Rails.logger.info "[RokidSSE] QR code decoded: #{qr_content}"
     
-    # 解析二维码内容：BOT_{id}
-    if qr_content =~ /BOT_(\d+)/
-      bot_id = $1.to_i
-      bot = Bot.find_by(id: bot_id)
-      
-      unless bot
-        @@pending_binding_photos.delete(message_id)
-        error_message = "二维码无效，找不到对应的 Bot。"
-        stream_response(message_id, agent_id, error_message, {})
-        send_done_event(message_id, agent_id)
-        return
-      end
-      
-      # 检查是否已被其他 agent_id 绑定
-      if bot.rokid_device_id.present? && bot.rokid_device_id != agent_id
-        @@pending_binding_photos.delete(message_id)
-        error_message = "此 Bot 已被其他设备绑定，请选择其他 Bot。"
-        stream_response(message_id, agent_id, error_message, {})
-        send_done_event(message_id, agent_id)
-        return
-      end
-      
-      # 绑定 agent_id 到 Bot
-      if bot.update(rokid_device_id: agent_id)
-        # 清除绑定状态
-        @@pending_binding_photos.delete(message_id)
-        Rails.logger.info "[RokidSSE] Successfully bound agent_id #{agent_id} to Bot #{bot.id}"
-        success_message = "绑定成功！您现在可以使用 #{bot.name} 了。"
-        stream_response(message_id, agent_id, success_message, {})
-        send_done_event(message_id, agent_id)
+    # 验证令牌（替换原来的 BOT_{id} 解析）
+    binding_token = BindingToken.find_by(token: qr_content)
+    
+    unless binding_token
+      @@pending_binding_photos.delete(message_id)
+      error_message = "无效的绑定令牌，请刷新网页后重新扫码。"
+      stream_response(message_id, agent_id, error_message, {})
+      send_done_event(message_id, agent_id)
+      return
+    end
+    
+    # 检查令牌是否有效
+    unless binding_token.valid_for_binding?
+      @@pending_binding_photos.delete(message_id)
+      if binding_token.used_at.present?
+        error_message = "此令牌已被使用，请刷新网页后重新扫码。"
       else
-        @@pending_binding_photos.delete(message_id)
-        error_message = "绑定失败，请稍后重试。"
-        stream_response(message_id, agent_id, error_message, {})
-        send_done_event(message_id, agent_id)
+        error_message = "令牌已过期，请刷新网页后重新扫码。"
       end
+      stream_response(message_id, agent_id, error_message, {})
+      send_done_event(message_id, agent_id)
+      return
+    end
+    
+    # 获取关联的 Bot
+    bot = binding_token.bot
+    
+    # 检查 Bot 是否已绑定其他设备
+    if bot.rokid_device_id.present? && bot.rokid_device_id != agent_id
+      @@pending_binding_photos.delete(message_id)
+      error_message = "此 Bot 已被其他设备绑定，请先解绑后再试。"
+      stream_response(message_id, agent_id, error_message, {})
+      send_done_event(message_id, agent_id)
+      return
+    end
+    
+    # 绑定 agent_id 到 Bot
+    if bot.update(rokid_device_id: agent_id)
+      # 标记令牌为已使用
+      binding_token.mark_as_used!(agent_id)
+      
+      # 清除绑定状态
+      @@pending_binding_photos.delete(message_id)
+      Rails.logger.info "[RokidSSE] Successfully bound agent_id #{agent_id} to Bot #{bot.id} using token #{binding_token.token}"
+      success_message = "绑定成功！您现在可以使用 #{bot.name} 了。"
+      stream_response(message_id, agent_id, success_message, {})
+      send_done_event(message_id, agent_id)
     else
       @@pending_binding_photos.delete(message_id)
-      error_message = "二维码格式不正确，请扫描网页上的绑定二维码。识别到的内容：#{qr_content}"
+      error_message = "绑定失败，请稍后重试。"
       stream_response(message_id, agent_id, error_message, {})
       send_done_event(message_id, agent_id)
     end
@@ -894,27 +906,177 @@ class RokidSseController < ApplicationController
   
   # hijack 版本的 handle_binding_photo_result
   def handle_binding_photo_result_hijack(io, message_id, agent_id, image_url)
-    # 这里简化处理，只返回成功消息
-    @@pending_binding_photos.delete(message_id)
+    Rails.logger.info "[RokidSSE] Processing binding photo result for agent_id: #{agent_id}"
+    Rails.logger.info "[RokidSSE] Image URL: #{image_url}"
     
-    success_data = {
-      role: 'agent',
-      type: 'answer',
-      answer_stream: '绑定成功！请重新发送消息开始对话。',
-      message_id: message_id,
-      agent_id: agent_id,
-      is_finish: true
-    }
-    write_sse_event_direct(io, 'message', success_data)
+    # 调用二维码识别 API
+    qr_content = decode_qr_code_from_url(image_url)
     
-    done_data = {
-      role: 'agent',
-      type: 'answer',
-      message_id: message_id,
-      agent_id: agent_id,
-      is_finish: true
-    }
-    write_sse_event_direct(io, 'done', done_data)
+    unless qr_content
+      # 清除绑定状态
+      @@pending_binding_photos.delete(message_id)
+      error_message = "未能识别二维码，请重新对准二维码后再试。"
+      error_data = {
+        role: 'agent',
+        type: 'answer',
+        answer_stream: error_message,
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'message', error_data)
+      
+      done_data = {
+        role: 'agent',
+        type: 'answer',
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'done', done_data)
+      io.close
+      return
+    end
+    
+    Rails.logger.info "[RokidSSE] QR code decoded: #{qr_content}"
+    
+    # 验证令牌（替换原来的 BOT_{id} 解析）
+    binding_token = BindingToken.find_by(token: qr_content)
+    
+    unless binding_token
+      @@pending_binding_photos.delete(message_id)
+      error_message = "无效的绑定令牌，请刷新网页后重新扫码。"
+      error_data = {
+        role: 'agent',
+        type: 'answer',
+        answer_stream: error_message,
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'message', error_data)
+      
+      done_data = {
+        role: 'agent',
+        type: 'answer',
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'done', done_data)
+      io.close
+      return
+    end
+    
+    # 检查令牌是否有效
+    unless binding_token.valid_for_binding?
+      @@pending_binding_photos.delete(message_id)
+      if binding_token.used_at.present?
+        error_message = "此令牌已被使用，请刷新网页后重新扫码。"
+      else
+        error_message = "令牌已过期，请刷新网页后重新扫码。"
+      end
+      error_data = {
+        role: 'agent',
+        type: 'answer',
+        answer_stream: error_message,
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'message', error_data)
+      
+      done_data = {
+        role: 'agent',
+        type: 'answer',
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'done', done_data)
+      io.close
+      return
+    end
+    
+    # 获取关联的 Bot
+    bot = binding_token.bot
+    
+    # 检查 Bot 是否已绑定其他设备
+    if bot.rokid_device_id.present? && bot.rokid_device_id != agent_id
+      @@pending_binding_photos.delete(message_id)
+      error_message = "此 Bot 已被其他设备绑定，请先解绑后再试。"
+      error_data = {
+        role: 'agent',
+        type: 'answer',
+        answer_stream: error_message,
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'message', error_data)
+      
+      done_data = {
+        role: 'agent',
+        type: 'answer',
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'done', done_data)
+      io.close
+      return
+    end
+    
+    # 绑定 agent_id 到 Bot
+    if bot.update(rokid_device_id: agent_id)
+      # 标记令牌为已使用
+      binding_token.mark_as_used!(agent_id)
+      
+      # 清除绑定状态
+      @@pending_binding_photos.delete(message_id)
+      Rails.logger.info "[RokidSSE] Successfully bound agent_id #{agent_id} to Bot #{bot.id} using token #{binding_token.token}"
+      success_message = "绑定成功！您现在可以使用 #{bot.name} 了。"
+      success_data = {
+        role: 'agent',
+        type: 'answer',
+        answer_stream: success_message,
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'message', success_data)
+      
+      done_data = {
+        role: 'agent',
+        type: 'answer',
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'done', done_data)
+    else
+      @@pending_binding_photos.delete(message_id)
+      error_message = "绑定失败，请稍后重试。"
+      error_data = {
+        role: 'agent',
+        type: 'answer',
+        answer_stream: error_message,
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'message', error_data)
+      
+      done_data = {
+        role: 'agent',
+        type: 'answer',
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'done', done_data)
+    end
+    
     io.close
   end
   
@@ -923,39 +1085,26 @@ class RokidSseController < ApplicationController
     instructions_data = {
       role: 'agent',
       type: 'answer',
-      answer_stream: '你好！请先绑定你的 Rokid 眼镜。',
+      answer_stream: '你好！请先在网页上打开机器人页面查看绑定二维码，然后使用眼镜拍摄二维码完成绑定。',
       message_id: message_id,
       agent_id: agent_id,
       is_finish: false
     }
     write_sse_event_direct(io, 'message', instructions_data)
     
-    # 生成绑定二维码 URL
-    frontend_url = ENV['FRONTEND_URL'] || 'http://localhost:3000'
-    qr_url = "#{frontend_url}/bind/new?agent_id=#{agent_id}&type=rokid"
-    qr_code_svg = RQRCode::QRCode.new(qr_url).as_svg(module_size: 6)
-    qr_code_base64 = Base64.strict_encode64(qr_code_svg)
-    
-    qr_data = {
+    # 发送拍照指令
+    Rails.logger.info "[RokidSSE] Sending take_photo command for binding in hijack mode"
+    take_photo_data = {
       role: 'agent',
-      type: 'answer',
-      answer_stream: '',
-      message_id: message_id,
-      agent_id: agent_id,
-      is_finish: false,
-      image_url: "data:image/svg+xml;base64,#{qr_code_base64}"
-    }
-    write_sse_event_direct(io, 'message', qr_data)
-    
-    final_instructions_data = {
-      role: 'agent',
-      type: 'answer',
-      answer_stream: '请使用 Rokid 眼镜拍摄上方二维码完成绑定。',
+      type: 'tool_call',
+      tool_call: {
+        command: 'take_photo'
+      },
       message_id: message_id,
       agent_id: agent_id,
       is_finish: false
     }
-    write_sse_event_direct(io, 'message', final_instructions_data)
+    write_sse_event_direct(io, 'message', take_photo_data)
     
     end_data = {
       role: 'agent',

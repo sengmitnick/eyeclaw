@@ -1,6 +1,7 @@
 class Bot < ApplicationRecord
   belongs_to :user
   has_many :bot_sessions, dependent: :destroy
+  has_many :binding_tokens, dependent: :destroy
   has_one :active_session, -> { where('last_ping_at > ?', 5.minutes.ago).order(last_ping_at: :desc) }, class_name: 'BotSession'
 
   # Validations

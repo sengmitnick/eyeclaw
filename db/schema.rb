@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_24_072635) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_25_104248) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -78,6 +78,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_24_072635) do
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_administrators_on_name", unique: true
     t.index ["role"], name: "index_administrators_on_role"
+  end
+
+  create_table "binding_tokens", force: :cascade do |t|
+    t.string "token"
+    t.bigint "bot_id"
+    t.datetime "expires_at"
+    t.datetime "used_at"
+    t.string "rokid_device_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bot_id"], name: "index_binding_tokens_on_bot_id"
+    t.index ["token"], name: "index_binding_tokens_on_token", unique: true
   end
 
   create_table "bot_sessions", force: :cascade do |t|
