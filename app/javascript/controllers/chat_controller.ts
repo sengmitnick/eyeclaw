@@ -34,6 +34,7 @@ export default class extends Controller {
   // Streaming state
   private currentEventSource: EventSource | null = null
   private streamingMessages: Map<string, { element: HTMLElement, content: string }> = new Map()
+  private updateQueue: Map<string, Promise<void>> = new Map()
 
   connect(): void {
     console.log("Chat controller connected (SSE mode)")
@@ -218,25 +219,29 @@ export default class extends Controller {
     }
   }
 
-  private handleMessageEvent(data: any, messageId: string): void {
-    const { role, type, answer_stream, is_finish } = data
+  private handleMessageEvent(data: any, requestMessageId: string): void {
+    const { role, type, answer_stream, is_finish, message_id } = data
 
     if (role === "agent" && type === "answer") {
+      // 使用后端返回的 message_id 作为 streamId
+      const streamId = message_id || requestMessageId
+      
       // 如果有内容，先显示内容
       if (answer_stream) {
-        this.appendStreamingChunk(messageId, answer_stream)
+        this.appendStreamingChunk(streamId, answer_stream)
       }
       
       // 如果标记为完成，结束流式消息
       if (is_finish) {
-        this.finishStreamingMessage(messageId)
+        this.finishStreamingMessage(streamId)
       }
     }
   }
 
-  private handleDoneEvent(data: any, messageId: string): void {
+  private handleDoneEvent(data: any, requestMessageId: string): void {
     console.log("Stream done:", data)
-    this.finishStreamingMessage(messageId)
+    const streamId = data.message_id || requestMessageId
+    this.finishStreamingMessage(streamId)
   }
 
   // 💡 STREAMING MESSAGE MANAGEMENT
@@ -261,39 +266,63 @@ export default class extends Controller {
   }
 
   private appendStreamingChunk(streamId: string, chunk: string): void {
-    let stream = this.streamingMessages.get(streamId)
+    // 使用队列确保顺序执行，避免竞态条件
+    const previousUpdate = this.updateQueue.get(streamId) || Promise.resolve()
     
-    if (!stream) {
-      // First chunk - create streaming message
-      this.startStreamingMessage(streamId)
-      stream = this.streamingMessages.get(streamId)
-      if (!stream) {
-        console.error("Failed to create streaming message for", streamId)
-        return
-      }
-    }
+    const currentUpdate = previousUpdate.then(() => {
+      return this.doAppendChunk(streamId, chunk)
+    })
+    
+    this.updateQueue.set(streamId, currentUpdate)
+  }
 
-    // 直接更新 content 属性并立即同步到 Map
-    const newContent = stream.content + chunk
-    stream.content = newContent
-    this.streamingMessages.set(streamId, stream)
-    
-    // Use textContent to preserve original formatting without parsing
-    if (stream.element) {
-      stream.element.textContent = newContent
-    }
-    
-    // Auto-scroll to bottom
-    this.scrollToBottom()
+  private doAppendChunk(streamId: string, chunk: string): Promise<void> {
+    return new Promise((resolve) => {
+      let stream = this.streamingMessages.get(streamId)
+      
+      if (!stream) {
+        // First chunk - create streaming message
+        this.startStreamingMessage(streamId)
+        stream = this.streamingMessages.get(streamId)
+        if (!stream) {
+          console.error("Failed to create streaming message for", streamId)
+          resolve()
+          return
+        }
+      }
+
+      // 累加新内容并明确写回 Map
+      const newContent = stream.content + chunk
+      const updatedStream = {
+        element: stream.element,
+        content: newContent
+      }
+      this.streamingMessages.set(streamId, updatedStream)
+      
+      // 更新 DOM 显示
+      if (updatedStream.element) {
+        updatedStream.element.textContent = newContent
+      }
+      
+      // Auto-scroll to bottom
+      this.scrollToBottom()
+      
+      resolve()
+    })
   }
 
   private finishStreamingMessage(streamId: string): void {
     const stream = this.streamingMessages.get(streamId)
     
     if (stream) {
-      // Message complete, clean up
-      this.streamingMessages.delete(streamId)
-      this.scrollToBottom()
+      // 等待所有更新完成后再清理
+      const pendingUpdate = this.updateQueue.get(streamId) || Promise.resolve()
+      pendingUpdate.then(() => {
+        // Message complete, clean up
+        this.streamingMessages.delete(streamId)
+        this.updateQueue.delete(streamId)
+        this.scrollToBottom()
+      })
     }
   }
 
