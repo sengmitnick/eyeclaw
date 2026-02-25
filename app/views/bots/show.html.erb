@@ -173,19 +173,31 @@
           <!-- Connection Command -->
           <div>
             <label class="form-label">快速开始</label>
-            <div class="card p-4 bg-surface-elevated">
-              <p class="text-sm text-secondary mb-3">
-                告诉 OpenClaw：「<span class="font-mono text-primary">帮我安装 skill: <%= skill_bot_url(@bot) %></span>」
-              </p>
-              <p class="text-xs text-muted">
-                OpenClaw 会自动读取 SKILL.md 并执行安装命令
-              </p>
+            <div class="card p-4 bg-surface-elevated" data-controller="clipboard">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex-1">
+                  <p class="text-sm text-secondary mb-3">
+                    告诉 OpenClaw：「<span class="font-mono text-primary">帮我安装 skill: <%= skill_bot_url(@bot) %></span>」
+                  </p>
+                  <p class="text-xs text-muted">
+                    OpenClaw 会自动读取 SKILL.md 并执行安装命令
+                  </p>
+                </div>
+                <button 
+                  data-action="click->clipboard#copy" 
+                  class="btn-ghost btn-sm flex items-center gap-1.5 shrink-0"
+                  title="复制命令">
+                  <%= lucide_icon "copy", class: "w-4 h-4" %>
+                  <span>复制</span>
+                </button>
+              </div>
+              <input 
+                type="hidden" 
+                data-clipboard-target="source" 
+                value="帮我安装 skill: <%= skill_bot_url(@bot) %>">
             </div>
             <div class="flex items-center gap-3 mt-3">
-              <a href="<%= skill_bot_path(@bot) %>" target="_blank" class="btn-outline btn-sm whitespace-nowrap">
-                <%= lucide_icon "external-link", class: "w-4 h-4" %>
-                查看 SKILL.md
-              </a>
+              
             </div>
           </div>
         </div>

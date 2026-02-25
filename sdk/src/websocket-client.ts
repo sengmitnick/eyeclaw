@@ -104,9 +104,9 @@ export class EyeClawWebSocketClient {
         return
       }
 
-      // Ping/pong (协议级别的 ping，直接响应 pong)
+      // Ping/pong (WebSocket 协议级别的 ping 由浏览器自动响应，无需手动处理)
       if (message.type === 'ping') {
-        this.send({ type: 'pong' })
+        this.api.logger.debug('[EyeClaw] Received protocol-level ping (auto-handled by WebSocket)')
         return
       }
       
@@ -351,7 +351,7 @@ export class EyeClawWebSocketClient {
    */
   private startPing() {
     this.pingInterval = setInterval(() => {
-      // 调用 Rails BotChannel 的 ping action
+      // 调用 Rails BotChannel 的 ping 方法（使用 ActionCable 标准协议）
       const channelIdentifier = JSON.stringify({
         channel: 'BotChannel',
         bot_id: this.config.botId,
@@ -362,6 +362,7 @@ export class EyeClawWebSocketClient {
         identifier: channelIdentifier,
         data: JSON.stringify({
           action: 'ping',
+          timestamp: new Date().toISOString(),
         }),
       })
     }, 60000) // 60秒心跳一次
