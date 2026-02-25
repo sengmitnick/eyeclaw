@@ -246,7 +246,7 @@ export default class extends Controller {
     messageEl.className = "flex justify-start"
     messageEl.innerHTML = `
       <div class="max-w-[70%] bg-surface-elevated text-primary rounded-lg px-4 py-2">
-        <div class="text-sm streaming-content"></div>
+        <pre class="text-sm whitespace-pre-wrap font-sans streaming-content"></pre>
         <div class="text-xs opacity-70 mt-1">${this.getCurrentTime()}</div>
       </div>
     `
@@ -265,9 +265,13 @@ export default class extends Controller {
       stream = this.streamingMessages.get(streamId)!
     }
 
-    stream.content += chunk
-    // Use innerHTML and preserve line breaks
-    stream.element.innerHTML = this.formatMessage(stream.content)
+    // 直接更新 content 属性并立即同步到 Map
+    const newContent = stream.content + chunk
+    stream.content = newContent
+    this.streamingMessages.set(streamId, stream)
+    
+    // Use textContent to preserve original formatting without parsing
+    stream.element.textContent = newContent
     
     // Auto-scroll to bottom
     this.scrollToBottom()
