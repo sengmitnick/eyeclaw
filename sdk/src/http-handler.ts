@@ -181,28 +181,24 @@ export function createHttpHandler(api: OpenClawPluginApi, getConfig: () => EyeCl
  */
 export const eyeclawConfigSchema = {
   safeParse: (value: unknown) => {
+    // 允许空配置
     if (!value || typeof value !== 'object') {
-      return { success: false, errors: ['Expected config object'] }
+      return { success: true, data: {} }
     }
-    const cfg = value as any
-    if (!cfg.sdkToken) {
-      return { success: false, errors: ['sdkToken is required'] }
-    }
-    if (!cfg.botId) {
-      return { success: false, errors: ['botId is required'] }
-    }
-    if (!cfg.serverUrl) {
-      return { success: false, errors: ['serverUrl is required'] }
-    }
-    return { success: true, data: cfg }
+    return { success: true, data: value }
   },
   jsonSchema: {
     type: 'object',
     properties: {
       sdkToken: { type: 'string', description: 'EyeClaw SDK Token' },
-      botId: { type: 'string', description: 'Bot ID in EyeClaw Rails app' },
+      botId: { 
+        oneOf: [
+          { type: 'string' },
+          { type: 'number' }
+        ],
+        description: 'Bot ID in EyeClaw Rails app' 
+      },
       serverUrl: { type: 'string', description: 'EyeClaw Rails server URL' },
     },
-    required: ['sdkToken', 'botId', 'serverUrl'],
   },
 }

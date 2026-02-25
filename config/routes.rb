@@ -66,6 +66,10 @@ Rails.application.routes.draw do
 
   # API routes
   namespace :api do
+    # Rokid Cloudflare Worker API endpoints
+    post 'rokid/trigger', to: 'rokid#trigger'
+    get 'rokid/poll', to: 'rokid#poll'
+    
     namespace :v1 do
       # API authentication routes
       post 'login', to: 'sessions#login'

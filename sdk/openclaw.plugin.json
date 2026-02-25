@@ -8,14 +8,16 @@
         "description": "SDK token for authentication"
       },
       "botId": {
-        "type": "string",
+        "oneOf": [
+          { "type": "string" },
+          { "type": "number" }
+        ],
         "description": "Bot ID in EyeClaw Rails app"
       },
       "serverUrl": {
         "type": "string",
         "description": "EyeClaw Rails server URL (e.g., http://localhost:3000)"
       }
-    },
-    "required": ["sdkToken", "botId", "serverUrl"]
+    }
   }
 }

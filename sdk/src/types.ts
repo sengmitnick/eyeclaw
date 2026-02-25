@@ -20,3 +20,18 @@ export interface BotStatus {
   total_sessions: number
   uptime: number
 }
+
+export interface WebSocketMessage {
+  type: string
+  command?: string
+  params?: {
+    message?: string
+    [key: string]: any
+  }
+  metadata?: {
+    session_id?: string
+    source?: string
+    [key: string]: any
+  }
+  [key: string]: any
+}

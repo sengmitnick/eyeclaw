@@ -20,15 +20,17 @@ export class EyeClawWebSocketClient {
   private ws: WebSocket | null = null
   private api: OpenClawPluginApi
   private config: EyeClawConfig
+  private getState: () => any
   private reconnectAttempts = 0
   private maxReconnectAttempts = 5
   private reconnectDelay = 3000
   private subscribed = false
   private pingInterval: any = null
 
-  constructor(api: OpenClawPluginApi, config: EyeClawConfig) {
+  constructor(api: OpenClawPluginApi, config: EyeClawConfig, getState: () => any) {
     this.api = api
     this.config = config
+    this.getState = getState
   }
 
   /**
@@ -101,9 +103,15 @@ export class EyeClawWebSocketClient {
         return
       }
 
-      // Ping/pong
+      // Ping/pong (协议级别的 ping，直接响应 pong)
       if (message.type === 'ping') {
         this.send({ type: 'pong' })
+        return
+      }
+      
+      // 处理 Rails BotChannel 的 pong 响应
+      if (message.type === 'pong') {
+        this.api.logger.debug('[EyeClaw] Received pong from server')
         return
       }
 
@@ -153,53 +161,64 @@ export class EyeClawWebSocketClient {
    * 处理命令消息
    */
   private async handleCommand(payload: WebSocketMessage) {
-    const { type, message: text, session_id, command } = payload
+    const { type, params, metadata, command } = payload
 
     // 只处理 execute_command 类型的消息
     if (type !== 'execute_command' && type !== 'chat') {
       return
     }
-
-    const userMessage = text || command
+    
+    // 从 params.message 或 command 提取用户消息
+    const userMessage = params?.message || command
     if (!userMessage) {
       this.api.logger.warn('[EyeClaw] No message content')
       return
     }
-
+    
+    // 从 metadata 提取 session_id
+    const sessionId = metadata?.session_id
+    
     this.api.logger.info(`[EyeClaw] Processing: ${userMessage.substring(0, 50)}...`)
+    this.api.logger.info(`[EyeClaw] Session ID: ${sessionId}`)
 
     // 通过 OpenClaw API 处理消息，获取流式响应
-    await this.processWithOpenClaw(userMessage, session_id)
+    await this.processWithOpenClaw(userMessage, sessionId)
   }
 
   /**
    * 使用 OpenClaw API 处理消息（流式）
+   * 调用自己的 HTTP 端点 /eyeclaw/chat
    */
   private async processWithOpenClaw(message: string, sessionId?: string) {
-    const gatewayPort = this.api.config?.gateway?.port ?? 18789
-    const gatewayToken = this.api.config?.gateway?.auth?.token
-
-    const openclawUrl = `http://127.0.0.1:${gatewayPort}/v1/chat/completions`
-    const openclawBody = {
-      model: 'openclaw:main',
-      stream: true,
-      messages: [{ role: 'user', content: message }],
-      user: sessionId ? `eyeclaw:${sessionId}` : 'eyeclaw:ws',
+    const state = this.getState()
+    const gatewayPort = state.gatewayPort
+    const eyeclawUrl = `http://127.0.0.1:${gatewayPort}/eyeclaw/chat`
+    
+    const requestBody = {
+      message,
+      session_id: sessionId,
     }
 
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-    if (gatewayToken) headers['Authorization'] = `Bearer ${gatewayToken}`
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.config.sdkToken}`,
+    }
+
+    this.api.logger.info(`[EyeClaw] Calling own HTTP endpoint: ${eyeclawUrl}`)
 
     try {
-      const response = await fetch(openclawUrl, {
+      const response = await fetch(eyeclawUrl, {
         method: 'POST',
         headers,
-        body: JSON.stringify(openclawBody),
+        body: JSON.stringify(requestBody),
       })
+
+      this.api.logger.info(`[EyeClaw] HTTP response status: ${response.status}`)
 
       if (!response.ok) {
         const errorText = await response.text()
-        throw new Error(`OpenClaw API error: ${response.status} - ${errorText}`)
+        this.api.logger.error(`[EyeClaw] HTTP error: status=${response.status}, body=${errorText}`)
+        throw new Error(`HTTP error: ${response.status} - ${errorText}`)
       }
 
       const reader = response.body?.getReader()
@@ -207,11 +226,16 @@ export class EyeClawWebSocketClient {
 
       const decoder = new TextDecoder()
       let buffer = ''
+      let currentEvent = ''
 
-      // 发送流式响应回 Rails
+      // 解析 SSE 流式响应
       while (true) {
         const { done, value } = await reader.read()
-        if (done) break
+        if (done) {
+          // 流结束，通知 Rails
+          this.sendMessage('stream_end', { session_id: sessionId })
+          break
+        }
 
         buffer += decoder.decode(value, { stream: true })
         const lines = buffer.split('\n')
@@ -219,22 +243,53 @@ export class EyeClawWebSocketClient {
 
         for (const line of lines) {
           const trimmed = line.trim()
-          if (!trimmed.startsWith('data: ')) continue
-          const data = trimmed.slice(6)
-          if (data === '[DONE]') continue
-
-          try {
-            const chunk = JSON.parse(data)
-            const content = chunk.choices?.[0]?.delta?.content
-            if (content) {
-              this.sendChunk(content, sessionId)
+          
+          // 跳过空行和注释
+          if (!trimmed || trimmed.startsWith(':')) {
+            // 空行表示事件结束，重置 currentEvent
+            if (!trimmed) {
+              currentEvent = ''
             }
-          } catch { /* ignore */ }
+            continue
+          }
+          
+          // 解析 SSE 事件类型
+          if (trimmed.startsWith('event: ')) {
+            currentEvent = trimmed.slice(7).trim()
+            continue
+          }
+          
+          // 解析 SSE 数据
+          if (trimmed.startsWith('data: ')) {
+            const data = trimmed.slice(6)
+            
+            try {
+              const eventData = JSON.parse(data)
+              
+              // stream_chunk 事件：发送内容
+              if (currentEvent === 'stream_chunk' && eventData.content) {
+                this.sendChunk(eventData.content, sessionId)
+              }
+              
+              // stream_end 事件：流结束（由 HTTP handler 发送）
+              if (currentEvent === 'stream_end') {
+                this.api.logger.info(`[EyeClaw] Stream ended: ${eventData.stream_id}`)
+                // 通知 Rails 流已结束
+                this.sendMessage('stream_end', { session_id: sessionId })
+              }
+              
+              // stream_error 事件：错误
+              if (currentEvent === 'stream_error') {
+                this.api.logger.error(`[EyeClaw] Stream error: ${eventData.error}`)
+              }
+            } catch (e) {
+              this.api.logger.warn(`[EyeClaw] Failed to parse SSE data: ${data}`)
+            }
+          }
         }
       }
 
-      // 发送完成信号
-      this.sendMessage('stream_end', { session_id: sessionId })
+      this.api.logger.info(`[EyeClaw] Stream processing completed for session: ${sessionId}`)
 
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error)
@@ -255,8 +310,7 @@ export class EyeClawWebSocketClient {
    * 发送流式内容块到 Rails
    */
   private sendChunk(content: string, sessionId?: string) {
-    this.send({
-      type: 'stream_chunk',
+    this.sendMessage('stream_chunk', {
       content,
       session_id: sessionId,
     })
@@ -274,7 +328,7 @@ export class EyeClawWebSocketClient {
     this.send({
       command: 'message',
       identifier: channelIdentifier,
-      data: { type, ...data },
+      data: JSON.stringify({ type, ...data }),
     })
   }
 
@@ -283,8 +337,20 @@ export class EyeClawWebSocketClient {
    */
   private startPing() {
     this.pingInterval = setInterval(() => {
-      this.send({ type: 'ping' })
-    }, 30000)
+      // 调用 Rails BotChannel 的 ping action
+      const channelIdentifier = JSON.stringify({
+        channel: 'BotChannel',
+        bot_id: this.config.botId,
+      })
+      
+      this.send({
+        command: 'message',
+        identifier: channelIdentifier,
+        data: JSON.stringify({
+          action: 'ping',
+        }),
+      })
+    }, 60000) // 60秒心跳一次
   }
 
   /**

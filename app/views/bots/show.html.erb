@@ -208,10 +208,12 @@
                 openclaw plugins install @eyeclaw/eyeclaw<br>
                 <br>
                 # Configure<br>
-                openclaw config set channels.eyeclaw.enabled true<br>
-                openclaw config set channels.eyeclaw.botId "<%= @bot.id %>"<br>
-                openclaw config set channels.eyeclaw.sdkToken "<%= @bot.sdk_token %>"<br>
-                openclaw config set channels.eyeclaw.serverUrl "<%= request.base_url %>"<br>
+                openclaw config set plugins.entries.eyeclaw.config.sdkToken "<%= @bot.sdk_token %>"<br>
+                openclaw config set plugins.entries.eyeclaw.config.botId "<%= @bot.id %>"<br>
+                openclaw config set plugins.entries.eyeclaw.config.serverUrl "<%= request.base_url %>"<br>
+                <br>
+                # Enable Gateway chat completions endpoint<br>
+                openclaw config set gateway.http.endpoints.chatCompletions.enabled true<br>
                 <br>
                 # Restart gateway<br>
                 openclaw gateway restart<br>

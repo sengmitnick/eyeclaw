@@ -138,17 +138,87 @@ class BotChannel < ApplicationCable::Channel
 
   # Handle streaming chunks from OpenClaw Agent
   def stream_chunk(data)
-    # Broadcast streaming chunks to dashboard clients
+    content = data['content'] || data['chunk']
+    session_id = data['session_id']
+    
+    Rails.logger.info "[BotChannel] Received stream_chunk for session #{session_id}: #{content&.[](0..50)}..."
+    
+    # Broadcast streaming chunks to Rokid SSE clients
+    ActionCable.server.broadcast(
+      "rokid_sse_#{@bot.id}_#{session_id}",
+      {
+        type: 'stream_chunk',
+        content: content,
+        session_id: session_id,
+        timestamp: Time.current.iso8601
+      }
+    )
+    
+    # Also broadcast to dashboard clients
     ActionCable.server.broadcast(
       @stream_name,
       {
         type: 'stream_chunk',
-        stream_type: data['type'], # stream_start, stream_chunk, stream_end, stream_error
-        stream_id: data['stream_id'],
-        chunk: data['chunk'],
-        timestamp: data['timestamp'] || Time.current.iso8601
+        content: content,
+        session_id: session_id,
+        timestamp: Time.current.iso8601
       }
     )
+  end
+  
+  # Handle stream end
+  def stream_end(data)
+    session_id = data['session_id']
+    
+    Rails.logger.info "[BotChannel] Stream ended for session #{session_id}"
+    
+    # Broadcast to Rokid SSE clients
+    ActionCable.server.broadcast(
+      "rokid_sse_#{@bot.id}_#{session_id}",
+      {
+        type: 'stream_end',
+        session_id: session_id,
+        timestamp: Time.current.iso8601
+      }
+    )
+  end
+  
+  # Handle stream error
+  def stream_error(data)
+    session_id = data['session_id']
+    error = data['error']
+    
+    Rails.logger.error "[BotChannel] Stream error for session #{session_id}: #{error}"
+    
+    # Broadcast to Rokid SSE clients
+    ActionCable.server.broadcast(
+      "rokid_sse_#{@bot.id}_#{session_id}",
+      {
+        type: 'stream_error',
+        error: error,
+        session_id: session_id,
+        timestamp: Time.current.iso8601
+      }
+    )
+  end
+
+  # Route incoming messages based on type
+  def receive(data)
+    Rails.logger.info "[BotChannel] receive called with data: #{data.inspect[0..200]}"
+    
+    case data['type']
+    when 'stream_chunk'
+      stream_chunk(data)
+    when 'stream_end'
+      stream_end(data)
+    when 'stream_error'
+      stream_error(data)
+    when 'pong'
+      # Client pong response, can be ignored or logged
+      Rails.logger.debug "[BotChannel] Received pong from client"
+    else
+      Rails.logger.warn "[BotChannel] Unknown message type: #{data['type']}"
+    end
   end
 
   private

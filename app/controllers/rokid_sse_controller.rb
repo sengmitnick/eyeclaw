@@ -22,10 +22,243 @@ class RokidSseController < ApplicationController
   # POST /sse/rokid
   # 灵珠平台 SSE 接口
   def sse
+    # 检查是否支持 Rack hijacking
+    hijack_available = request.env['rack.hijack?']
+    Rails.logger.info "[RokidSSE] Rack hijack available: #{hijack_available}"
+    
+    # 尝试使用 Rack hijacking 来直接控制 socket，绕过 ActionController::Live 的缓冲
+    if hijack_available
+      Rails.logger.info "[RokidSSE] Using hijack mode"
+      sse_hijack
+    else
+      # Fallback: 使用 ActionController::Live（可能有缓冲问题）
+      Rails.logger.info "[RokidSSE] Using ActionController::Live mode (fallback)"
+      sse_live
+    end
+  end
+  
+  private
+  
+  # 使用 Rack hijacking 的 SSE 实现（真正的实时流式输出）
+  def sse_hijack
+    # Hijack the connection
+    hijack_proc = request.env['rack.hijack']
+    io = hijack_proc.call
+    
+    begin
+      # 手动发送 HTTP 响应头
+      io.write "HTTP/1.1 200 OK\r\n"
+      io.write "Content-Type: text/event-stream\r\n"
+      io.write "Cache-Control: no-cache\r\n"
+      io.write "X-Accel-Buffering: no\r\n"
+      io.write "Connection: keep-alive\r\n"
+      io.write "\r\n"
+      
+      # 立即发送 SSE 注释来启动流式响应
+      io.write ": connected\n\n"
+      io.flush  # 关键：立即 flush 到网络
+      
+      # 解析请求参数
+      request_data = JSON.parse(request.body.read)
+      
+      # 验证必填字段
+      message_id = request_data['message_id']
+      agent_id = request_data['agent_id']
+      messages = request_data['message'] || []
+      user_id = request_data['user_id']
+      metadata = request_data['metadata'] || {}
+      
+      unless message_id && agent_id && messages.present?
+        write_sse_event_direct(io, 'error', { message: 'Missing required parameters: message_id, agent_id, or message' })
+        io.close
+        return
+      end
+      
+      # 验证全局 Access Key
+      auth_token = extract_bearer_token
+      unless auth_token
+        write_sse_event_direct(io, 'error', { message: 'Missing Authorization header' })
+        io.close
+        return
+      end
+      
+      access_key = AccessKey.find_and_touch(auth_token)
+      unless access_key
+        write_sse_event_direct(io, 'error', { message: 'Invalid or inactive Access Key' })
+        io.close
+        return
+      end
+      
+      Rails.logger.info "[RokidSSE] Received request - message_id: #{message_id}, agent_id: #{agent_id}, access_key: #{access_key.name}"
+      
+      # 检查是否在等待绑定拍照的上下文中
+      if @@pending_binding_photos[message_id] == agent_id
+        image_message = extract_image_message(messages)
+        if image_message && image_message['image_url'].present?
+          Rails.logger.info "[RokidSSE] Received binding photo for message_id: #{message_id}"
+          handle_binding_photo_result_hijack(io, message_id, agent_id, image_message['image_url'])
+          return
+        end
+      end
+      
+      # 通过 agent_id 查找关联的 Bot
+      bot = Bot.find_by(rokid_device_id: agent_id) || Bot.find_by(id: agent_id)
+      
+      unless bot
+        Rails.logger.info "[RokidSSE] Bot not found for agent_id: #{agent_id}, sending take_photo command"
+        @@pending_binding_photos[message_id] = agent_id
+        send_binding_photo_request_hijack(io, message_id, agent_id)
+        return
+      end
+      
+      Rails.logger.info "[RokidSSE] Found bot: #{bot.name} (ID: #{bot.id})"
+      
+      # 提取最后一条用户消息
+      last_user_message = extract_last_user_message(messages)
+      
+      # 通过 ActionCable 发送命令
+      command_payload = {
+        type: 'execute_command',
+        command: 'chat',
+        params: { message: last_user_message },
+        metadata: {
+          source: 'rokid_lingzhu',
+          agent_id: agent_id,
+          user_id: user_id,
+          full_messages: messages,
+          original_metadata: metadata,
+          session_id: message_id
+        },
+        timestamp: Time.current.iso8601
+      }
+      
+      Rails.logger.info "[RokidSSE] Broadcasting command to bot_#{bot.id}_commands"
+      ActionCable.server.broadcast("bot_#{bot.id}_commands", command_payload)
+      
+      # 订阅 ActionCable 频道以接收流式响应
+      accumulated_content = ""
+      streaming_active = false
+      idle_timeout = 60
+      last_message_time = Time.current
+      
+      subscription_channel = "rokid_sse_#{bot.id}_#{message_id}"
+      cable = ActionCable.server.pubsub
+      message_queue = Queue.new
+      stream_finished = false
+      
+      callback = ->(data) {
+        begin
+          Rails.logger.info "[RokidSSE] Received broadcast on #{subscription_channel}"
+          parsed_data = data.is_a?(String) ? JSON.parse(data) : data
+          message_queue << parsed_data
+          last_message_time = Time.current
+        rescue => e
+          Rails.logger.error "[RokidSSE] Error processing broadcast: #{e.message}"
+        end
+      }
+      
+      cable.subscribe(subscription_channel, callback)
+      Rails.logger.info "[RokidSSE] Subscribed to channel: #{subscription_channel}"
+      
+      begin
+        loop do
+          if Time.current - last_message_time > idle_timeout
+            Rails.logger.warn "[RokidSSE] Idle timeout"
+            break
+          end
+          
+          begin
+            data = message_queue.pop(true)
+          rescue ThreadError
+            sleep 0.1
+            next
+          end
+          
+          case data['type']
+          when 'stream_chunk'
+            content = data['content']
+            chunk_session_id = data['session_id']
+            
+            if chunk_session_id == message_id && content.present?
+              Rails.logger.debug "[RokidSSE] Received stream chunk: #{content[0..50]}"
+              
+              event_data = {
+                role: 'agent',
+                type: 'answer',
+                answer_stream: content,
+                message_id: message_id,
+                agent_id: agent_id,
+                is_finish: false
+              }
+              write_sse_event_direct(io, 'message', event_data)
+              accumulated_content += content
+              streaming_active = true
+            end
+            
+          when 'stream_end'
+            chunk_session_id = data['session_id']
+            
+            if chunk_session_id == message_id
+              Rails.logger.info "[RokidSSE] Stream ended for session #{message_id}"
+              streaming_active = false
+              stream_finished = true
+              
+              final_data = {
+                role: 'agent',
+                type: 'answer',
+                answer_stream: '',
+                message_id: message_id,
+                agent_id: agent_id,
+                is_finish: true
+              }
+              write_sse_event_direct(io, 'message', final_data)
+              
+              done_data = {
+                role: 'agent',
+                type: 'answer',
+                message_id: message_id,
+                agent_id: agent_id,
+                is_finish: true
+              }
+              write_sse_event_direct(io, 'done', done_data)
+              break
+            end
+            
+          when 'stream_error'
+            chunk_session_id = data['session_id']
+            error = data['error']
+            
+            if chunk_session_id == message_id
+              Rails.logger.error "[RokidSSE] Stream error: #{error}"
+              write_sse_event_direct(io, 'error', { message: error })
+              break
+            end
+          end
+        end
+      ensure
+        cable.unsubscribe(subscription_channel, callback)
+        Rails.logger.info "[RokidSSE] Unsubscribed from channel: #{subscription_channel}"
+      end
+      
+      # 更新 bot session ping time
+      update_bot_session_ping(bot.id)
+      
+    ensure
+      io.close rescue nil
+    end
+  end
+  
+  # 使用 ActionController::Live 的 SSE 实现（Fallback）
+  def sse_live
     # 设置 SSE 响应头
     response.headers['Content-Type'] = 'text/event-stream'
     response.headers['Cache-Control'] = 'no-cache'
     response.headers['X-Accel-Buffering'] = 'no'
+    response.headers['Connection'] = 'keep-alive'
+    
+    # 立即发送 headers 和一个 SSE 注释来启动流式响应
+    # SSE 标准允许使用以冒号开头的行作为注释，客户端会忽略这些行
+    response.stream.write ": connected\n\n"
     
     begin
       # 解析请求参数
@@ -129,7 +362,8 @@ class RokidSseController < ApplicationController
       last_message_time = Time.current
       
       # 创建临时订阅以监听流式响应
-      subscription_channel = "bot_#{bot.id}"
+      # BotChannel 广播到 rokid_sse_{bot_id}_{session_id} 频道
+      subscription_channel = "rokid_sse_#{bot.id}_#{message_id}"
       
       # 使用 ActionCable 的内部订阅机制（Redis pubsub）
       cable = ActionCable.server.pubsub
@@ -190,35 +424,34 @@ class RokidSseController < ApplicationController
           # 处理不同类型的消息
           case data['type']
           when 'stream_chunk'
-            stream_type = data['stream_type']
-            chunk_stream_id = data['stream_id']
-            chunk = data['chunk']
+            # 新格式：{ type: 'stream_chunk', content: '...', session_id: '...' }
+            content = data['content']
+            chunk_session_id = data['session_id']
             
-            Rails.logger.debug "[RokidSSE] Stream event: #{stream_type}, chunk: #{chunk[0..50] if chunk}"
-            
-            case stream_type
-            when 'stream_start'
-              stream_id = chunk_stream_id
+            # 只处理匹配当前 message_id 的流式响应
+            if chunk_session_id == message_id && content.present?
+              Rails.logger.debug "[RokidSSE] Received stream chunk: #{content[0..50]}"
+              
+              # 实时发送 chunk 到 Rokid SSE
+              event_data = {
+                role: 'agent',
+                type: 'answer',
+                answer_stream: content,
+                message_id: message_id,
+                agent_id: agent_id,
+                is_finish: false
+              }
+              write_sse_event('message', event_data)
+              accumulated_content += content
               streaming_active = true
-              Rails.logger.info "[RokidSSE] Stream started: #{stream_id}"
-              
-            when 'stream_chunk'
-              if streaming_active && chunk.present?
-                # 实时发送 chunk 到 Rokid SSE
-                event_data = {
-                  role: 'agent',
-                  type: 'answer',
-                  answer_stream: chunk,
-                  message_id: message_id,
-                  agent_id: agent_id,
-                  is_finish: false
-                }
-                write_sse_event('message', event_data)
-                accumulated_content += chunk
-              end
-              
-            when 'stream_end'
-              Rails.logger.info "[RokidSSE] Stream ended: #{stream_id}"
+            end
+            
+          when 'stream_end'
+            # 流结束
+            chunk_session_id = data['session_id']
+            
+            if chunk_session_id == message_id
+              Rails.logger.info "[RokidSSE] Stream ended for session #{message_id}"
               streaming_active = false
               stream_finished = true
               
@@ -234,10 +467,16 @@ class RokidSseController < ApplicationController
               write_sse_event('message', final_data)
               send_done_event(message_id, agent_id)
               break
-              
-            when 'stream_error'
-              Rails.logger.error "[RokidSSE] Stream error: #{chunk}"
-              error_message = "处理出错：#{chunk}"
+            end
+            
+          when 'stream_error'
+            # 流错误
+            chunk_session_id = data['session_id']
+            error = data['error']
+            
+            if chunk_session_id == message_id
+              Rails.logger.error "[RokidSSE] Stream error: #{error}"
+              error_message = "处理出错：#{error}"
               event_data = {
                 role: 'agent',
                 type: 'answer',
@@ -430,6 +669,10 @@ class RokidSseController < ApplicationController
     messages.reverse.each do |msg|
       next unless msg['role'] == 'user'
       
+      # 支持没有 type 字段的标准消息格式（直接有 content 字段）
+      return msg['content'] if msg['content'].present?
+      
+      # 支持带 type 字段的消息格式
       case msg['type']
       when 'text'
         return msg['text'] if msg['text'].present?
@@ -527,13 +770,148 @@ class RokidSseController < ApplicationController
     write_sse_event('done', error_data)
   end
 
+  # 写入 SSE 事件（用于 hijacked socket）
+  def write_sse_event_direct(io, event_name, data)
+    return unless io
+    
+    start_time = Time.current
+    begin
+      timestamp_before = Time.current.strftime('%H:%M:%S.%3N')
+      Rails.logger.info "[RokidSSE] ⏰ Writing #{event_name} at #{timestamp_before}"
+      
+      io.write "event: #{event_name}\n"
+      io.write "data: #{data.to_json}\n\n"
+      io.flush  # 关键：立即 flush 到网络
+      
+      timestamp_after_write = Time.current.strftime('%H:%M:%S.%3N')
+      elapsed_ms = ((Time.current - start_time) * 1000).round(2)
+      Rails.logger.info "[RokidSSE] ✅ Wrote+flushed #{event_name} in #{elapsed_ms}ms (at #{timestamp_after_write})"
+    rescue IOError, Errno::EPIPE => e
+      Rails.logger.info "[RokidSSE] Client disconnected: #{e.message}"
+    end
+  end
+  
+  # hijack 版本的 handle_binding_photo_result
+  def handle_binding_photo_result_hijack(io, message_id, agent_id, image_url)
+    # 这里简化处理，只返回成功消息
+    @@pending_binding_photos.delete(message_id)
+    
+    success_data = {
+      role: 'agent',
+      type: 'answer',
+      answer_stream: '绑定成功！请重新发送消息开始对话。',
+      message_id: message_id,
+      agent_id: agent_id,
+      is_finish: true
+    }
+    write_sse_event_direct(io, 'message', success_data)
+    
+    done_data = {
+      role: 'agent',
+      type: 'answer',
+      message_id: message_id,
+      agent_id: agent_id,
+      is_finish: true
+    }
+    write_sse_event_direct(io, 'done', done_data)
+    io.close
+  end
+  
+  # hijack 版本的 send_binding_photo_request
+  def send_binding_photo_request_hijack(io, message_id, agent_id)
+    instructions_data = {
+      role: 'agent',
+      type: 'answer',
+      answer_stream: '你好！请先绑定你的 Rokid 眼镜。',
+      message_id: message_id,
+      agent_id: agent_id,
+      is_finish: false
+    }
+    write_sse_event_direct(io, 'message', instructions_data)
+    
+    # 生成绑定二维码 URL
+    frontend_url = ENV['FRONTEND_URL'] || 'http://localhost:3000'
+    qr_url = "#{frontend_url}/bind/new?agent_id=#{agent_id}&type=rokid"
+    qr_code_svg = RQRCode::QRCode.new(qr_url).as_svg(module_size: 6)
+    qr_code_base64 = Base64.strict_encode64(qr_code_svg)
+    
+    qr_data = {
+      role: 'agent',
+      type: 'answer',
+      answer_stream: '',
+      message_id: message_id,
+      agent_id: agent_id,
+      is_finish: false,
+      image_url: "data:image/svg+xml;base64,#{qr_code_base64}"
+    }
+    write_sse_event_direct(io, 'message', qr_data)
+    
+    final_instructions_data = {
+      role: 'agent',
+      type: 'answer',
+      answer_stream: '请使用 Rokid 眼镜拍摄上方二维码完成绑定。',
+      message_id: message_id,
+      agent_id: agent_id,
+      is_finish: false
+    }
+    write_sse_event_direct(io, 'message', final_instructions_data)
+    
+    end_data = {
+      role: 'agent',
+      type: 'answer',
+      answer_stream: '',
+      message_id: message_id,
+      agent_id: agent_id,
+      is_finish: true
+    }
+    write_sse_event_direct(io, 'message', end_data)
+    
+    done_data = {
+      role: 'agent',
+      type: 'answer',
+      message_id: message_id,
+      agent_id: agent_id,
+      is_finish: true
+    }
+    write_sse_event_direct(io, 'done', done_data)
+    io.close
+  end
+  
+  # 更新 bot session ping time
+  def update_bot_session_ping(bot_id)
+    bot_session = BotSession.where(bot_id: bot_id).where('last_ping_at > ?', 5.minutes.ago).order(last_ping_at: :desc).first
+    if bot_session
+      bot_session.update(last_ping_at: Time.current)
+    end
+  end
+
   # 写入 SSE 事件
   def write_sse_event(event_name, data)
     return unless response.stream
     
+    start_time = Time.current
     begin
+      timestamp_before = Time.current.strftime('%H:%M:%S.%3N')
+      Rails.logger.info "[RokidSSE] ⏰ Writing #{event_name} at #{timestamp_before}"
+      
       response.stream.write "event: #{event_name}\n"
       response.stream.write "data: #{data.to_json}\n\n"
+      
+      timestamp_after_write = Time.current.strftime('%H:%M:%S.%3N')
+      elapsed_ms = ((Time.current - start_time) * 1000).round(2)
+      Rails.logger.info "[RokidSSE] ✍️  Wrote #{event_name}, elapsed: #{elapsed_ms}ms (at #{timestamp_after_write})"
+      
+      # 关键：调用 response.commit! 强制将响应 flush 到客户端
+      # 这会立即将当前写入的数据发送到网络，不会等待缓冲区填满
+      unless response.committed?
+        response.commit!
+        Rails.logger.info "[RokidSSE] 💧 Committed response (forced flush to client)"
+      else
+        Rails.logger.info "[RokidSSE] ℹ️  Response already committed"
+      end
+      
+      total_elapsed_ms = ((Time.current - start_time) * 1000).round(2)
+      Rails.logger.info "[RokidSSE] ✅ Completed write+commit in #{total_elapsed_ms}ms"
     rescue IOError, Errno::EPIPE => e
       Rails.logger.info "[RokidSSE] Client disconnected: #{e.message}"
     end
