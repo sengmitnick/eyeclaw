@@ -172,36 +172,21 @@
 
           <!-- Connection Command -->
           <div>
-            <label class="form-label">Quick Start Command</label>
+            <label class="form-label">快速开始</label>
             <div class="card p-4 bg-surface-elevated">
-              <code class="text-sm font-mono text-secondary">
-                # Install the plugin<br>
-                openclaw plugins install @eyeclaw/eyeclaw<br>
-                <br>
-                # Configure<br>
-                openclaw config set plugins.entries.eyeclaw.config.sdkToken "<%= @bot.sdk_token %>"<br>
-                openclaw config set plugins.entries.eyeclaw.config.botId "<%= @bot.id %>"<br>
-                openclaw config set plugins.entries.eyeclaw.config.serverUrl "<%= request.base_url %>"<br>
-                <br>
-                # Enable Gateway chat completions endpoint<br>
-                openclaw config set gateway.http.endpoints.chatCompletions.enabled true<br>
-                <br>
-                # Restart gateway<br>
-                openclaw gateway restart<br>
-              </code>
+              <p class="text-sm text-secondary mb-3">
+                告诉 OpenClaw：「<span class="font-mono text-primary">帮我安装 skill: <%= skill_bot_url(@bot) %></span>」
+              </p>
+              <p class="text-xs text-muted">
+                OpenClaw 会自动读取 SKILL.md 并执行安装命令
+              </p>
             </div>
-            <p class="form-help mt-2">Copy and paste these commands to connect your local OpenClaw instance</p>
-          </div>
-
-          <!-- Plugin Update -->
-          <div>
-            <label class="form-label">Update Plugin</label>
-            <div class="card p-4 bg-surface-elevated">
-              <code class="text-sm font-mono text-secondary">
-                openclaw plugins update eyeclaw
-              </code>
+            <div class="flex items-center gap-3 mt-3">
+              <a href="<%= skill_bot_path(@bot) %>" target="_blank" class="btn-outline btn-sm whitespace-nowrap">
+                <%= lucide_icon "external-link", class: "w-4 h-4" %>
+                查看 SKILL.md
+              </a>
             </div>
-            <p class="form-help mt-2">Run this command to update the plugin to the latest version</p>
           </div>
         </div>
       </div>

@@ -1,0 +1,57 @@
+# EyeClaw Bot Integration
+---
+name: eyeclaw
+description: Connect and integrate EyeClaw bot with OpenClaw gateway for AI chat capabilities
+metadata: {"openclaw":{"emoji":"👁️","requires":{"plugins":["eyeclaw"],"config":["gateway.http.endpoints.chatCompletions.enabled"]},"install":[{"kind":"node","package":"@eyeclaw/eyeclaw"}]}}
+---
+
+## 插件安装
+
+当用户说「帮我安装 skill」或类似表达时，AI 应自动执行以下命令安装并配置插件：
+
+```bash
+# 安装插件
+openclaw plugins install @eyeclaw/eyeclaw
+
+# 配置 Bot 凭证
+openclaw config set plugins.entries.eyeclaw.config.sdkToken "<%= @bot.sdk_token %>"
+openclaw config set plugins.entries.eyeclaw.config.botId "<%= @bot.id %>"
+openclaw config set plugins.entries.eyeclaw.config.serverUrl "<%= @server_url %>"
+
+# 启用网关 chat completions 端点
+openclaw config set gateway.http.endpoints.chatCompletions.enabled true
+
+# 重启网关
+openclaw gateway restart
+```
+
+## 插件更新
+
+当用户说「更新 skill」或「更新插件」时，AI 应自动执行：
+
+```bash
+openclaw plugins update eyeclaw
+```
+
+## 插件卸载
+
+当用户说「卸载 skill」或「删除插件」时，AI 应自动执行：
+
+```bash
+openclaw plugins uninstall eyeclaw
+```
+
+## Bot 信息
+
+- **Bot Name**: <%= @bot.name %>
+- **Bot ID**: <%= @bot.id %>
+- **Server URL**: <%= @server_url %>
+
+## 故障排除
+
+如果连接失败：
+
+1. 确认 SDK Token 正确
+2. 检查服务器 URL 可访问
+3. 重启网关：`openclaw gateway restart`
+4. 查看 Bot 状态：<%= bot_url(@bot) %>

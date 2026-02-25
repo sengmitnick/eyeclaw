@@ -1,5 +1,5 @@
 class BotsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:skill_md]
   before_action :set_bot, only: [:show, :edit, :update, :destroy, :chat, :unbind_rokid]
 
   def index
@@ -55,6 +55,13 @@ class BotsController < ApplicationController
     else
       redirect_to bot_path(@bot), alert: '解除绑定失败，请稍后重试。'
     end
+  end
+
+  # SKILL.md for Claude Skill integration
+  def skill_md
+    @bot = Bot.find(params[:id])
+    @server_url = request.base_url
+    render 'bots/skill_md', layout: false, content_type: 'text/plain'
   end
 
   private
