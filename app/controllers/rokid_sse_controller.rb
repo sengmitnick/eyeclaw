@@ -90,8 +90,6 @@ class RokidSseController < ApplicationController
         return
       end
       
-      Rails.logger.info "[RokidSSE] Received request - message_id: #{message_id}, agent_id: #{agent_id}, access_key: #{access_key.name}"
-      
       # 检查是否在等待绑定拍照的上下文中
       if @@pending_binding_photos[message_id] == agent_id
         image_message = extract_image_message(messages)
@@ -104,6 +102,26 @@ class RokidSseController < ApplicationController
       
       # 通过 agent_id 查找关联的 Bot
       bot = Bot.find_by(rokid_device_id: agent_id) || Bot.find_by(id: agent_id)
+      
+      # 生成 trace_id 用于追踪（在 bot 查找之后）
+      trace_id = "trace_#{SecureRandom.hex(8)}"
+      
+      # 创建追踪记录（此时 bot 已找到）
+      stream_trace = StreamTrace.create!(
+        trace_id: trace_id,
+        message_id: message_id,
+        agent_id: agent_id,
+        bot_id: bot&.id,
+        status: 'active'
+      )
+      stream_trace.add_event(:request_received, {
+        message_id: message_id,
+        agent_id: agent_id,
+        bot_id: bot&.id,
+        access_key: access_key.name
+      })
+      
+      Rails.logger.info "[RokidSSE] Created trace #{trace_id} for message_id=#{message_id}"
       
       unless bot
         Rails.logger.info "[RokidSSE] Bot not found for agent_id: #{agent_id}, sending take_photo command"
@@ -146,7 +164,7 @@ class RokidSseController < ApplicationController
       # 提取最后一条用户消息
       last_user_message = extract_last_user_message(messages)
       
-      # 通过 ActionCable 发送命令
+      # 通过 ActionCable 发送命令（带上 trace_id）
       command_payload = {
         type: 'execute_command',
         command: 'chat',
@@ -158,12 +176,18 @@ class RokidSseController < ApplicationController
           full_messages: messages,
           original_metadata: metadata,
           session_id: message_id,
-          openclaw_session_id: metadata['openclaw_session_id'] || "bot_#{bot.id}"
+          openclaw_session_id: metadata['openclaw_session_id'] || "bot_#{bot.id}",
+          trace_id: trace_id  # 添加 trace_id 用于追踪
         },
         timestamp: Time.current.iso8601
       }
       
-      Rails.logger.info "[RokidSSE] Broadcasting command to bot_#{bot.id}_commands"
+      stream_trace.add_event(:command_broadcast, {
+        channel: "bot_#{bot.id}_commands",
+        timestamp: Time.current.iso8601
+      })
+      
+      Rails.logger.info "[RokidSSE] Broadcasting command to bot_#{bot.id}_commands (trace_id=#{trace_id})"
       ActionCable.server.broadcast("bot_#{bot.id}_commands", command_payload)
       
       # 订阅 ActionCable 频道以接收流式响应
@@ -236,6 +260,9 @@ class RokidSseController < ApplicationController
             sequence = data['sequence']  # SDK 发送的序号
             chunk_session_id = data['session_id']
             
+            # 记录 SDK 收到的 chunk
+            stream_trace.record_sdk_chunk(content, sequence) if stream_trace
+            
             if chunk_session_id == message_id && content.present?
               Rails.logger.debug "[RokidSSE] Received stream chunk ##{sequence}: #{content[0..50]}"
               
@@ -250,8 +277,12 @@ class RokidSseController < ApplicationController
                   is_finish: false
                 }
                 write_sse_event_direct(io, 'message', event_data)
+                io.flush  # 确保立即发送到眼镜
                 accumulated_content += content
                 streaming_active = true
+                
+                # 记录 SSE 发送成功（无序号）
+                stream_trace.record_sse_chunk(content, nil) if stream_trace
               else
                 # 有序号，使用有序队列
                 if sequence == next_expected_sequence
@@ -265,9 +296,13 @@ class RokidSseController < ApplicationController
                     is_finish: false
                   }
                   write_sse_event_direct(io, 'message', event_data)
+                  io.flush  # 确保立即发送到眼镜
                   accumulated_content += content
                   streaming_active = true
                   next_expected_sequence += 1
+                  
+                  # 记录 SSE 发送成功
+                  stream_trace.record_sse_chunk(content, sequence) if stream_trace
                   
                   # 检查缓存中是否有后续的 chunks
                   while pending_chunks.key?(next_expected_sequence)
@@ -283,8 +318,12 @@ class RokidSseController < ApplicationController
                       is_finish: false
                     }
                     write_sse_event_direct(io, 'message', event_data)
+                    io.flush  # 确保立即发送到眼镜
                     accumulated_content += buffered_content
                     next_expected_sequence += 1
+                    
+                    # 记录 SSE 发送成功
+                    stream_trace.record_sse_chunk(buffered_content, next_expected_sequence - 1) if stream_trace
                   end
                 elsif sequence > next_expected_sequence
                   # 当前 chunk 来得太早，缓存起来
@@ -305,6 +344,12 @@ class RokidSseController < ApplicationController
               streaming_active = false
               stream_finished = true
               
+              # 记录 stream_end 事件
+              stream_trace.add_event(:stream_end, {
+                accumulated_content_length: accumulated_content.length,
+                next_expected_sequence: next_expected_sequence
+              }) if stream_trace
+              
               final_data = {
                 role: 'agent',
                 type: 'answer',
@@ -314,6 +359,7 @@ class RokidSseController < ApplicationController
                 is_finish: true
               }
               write_sse_event_direct(io, 'message', final_data)
+              io.flush
               
               done_data = {
                 role: 'agent',
@@ -323,7 +369,78 @@ class RokidSseController < ApplicationController
                 is_finish: true
               }
               write_sse_event_direct(io, 'done', done_data)
+              io.flush
               break
+            end
+            
+          # 新增：处理 SDK 发来的 stream_summary（兜底机制）
+          when 'stream_summary'
+            chunk_session_id = data['session_id']
+            
+            if chunk_session_id == message_id
+              Rails.logger.info "[RokidSSE] Received stream_summary for session #{message_id}"
+              
+              sdk_total_content = data['total_content'] || ''
+              sdk_total_chunks = data['total_chunks'] || 0
+              content_hash = data['content_hash']
+              
+              stream_trace.add_event(:stream_summary_received, {
+                sdk_total_chunks: sdk_total_chunks,
+                sdk_total_content_length: sdk_total_content.length,
+                sse_sent_chunks: stream_trace&.sse_chunk_count || 0,
+                sse_sent_content_length: accumulated_content.length,
+                content_hash: content_hash
+              }) if stream_trace
+              
+              # 检测丢包并尝试补偿
+              if stream_trace
+                diff = sdk_total_chunks - stream_trace.sse_chunk_count
+                content_diff = sdk_total_content.length - accumulated_content.length
+                
+                Rails.logger.warn "[RokidSSE] [#{trace_id}] Compensation check: " \
+                  "SDK chunks=#{sdk_total_chunks}, SSE sent=#{stream_trace.sse_chunk_count}, " \
+                  "SDK len=#{sdk_total_content.length}, SSE len=#{accumulated_content.length}"
+                
+                # 如果有差异，尝试补偿发送缺失的内容
+                if diff >= 3 || content_diff > 20
+                  Rails.logger.warn "[RokidSSE] [#{trace_id}] Detected packet loss! Attempting compensation..."
+                  
+                  # 找出缺失的内容：SDK 完整内容 - 已发送内容
+                  missing_content = sdk_total_content[accumulated_content.length..]
+                  
+                  if missing_content.present?
+                    Rails.logger.info "[RokidSSE] [#{trace_id}] Sending compensation: #{missing_content.length} chars"
+                    
+                    # 发送补偿内容
+                    compensation_data = {
+                      role: 'agent',
+                      type: 'answer',
+                      answer_stream: missing_content,
+                      message_id: message_id,
+                      agent_id: agent_id,
+                      is_finish: false
+                    }
+                    write_sse_event_direct(io, 'message', compensation_data)
+                    io.flush
+                    
+                    # 更新已发送内容
+                    accumulated_content += missing_content
+                    
+                    stream_trace.add_event(:compensation_sent, {
+                      compensation_length: missing_content.length,
+                      compensation_preview: missing_content[0..50]
+                    })
+                  end
+                end
+                
+                # 更新追踪状态
+                stream_trace.update(
+                  status: (diff >= 3 || content_diff > 20) ? 'anomaly' : 'completed',
+                  sdk_content: sdk_total_content,
+                  sse_content: accumulated_content
+                )
+                stream_trace.detect_anomaly!
+              end
             end
             
           when 'stream_error'
@@ -338,6 +455,17 @@ class RokidSseController < ApplicationController
           end
         end
       ensure
+        # 最终更新追踪状态
+        if stream_trace
+          stream_trace.update(
+            status: stream_finished ? 'completed' : stream_trace.status,
+            sdk_content: stream_trace.sdk_content,
+            sse_content: accumulated_content
+          )
+          stream_trace.detect_anomaly!
+          Rails.logger.info "[RokidSSE] [#{trace_id}] Trace finalized: status=#{stream_trace.status}, SDK chunks=#{stream_trace.sdk_chunk_count}, SSE chunks=#{stream_trace.sse_chunk_count}"
+        end
+        
         cable.unsubscribe(subscription_channel, callback)
         Rails.logger.info "[RokidSSE] Unsubscribed from channel: #{subscription_channel}"
       end

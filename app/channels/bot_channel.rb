@@ -210,6 +210,29 @@ class BotChannel < ApplicationCable::Channel
     )
   end
 
+  # Handle stream_summary (compensation mechanism)
+  def stream_summary(data)
+    session_id = data['session_id']
+    total_content = data['total_content']
+    total_chunks = data['total_chunks']
+    content_hash = data['content_hash']
+    
+    Rails.logger.info "[BotChannel] Received stream_summary for session #{session_id}: chunks=#{total_chunks}, len=#{total_content&.length}, hash=#{content_hash}"
+    
+    # Broadcast to Rokid SSE clients
+    ActionCable.server.broadcast(
+      "rokid_sse_#{@bot.id}_#{session_id}",
+      {
+        type: 'stream_summary',
+        total_content: total_content,
+        total_chunks: total_chunks,
+        content_hash: content_hash,
+        session_id: session_id,
+        timestamp: Time.current.iso8601
+      }
+    )
+  end
+
   # Route incoming messages based on type
   def receive(data)
     Rails.logger.info "[BotChannel] receive called with data: #{data.inspect[0..200]}"
@@ -221,6 +244,8 @@ class BotChannel < ApplicationCable::Channel
       stream_end(data)
     when 'stream_error'
       stream_error(data)
+    when 'stream_summary'
+      stream_summary(data)
     when 'pong'
       # Client pong response, can be ignored or logged
       Rails.logger.debug "[BotChannel] Received pong from client"

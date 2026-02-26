@@ -1,0 +1,136 @@
+<% content_for :title, @stream_trace.respond_to?(:name) ? @stream_trace.name : "Stream trace" %>
+
+<div class="container-lg">
+  <div class="mb-6">
+    <div class="flex items-center space-x-4">
+      <%= link_to admin_stream_traces_path, class: "btn-ghost text-sm py-1 px-3" do %>
+        <%= lucide_icon "arrow-left", class: "w-4 h-4 mr-2" %>
+        Back to Stream traces
+      <% end %>
+    </div>
+
+    <div class="mt-4 flex items-center justify-between">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50"><%= @stream_trace.respond_to?(:name) ? @stream_trace.name : "Stream trace ##{@stream_trace.id}" %></h1>
+
+      <div class="flex items-center space-x-3">
+        <%= link_to edit_admin_stream_trace_path(@stream_trace.id), class: "btn-primary" do %>
+          <%= lucide_icon "pencil", class: "w-5 h-5 mr-2" %>
+          Edit
+        <% end %>
+
+        <%= link_to admin_stream_trace_path(@stream_trace.id),
+            method: :delete,
+            data: { confirm: "Are you sure you want to delete this stream_trace?" },
+            class: "btn-danger" do %>
+          <%= lucide_icon "trash-2", class: "w-5 h-5 mr-2" %>
+          Delete
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stream trace Content -->
+  <div class="card bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+    <div class="card-body">
+      <div class="space-y-6">
+        <!-- Trace -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Trace</label>
+          <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @stream_trace.trace_id %></div>
+        </div>
+
+        <!-- Message -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message</label>
+          <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @stream_trace.message_id %></div>
+        </div>
+
+        <!-- Agent -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Agent</label>
+          <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @stream_trace.agent_id %></div>
+        </div>
+
+        <!-- Status -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+          <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @stream_trace.status %></div>
+        </div>
+
+        <!-- Events -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Events</label>
+          <div class="prose prose-gray dark:prose-invert max-w-none">
+            <%= simple_format(@stream_trace.events) %>
+          </div>
+        </div>
+
+        <!-- Sdk content -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sdk content</label>
+          <div class="prose prose-gray dark:prose-invert max-w-none">
+            <%= simple_format(@stream_trace.sdk_content) %>
+          </div>
+        </div>
+
+        <!-- Sse content -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sse content</label>
+          <div class="prose prose-gray dark:prose-invert max-w-none">
+            <%= simple_format(@stream_trace.sse_content) %>
+          </div>
+        </div>
+
+        <!-- Sdk chunk count -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sdk chunk count</label>
+          <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @stream_trace.sdk_chunk_count %></div>
+        </div>
+
+        <!-- Sse chunk count -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sse chunk count</label>
+          <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @stream_trace.sse_chunk_count %></div>
+        </div>
+
+        <!-- Anomaly -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Anomaly</label>
+          <div class="prose prose-gray dark:prose-invert max-w-none">
+            <%= simple_format(@stream_trace.anomaly) %>
+          </div>
+        </div>
+
+        <!-- Bot -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bot</label>
+          <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @stream_trace.bot&.name %></div>
+        </div>
+
+        <!-- Metadata -->
+        <div class="pt-6 border-t border-gray-200 dark:border-gray-600">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ID</label>
+              <div class="text-sm text-gray-900 dark:text-gray-100 font-mono"><%= @stream_trace.id %></div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Created</label>
+              <div class="text-sm text-gray-600 dark:text-gray-400">
+                <%= @stream_trace.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+                <span class="text-gray-400">(<%= time_ago_in_words(@stream_trace.created_at) %> ago)</span>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Updated</label>
+              <div class="text-sm text-gray-600 dark:text-gray-400">
+                <%= @stream_trace.updated_at.strftime("%B %d, %Y at %I:%M %p") %>
+                <span class="text-gray-400">(<%= time_ago_in_words(@stream_trace.updated_at) %> ago)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

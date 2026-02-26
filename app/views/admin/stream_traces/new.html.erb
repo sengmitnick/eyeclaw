@@ -1,0 +1,94 @@
+<% content_for :title, "New Stream trace" %>
+
+<div class="container-md">
+  <div class="flex items-center space-x-4">
+    <%= link_to admin_stream_traces_path, class: "btn-ghost text-sm py-1 px-3" do %>
+      <%= lucide_icon "arrow-left", class: "w-4 h-4 mr-2" %>
+      Back to Stream traces
+    <% end %>
+  </div>
+
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50 mt-4 mb-8">Create New Stream trace</h1>
+
+  <!-- Form -->
+  <div class="card bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+    <div class="card-body">
+      <%= form_with model: [:admin, @stream_trace], local: true, class: "space-y-6" do |form| %>
+        <!-- Trace -->
+        <div class="form-group">
+          <%= form.label :trace_id %>
+          <%= form.text_field :trace_id, placeholder: "Enter trace..." %>
+        </div>
+
+        <!-- Message -->
+        <div class="form-group">
+          <%= form.label :message_id %>
+          <%= form.text_field :message_id, placeholder: "Enter message..." %>
+        </div>
+
+        <!-- Agent -->
+        <div class="form-group">
+          <%= form.label :agent_id %>
+          <%= form.text_field :agent_id, placeholder: "Enter agent..." %>
+        </div>
+
+        <!-- Status -->
+        <div class="form-group">
+          <%= form.label :status %>
+          <%= form.text_field :status, placeholder: "Enter status..." %>
+        </div>
+
+        <!-- Events -->
+        <div class="form-group">
+          <%= form.label :events %>
+          <%= form.text_area :events, rows: 5, placeholder: "Enter events..." %>
+        </div>
+
+        <!-- Sdk content -->
+        <div class="form-group">
+          <%= form.label :sdk_content %>
+          <%= form.text_area :sdk_content, rows: 5, placeholder: "Enter sdk content..." %>
+        </div>
+
+        <!-- Sse content -->
+        <div class="form-group">
+          <%= form.label :sse_content %>
+          <%= form.text_area :sse_content, rows: 5, placeholder: "Enter sse content..." %>
+        </div>
+
+        <!-- Sdk chunk count -->
+        <div class="form-group">
+          <%= form.label :sdk_chunk_count %>
+          <%= form.number_field :sdk_chunk_count, placeholder: "Enter sdk chunk count..." %>
+        </div>
+
+        <!-- Sse chunk count -->
+        <div class="form-group">
+          <%= form.label :sse_chunk_count %>
+          <%= form.number_field :sse_chunk_count, placeholder: "Enter sse chunk count..." %>
+        </div>
+
+        <!-- Anomaly -->
+        <div class="form-group">
+          <%= form.label :anomaly %>
+          <%= form.text_area :anomaly, rows: 5, placeholder: "Enter anomaly..." %>
+        </div>
+
+        <!-- Bot -->
+        <div class="form-group">
+          <%= form.label :bot_id, "Bot" %>
+          <%= form.select :bot_id,
+              options_for_select([['Select Bot', '']] + Bot.all.map { |item| [item.name, item.id] }, @stream_trace.bot_id) %>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-3">
+          <%= link_to admin_stream_traces_path, class: "btn-ghost" do %>
+            Cancel
+          <% end %>
+          <%= form.submit "Create Stream trace", class: "btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

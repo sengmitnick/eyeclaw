@@ -27,6 +27,7 @@ export class EyeClawWebSocketClient {
   private subscribed = false
   private pingInterval: any = null
   private chunkSequence = 0 // 每个会话的 chunk 序号
+  private accumulatedContent = '' // 累积完整内容用于兜底
 
   constructor(api: OpenClawPluginApi, config: EyeClawConfig, getState: () => any) {
     this.api = api
@@ -244,6 +245,9 @@ export class EyeClawWebSocketClient {
         if (done) {
           // 流结束，通知 Rails
           this.sendMessage('stream_end', { session_id: sessionId })
+          
+          // 发送 stream_summary 用于兜底机制
+          this.sendStreamSummary(sessionId)
           break
         }
 
@@ -322,12 +326,51 @@ export class EyeClawWebSocketClient {
   private sendChunk(content: string, sessionId?: string) {
     const timestamp = new Date().toISOString();
     const sequence = this.chunkSequence++;
+    
+    // 累积完整内容用于兜底
+    this.accumulatedContent += content;
+    
     this.api.logger.info(`[EyeClaw] [${timestamp}] Sending chunk #${sequence} to Rails: "${content}"`);
     this.sendMessage('stream_chunk', {
       content,
       session_id: sessionId,
       sequence, // 添加序号
     })
+  }
+  
+  /**
+   * 发送 stream_summary 用于兜底机制
+   * 告诉 Rails 完整内容是什么，以便检测丢包并补偿
+   */
+  private sendStreamSummary(sessionId?: string) {
+    // 计算内容 hash
+    const contentHash = this.hashCode(this.accumulatedContent);
+    
+    this.api.logger.info(`[EyeClaw] Sending stream_summary: chunks=${this.chunkSequence}, content_len=${this.accumulatedContent.length}, hash=${contentHash}`);
+    
+    this.sendMessage('stream_summary', {
+      session_id: sessionId,
+      total_content: this.accumulatedContent,
+      total_chunks: this.chunkSequence,
+      content_hash: contentHash,
+    })
+    
+    // 重置累积内容（为下一个会话做准备）
+    this.accumulatedContent = '';
+    this.chunkSequence = 0;
+  }
+  
+  /**
+   * 简单 hash 函数
+   */
+  private hashCode(str: string): string {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash.toString(16);
   }
 
   /**

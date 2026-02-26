@@ -10,6 +10,7 @@ import SystemMonitorController from "./system_monitor_controller"
 import FlashController from "./flash_controller"
 import McpController from "./_mcp_controller"
 import ChatController from "./chat_controller"
+import RokidSseController from "./rokid_sse_controller"
 
 const application = Application.start()
 
@@ -23,5 +24,6 @@ application.register("system-monitor", SystemMonitorController)
 application.register("flash", FlashController)
 application.register("-mcp", McpController)
 application.register("chat", ChatController)
+application.register("rokid-sse", RokidSseController)
 
 window.Stimulus = application
