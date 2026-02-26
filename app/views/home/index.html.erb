@@ -23,20 +23,17 @@
         
         <div class="flex flex-wrap gap-4">
           <% if current_user %>
-            <%= link_to bots_path, class: "btn-primary btn-lg" do %>
+            <%= link_to bots_path, class: "btn-primary btn-lg gap-1" do %>
               <%= lucide_icon "bot", class: "w-5 h-5" %>
-              My Bots
+              我的 Bots
             <% end %>
           <% else %>
-            <%= link_to sign_up_path, class: "btn-primary btn-lg" do %>
+            <%= link_to sign_up_path, class: "btn-primary btn-lg gap-1" do %>
               <%= lucide_icon "rocket", class: "w-5 h-5" %>
-              Get Started
+              立刻开始
             <% end %>
           <% end %>
-          <a href="#how-it-works" class="btn-outline btn-lg">
-            <%= lucide_icon "play-circle", class: "w-5 h-5" %>
-            Watch Demo
-          </a>
+          
         </div>
         
         <!-- Stats -->
@@ -164,9 +161,9 @@
           <div class="w-12 h-12 rounded-lg gradient-purple flex items-center justify-center group-hover:glow-secondary transition-all">
             <%= lucide_icon "code-2", class: "w-6 h-6 text-surface" %>
           </div>
-          <h3 class="text-xl font-bold text-primary">开发者友好</h3>
+          <h3 class="text-xl font-bold text-primary">简单易用</h3>
           <p class="text-secondary">
-            简洁的 REST API、完整的 SDK 文档和 TypeScript 支持，让集成变得简单快速。
+            简洁直观的界面设计，无需技术背景也能轻松上手。完善的文档和教程助您快速开始。
           </p>
         </div>
       </div>
@@ -222,13 +219,21 @@
           </div>
           <h3 class="text-3xl font-bold text-primary">连接 OpenClaw</h3>
           <p class="text-lg text-secondary leading-relaxed">
-            安装 @eyeclaw/eyeclaw 作为 OpenClaw 插件，连接你的本地实例。安全的 WebSocket 连接建立后，即可实现实时通信。
+            直接告诉 OpenClaw 安装你的 Bot Skill，系统会自动完成所有配置。无需任何命令行操作，对话即可完成。
           </p>
-          <div class="card p-4 bg-surface-elevated font-mono text-sm space-y-2">
-            <code class="text-primary">openclaw plugins install @eyeclaw/eyeclaw</code><br>
-            <code class="text-secondary">openclaw config set channels.eyeclaw.botId "YOUR_BOT_ID"</code><br>
-            <code class="text-secondary">openclaw config set channels.eyeclaw.sdkToken "YOUR_TOKEN"</code><br>
-            <code class="text-success">openclaw config set channels.eyeclaw.enabled true</code>
+          <div class="card p-4 bg-surface-elevated space-y-3">
+            <div class="flex items-start gap-3">
+              <%= lucide_icon "message-circle", class: "w-5 h-5 text-primary mt-1 flex-shrink-0" %>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-primary mb-1">告诉 OpenClaw：</p>
+                <p class="text-base text-secondary font-mono">
+                  "帮我安装 skill: https://your-bot-url"
+                </p>
+                <p class="text-xs text-muted mt-2">
+                  OpenClaw 会自动读取配置并完成安装
+                </p>
+              </div>
+            </div>
           </div>
         </div>
         <div class="lg:order-1 relative">
@@ -247,14 +252,35 @@
             <span class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-surface font-bold">3</span>
             <span class="font-mono text-sm text-muted">Step Three</span>
           </div>
-          <h3 class="text-3xl font-bold text-primary">集成到灵珠平台</h3>
+          <h3 class="text-3xl font-bold text-primary">用 Rokid 眼镜扫码绑定</h3>
           <p class="text-lg text-secondary leading-relaxed">
-            将你的 Bot 连接到 Rokid 灵珠平台。通过 SSE 流式接口，实现实时流式响应。
+            对着 Rokid 眼镜说话，系统会引导您拍照 Bot 详情页的二维码完成绑定。绑定后即可在灵珠平台使用。
           </p>
-          <div class="flex gap-3">
-            <span class="badge-info font-mono">SSE Stream</span>
-            <span class="badge-warning font-mono">Rokid 灵珠</span>
-            <span class="badge-success font-mono">实时流式</span>
+          <div class="card p-4 bg-surface-elevated space-y-3">
+            <div class="flex items-start gap-3">
+              <%= lucide_icon "qr-code", class: "w-5 h-5 text-primary mt-1 flex-shrink-0" %>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-primary mb-2">简单三步：</p>
+                <div class="space-y-2 text-sm text-secondary">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center flex-shrink-0 font-bold">1</span>
+                    <span>打开 Bot 详情页，查看绑定二维码</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center flex-shrink-0 font-bold">2</span>
+                    <span>对着 Rokid 眼镜说话，触发对话</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center flex-shrink-0 font-bold">3</span>
+                    <span>按系统引导拍照二维码，完成绑定</span>
+                  </div>
+                </div>
+                <p class="text-xs text-muted mt-3">
+                  <%= lucide_icon "shield-check", class: "w-3 h-3 inline" %>
+                  安全令牌仅用于一次性绑定，5分钟后自动失效
+                </p>
+              </div>
+            </div>
           </div>
         </div>
         <div class="relative">
@@ -291,10 +317,7 @@
             注册账户
           <% end %>
         <% end %>
-        <a href="#docs" class="btn-outline btn-xl">
-          <%= lucide_icon "book-open", class: "w-5 h-5" %>
-          查看文档
-        </a>
+        
       </div>
     </div>
   </div>
