@@ -173,11 +173,17 @@
           <!-- Connection Command -->
           <div>
             <label class="form-label">快速开始</label>
+            <% 
+              # 获取或创建有效的绑定 token
+              @skill_binding_token = @bot.binding_tokens.where('expires_at > ?', Time.current).where(used_at: nil).first
+              @skill_binding_token ||= @bot.binding_tokens.create!
+              @skill_url = skill_md_bot_url(@bot, token: @skill_binding_token.token)
+            %>
             <div class="card p-4 bg-surface-elevated" data-controller="clipboard">
               <div class="flex items-start justify-between gap-3">
                 <div class="flex-1">
                   <p class="text-sm text-secondary mb-3">
-                    告诉 OpenClaw：「<span class="font-mono text-primary">帮我安装 skill: <%= skill_bot_url(@bot) %></span>」
+                    告诉 OpenClaw：「<span class="font-mono text-primary">帮我安装 skill: <%= @skill_url %></span>」
                   </p>
                   <p class="text-xs text-muted">
                     OpenClaw 会自动读取 SKILL.md 并执行安装命令
@@ -194,10 +200,13 @@
               <input 
                 type="hidden" 
                 data-clipboard-target="source" 
-                value="帮我安装 skill: <%= skill_bot_url(@bot) %>">
-            </div>
-            <div class="flex items-center gap-3 mt-3">
-              
+                value="帮我安装 skill: <%= @skill_url %>">
+              <div class="flex items-center gap-3 mt-3">
+                <span class="badge-warning text-xs">
+                  <%= lucide_icon "shield-check", class: "w-3 h-3 inline" %>
+                  链接有效期 <%= distance_of_time_in_words_to_now(@skill_binding_token.expires_at) %>
+                </span>
+              </div>
             </div>
           </div>
         </div>

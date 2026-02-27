@@ -1,0 +1,25 @@
+<div class="card p-4 bg-success/5 border-2 border-success">
+  <div class="flex items-start gap-3">
+    <%= lucide_icon "link", class: "w-6 h-6 text-success flex-shrink-0 mt-1" %>
+    <div class="flex-1">
+      <h3 class="font-bold text-success mb-2">绑定链接已生成</h3>
+      <p class="text-sm text-secondary mb-3">
+        此链接有效期 5 分钟，请尽快使用。
+      </p>
+      <div class="flex items-center gap-2" data-controller="clipboard">
+        <input type="text" 
+               value="<%= @skill_url %>" 
+               readonly 
+               class="form-input font-mono text-sm flex-1"
+               data-clipboard-target="source">
+        <button data-action="click->clipboard#copy" class="btn-primary btn-sm">
+          <%= lucide_icon "copy", class: "w-4 h-4" %>
+          复制
+        </button>
+      </div>
+      <p class="text-xs text-muted mt-2">
+        告诉 OpenClaw：「<span class="font-mono">帮我安装 skill: <%= @skill_url %></span>」
+      </p>
+    </div>
+  </div>
+</div>

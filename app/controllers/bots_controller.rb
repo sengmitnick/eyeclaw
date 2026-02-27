@@ -1,6 +1,6 @@
 class BotsController < ApplicationController
   before_action :authenticate_user!, except: [:skill_md]
-  before_action :set_bot, only: [:show, :edit, :update, :destroy, :chat, :unbind_rokid]
+  before_action :set_bot, only: [:show, :edit, :update, :destroy, :chat, :unbind_rokid, :generate_skill_token]
 
   def index
     @bots = current_user.bots.order(created_at: :desc)
@@ -57,11 +57,40 @@ class BotsController < ApplicationController
     end
   end
 
-  # SKILL.md for Claude Skill integration
+  # SKILL.md for Claude Skill integration (requires valid token)
   def skill_md
     @bot = Bot.find(params[:id])
+    
+    # 验证 token
+    token = params[:token]
+    unless token.present?
+      render plain: "Missing token. Please generate a binding link from bot settings.", status: :forbidden
+      return
+    end
+    
+    binding_token = @bot.binding_tokens.find_by(token: token)
+    unless binding_token&.valid_for_binding?
+      render plain: "Invalid or expired token. Please generate a new binding link from bot settings.", status: :forbidden
+      return
+    end
+    
+    # 标记 token 已使用（可选：也可以选择不标记，让它过期即可）
+    # binding_token.mark_as_used!('skill') if binding_token.used_at.nil?
+    
     @server_url = request.base_url
     render 'bots/skill_md', layout: false, content_type: 'text/plain'
+  end
+
+  # 生成 SKILL 绑定链接的 token
+  def generate_skill_token
+    # 创建新的临时 token（5分钟有效期）
+    @binding_token = @bot.binding_tokens.create!
+    
+    # 返回带 token 的 URL
+    @skill_url = skill_md_bot_url(@bot, token: @binding_token.token)
+    
+    # 直接渲染 Turbo Stream
+    render 'bots/generate_skill_token', formats: :turbo_stream
   end
 
   private

@@ -13,7 +13,8 @@ Rails.application.routes.draw do
     member do
       get :chat
       delete :unbind_rokid
-      get 'SKILL.md', to: 'bots#skill_md'
+      get 'SKILL.md', to: 'bots#skill_md', as: :skill_md
+      post :generate_skill_token
     end
   end
   # End routes for bots
