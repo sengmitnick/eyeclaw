@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_27_100000) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_27_163814) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -248,6 +248,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_27_100000) do
     t.text "anomaly"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "sdk_total_chunks"
+    t.text "missing_sequences"
+    t.string "loss_position"
+    t.integer "first_chunk_delay"
+    t.integer "avg_chunk_interval"
+    t.integer "last_chunk_delay"
   end
 
   create_table "users", force: :cascade do |t|

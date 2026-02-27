@@ -1,0 +1,822 @@
+2026-02-27T15:54:12.566Z Running docker entrypoint
+2026-02-27T15:54:12.568Z Check if application.yml and database.yml are present
+2026-02-27T15:54:12.576Z If running the rails server then create or migrate existing database
+2026-02-27T15:54:13.594Z WARNING: Skipping key "SECRET_KEY_BASE". Already set in ENV.
+2026-02-27T15:54:13.594Z WARNING: Skipping key "PUBLIC_HOST". Already set in ENV.
+2026-02-27T15:54:15.559Z WARNING: Skipping key "SECRET_KEY_BASE". Already set in ENV.
+2026-02-27T15:54:15.559Z WARNING: Skipping key "PUBLIC_HOST". Already set in ENV.
+2026-02-27T15:54:15.625Z => Booting Puma
+2026-02-27T15:54:15.625Z => Rails 7.2.2.2 application starting in production
+2026-02-27T15:54:15.625Z => Run `bin/rails server --help` for more startup options
+2026-02-27T15:54:17.890Z I, [2026-02-27T15:54:17.741370 #1]  INFO -- : [GoodJob] [1] GoodJob 4.13.1 started scheduler with queues=* max_threads=20.
+2026-02-27T15:54:17.890Z Puma starting in single mode...
+2026-02-27T15:54:17.890Z * Puma version: 7.1.0 ("Neon Witch")
+2026-02-27T15:54:17.890Z * Ruby version: ruby 3.3.5 (2024-09-03 revision ef084cc8f4) +YJIT [x86_64-linux]
+2026-02-27T15:54:17.890Z *  Min threads: 5
+2026-02-27T15:54:17.890Z *  Max threads: 5
+2026-02-27T15:54:17.890Z *  Environment: production
+2026-02-27T15:54:17.890Z *          PID: 1
+2026-02-27T15:54:17.893Z * Listening on http://0.0.0.0:3000
+2026-02-27T15:54:17.898Z Use Ctrl-C to stop
+2026-02-27T15:54:17.942Z I, [2026-02-27T15:54:17.942771 #1]  INFO -- : [GoodJob] Notifier subscribed with LISTEN
+2026-02-27T15:58:29.106Z I, [2026-02-27T15:58:29.106502 #1]  INFO -- : [6a7ece92-0744-4e22-bf4a-0ed1f804dc64] Started GET "/admin/stream_traces" for 23.106.134.42 at 2026-02-27 15:58:29 +0000
+2026-02-27T15:58:29.118Z I, [2026-02-27T15:58:29.118189 #1]  INFO -- : [6a7ece92-0744-4e22-bf4a-0ed1f804dc64] Processing by Admin::StreamTracesController#index as HTML
+2026-02-27T15:58:29.347Z I, [2026-02-27T15:58:29.347221 #1]  INFO -- : [6a7ece92-0744-4e22-bf4a-0ed1f804dc64]   Rendered layout layouts/admin.html.erb (Duration: 155.2ms | GC: 20.6ms)
+2026-02-27T15:58:29.347Z I, [2026-02-27T15:58:29.347649 #1]  INFO -- : [6a7ece92-0744-4e22-bf4a-0ed1f804dc64] Completed 200 OK in 229ms (Views: 149.5ms | ActiveRecord: 16.1ms (14 queries, 9 cached) | GC: 20.9ms)
+2026-02-27T15:58:47.886Z I, [2026-02-27T15:58:47.886689 #1]  INFO -- : [bd9ee4ec-95ee-4824-ae57-bf603cc0df7a] Started GET "/admin/stream_traces/41" for 23.106.134.42 at 2026-02-27 15:58:47 +0000
+2026-02-27T15:58:47.889Z I, [2026-02-27T15:58:47.889154 #1]  INFO -- : [bd9ee4ec-95ee-4824-ae57-bf603cc0df7a] Processing by Admin::StreamTracesController#show as HTML
+2026-02-27T15:58:47.889Z I, [2026-02-27T15:58:47.889212 #1]  INFO -- : [bd9ee4ec-95ee-4824-ae57-bf603cc0df7a]   Parameters: {"id"=>"41"}
+2026-02-27T15:58:47.918Z I, [2026-02-27T15:58:47.918493 #1]  INFO -- : [bd9ee4ec-95ee-4824-ae57-bf603cc0df7a]   Rendered layout layouts/admin.html.erb (Duration: 19.3ms | GC: 0.2ms)
+2026-02-27T15:58:47.918Z I, [2026-02-27T15:58:47.918891 #1]  INFO -- : [bd9ee4ec-95ee-4824-ae57-bf603cc0df7a] Completed 200 OK in 30ms (Views: 19.4ms | ActiveRecord: 0.8ms (3 queries, 0 cached) | GC: 0.3ms)
+2026-02-27T15:58:59.769Z I, [2026-02-27T15:58:59.769686 #1]  INFO -- : [6ab12583-7ce0-44c3-8874-7f81454ec6e1] Started GET "/admin/stream_traces" for 23.106.134.42 at 2026-02-27 15:58:59 +0000
+2026-02-27T15:58:59.772Z I, [2026-02-27T15:58:59.771950 #1]  INFO -- : [6ab12583-7ce0-44c3-8874-7f81454ec6e1] Processing by Admin::StreamTracesController#index as HTML
+2026-02-27T15:58:59.820Z I, [2026-02-27T15:58:59.819837 #1]  INFO -- : [6ab12583-7ce0-44c3-8874-7f81454ec6e1]   Rendered layout layouts/admin.html.erb (Duration: 45.1ms | GC: 0.8ms)
+2026-02-27T15:58:59.820Z I, [2026-02-27T15:58:59.820630 #1]  INFO -- : [6ab12583-7ce0-44c3-8874-7f81454ec6e1] Completed 200 OK in 48ms (Views: 43.9ms | ActiveRecord: 1.9ms (14 queries, 9 cached) | GC: 0.8ms)
+2026-02-27T15:59:02.310Z I, [2026-02-27T15:59:02.310492 #1]  INFO -- : [3ec75da0-387f-4714-aeca-c623e9913858] Started GET "/admin/stream_traces?page=2" for 23.106.134.42 at 2026-02-27 15:59:02 +0000
+2026-02-27T15:59:02.311Z I, [2026-02-27T15:59:02.311644 #1]  INFO -- : [3ec75da0-387f-4714-aeca-c623e9913858] Processing by Admin::StreamTracesController#index as HTML
+2026-02-27T15:59:02.311Z I, [2026-02-27T15:59:02.311694 #1]  INFO -- : [3ec75da0-387f-4714-aeca-c623e9913858]   Parameters: {"page"=>"2"}
+2026-02-27T15:59:02.349Z I, [2026-02-27T15:59:02.349646 #1]  INFO -- : [3ec75da0-387f-4714-aeca-c623e9913858]   Rendered layout layouts/admin.html.erb (Duration: 35.7ms | GC: 6.1ms)
+2026-02-27T15:59:02.349Z I, [2026-02-27T15:59:02.349878 #1]  INFO -- : [3ec75da0-387f-4714-aeca-c623e9913858] Completed 200 OK in 38ms (Views: 34.7ms | ActiveRecord: 1.6ms (10 queries, 5 cached) | GC: 6.1ms)
+2026-02-27T15:59:03.037Z I, [2026-02-27T15:59:03.036957 #1]  INFO -- : [c79e00bb-af9a-4b3e-96be-5474bd47e277] Started GET "/admin/stream_traces" for 23.106.134.42 at 2026-02-27 15:59:03 +0000
+2026-02-27T15:59:03.039Z I, [2026-02-27T15:59:03.039550 #1]  INFO -- : [c79e00bb-af9a-4b3e-96be-5474bd47e277] Processing by Admin::StreamTracesController#index as HTML
+2026-02-27T15:59:03.092Z I, [2026-02-27T15:59:03.091874 #1]  INFO -- : [c79e00bb-af9a-4b3e-96be-5474bd47e277]   Rendered layout layouts/admin.html.erb (Duration: 48.1ms | GC: 30.3ms)
+2026-02-27T15:59:03.092Z I, [2026-02-27T15:59:03.092150 #1]  INFO -- : [c79e00bb-af9a-4b3e-96be-5474bd47e277] Completed 200 OK in 52ms (Views: 47.6ms | ActiveRecord: 1.6ms (14 queries, 9 cached) | GC: 32.0ms)
+2026-02-27T15:59:06.309Z I, [2026-02-27T15:59:06.308880 #1]  INFO -- : [0ba918ac-9a21-49d0-acde-27c0b91d9409] Started GET "/admin/stream_traces/39" for 23.106.134.42 at 2026-02-27 15:59:06 +0000
+2026-02-27T15:59:06.312Z I, [2026-02-27T15:59:06.312219 #1]  INFO -- : [0ba918ac-9a21-49d0-acde-27c0b91d9409] Processing by Admin::StreamTracesController#show as HTML
+2026-02-27T15:59:06.312Z I, [2026-02-27T15:59:06.312273 #1]  INFO -- : [0ba918ac-9a21-49d0-acde-27c0b91d9409]   Parameters: {"id"=>"39"}
+2026-02-27T15:59:06.345Z I, [2026-02-27T15:59:06.344542 #1]  INFO -- : [0ba918ac-9a21-49d0-acde-27c0b91d9409]   Rendered layout layouts/admin.html.erb (Duration: 25.0ms | GC: 15.9ms)
+2026-02-27T15:59:06.345Z I, [2026-02-27T15:59:06.344803 #1]  INFO -- : [0ba918ac-9a21-49d0-acde-27c0b91d9409] Completed 200 OK in 32ms (Views: 26.2ms | ActiveRecord: 2.0ms (3 queries, 0 cached) | GC: 20.5ms)
+2026-02-27T15:59:20.651Z I, [2026-02-27T15:59:20.651812 #1]  INFO -- : [d9d72225-ba2e-4767-b3e3-eda7a2f85165] Started GET "/admin" for 23.106.134.42 at 2026-02-27 15:59:20 +0000
+2026-02-27T15:59:20.652Z I, [2026-02-27T15:59:20.652522 #1]  INFO -- : [d9d72225-ba2e-4767-b3e3-eda7a2f85165] Processing by Admin::DashboardController#index as HTML
+2026-02-27T15:59:20.704Z I, [2026-02-27T15:59:20.703836 #1]  INFO -- : [d9d72225-ba2e-4767-b3e3-eda7a2f85165]   Rendered layout layouts/admin.html.erb (Duration: 35.5ms | GC: 0.9ms)
+2026-02-27T15:59:20.704Z I, [2026-02-27T15:59:20.704477 #1]  INFO -- : [d9d72225-ba2e-4767-b3e3-eda7a2f85165] Completed 200 OK in 52ms (Views: 33.5ms | ActiveRecord: 4.7ms (5 queries, 0 cached) | GC: 1.7ms)
+2026-02-27T15:59:21.460Z I, [2026-02-27T15:59:21.460763 #1]  INFO -- : [a495479f-e1e7-4ee8-8881-6be5f2935297] Started GET "/admin/stream_traces?page=2" for 23.106.134.42 at 2026-02-27 15:59:21 +0000
+2026-02-27T15:59:21.461Z I, [2026-02-27T15:59:21.461722 #1]  INFO -- : [a495479f-e1e7-4ee8-8881-6be5f2935297] Processing by Admin::StreamTracesController#index as HTML
+2026-02-27T15:59:21.461Z I, [2026-02-27T15:59:21.461767 #1]  INFO -- : [a495479f-e1e7-4ee8-8881-6be5f2935297]   Parameters: {"page"=>"2"}
+2026-02-27T15:59:21.496Z I, [2026-02-27T15:59:21.496669 #1]  INFO -- : [a495479f-e1e7-4ee8-8881-6be5f2935297]   Rendered layout layouts/admin.html.erb (Duration: 32.1ms | GC: 0.5ms)
+2026-02-27T15:59:21.497Z I, [2026-02-27T15:59:21.496898 #1]  INFO -- : [a495479f-e1e7-4ee8-8881-6be5f2935297] Completed 200 OK in 35ms (Views: 31.3ms | ActiveRecord: 1.3ms (10 queries, 5 cached) | GC: 0.5ms)
+2026-02-27T15:59:25.790Z I, [2026-02-27T15:59:25.790769 #1]  INFO -- : [2da25612-f48b-490a-92e2-fd6c9508db9e] Started GET "/admin/stream_traces/39" for 23.106.134.42 at 2026-02-27 15:59:25 +0000
+2026-02-27T15:59:25.791Z I, [2026-02-27T15:59:25.791471 #1]  INFO -- : [2da25612-f48b-490a-92e2-fd6c9508db9e] Processing by Admin::StreamTracesController#show as HTML
+2026-02-27T15:59:25.791Z I, [2026-02-27T15:59:25.791516 #1]  INFO -- : [2da25612-f48b-490a-92e2-fd6c9508db9e]   Parameters: {"id"=>"39"}
+2026-02-27T15:59:25.804Z I, [2026-02-27T15:59:25.804239 #1]  INFO -- : [2da25612-f48b-490a-92e2-fd6c9508db9e]   Rendered layout layouts/admin.html.erb (Duration: 8.2ms | GC: 0.1ms)
+2026-02-27T15:59:25.804Z I, [2026-02-27T15:59:25.804479 #1]  INFO -- : [2da25612-f48b-490a-92e2-fd6c9508db9e] Completed 200 OK in 13ms (Views: 8.4ms | ActiveRecord: 0.5ms (3 queries, 0 cached) | GC: 0.1ms)
+2026-02-27T15:59:26.152Z I, [2026-02-27T15:59:26.152046 #1]  INFO -- : [57116d8e-904a-4d21-a810-67c71f25d1c7] Started GET "/admin/stream_traces/40" for 23.106.134.42 at 2026-02-27 15:59:26 +0000
+2026-02-27T15:59:26.154Z I, [2026-02-27T15:59:26.154350 #1]  INFO -- : [57116d8e-904a-4d21-a810-67c71f25d1c7] Processing by Admin::StreamTracesController#show as HTML
+2026-02-27T15:59:26.154Z I, [2026-02-27T15:59:26.154414 #1]  INFO -- : [57116d8e-904a-4d21-a810-67c71f25d1c7]   Parameters: {"id"=>"40"}
+2026-02-27T15:59:26.167Z I, [2026-02-27T15:59:26.166880 #1]  INFO -- : [57116d8e-904a-4d21-a810-67c71f25d1c7]   Rendered layout layouts/admin.html.erb (Duration: 8.6ms | GC: 0.2ms)
+2026-02-27T15:59:26.167Z I, [2026-02-27T15:59:26.167198 #1]  INFO -- : [57116d8e-904a-4d21-a810-67c71f25d1c7] Completed 200 OK in 13ms (Views: 9.3ms | ActiveRecord: 0.6ms (3 queries, 0 cached) | GC: 0.3ms)
+2026-02-27T16:00:01.130Z I, [2026-02-27T16:00:01.128815 #1]  INFO -- : [c5036407-6df2-4d00-a117-a4e4b46f9652] Started GET "/wp-admin/setup-config.php" for 104.23.223.81 at 2026-02-27 16:00:01 +0000
+2026-02-27T16:00:01.134Z I, [2026-02-27T16:00:01.131678 #1]  INFO -- : [c5036407-6df2-4d00-a117-a4e4b46f9652] Processing by ApplicationController#handle_routing_error as */*
+2026-02-27T16:00:01.134Z I, [2026-02-27T16:00:01.133880 #1]  INFO -- : [c5036407-6df2-4d00-a117-a4e4b46f9652]   Parameters: {"path"=>"wp-admin/setup-config"}
+2026-02-27T16:00:01.164Z I, [2026-02-27T16:00:01.163976 #1]  INFO -- : [c5036407-6df2-4d00-a117-a4e4b46f9652] Completed 500 Internal Server Error in 30ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.6ms)
+2026-02-27T16:00:01.166Z E, [2026-02-27T16:00:01.165976 #1] ERROR -- : [c5036407-6df2-4d00-a117-a4e4b46f9652]
+2026-02-27T16:00:01.166Z [c5036407-6df2-4d00-a117-a4e4b46f9652] ArgumentError (wrong number of arguments (given 2, expected 0..1)):
+2026-02-27T16:00:01.166Z [c5036407-6df2-4d00-a117-a4e4b46f9652]
+2026-02-27T16:00:01.166Z [c5036407-6df2-4d00-a117-a4e4b46f9652] app/controllers/concerns/friendly_error_handling_concern.rb:26:in `handle_routing_error'
+2026-02-27T16:00:01.166Z [c5036407-6df2-4d00-a117-a4e4b46f9652] lib/middleware/clacky_health_check.rb:19:in `call'
+2026-02-27T16:01:31.512Z I, [2026-02-27T16:01:31.512020 #1]  INFO -- : [7553096f-8d06-4a61-b1b5-83898574c5e5] Started GET "/wp-admin/setup-config.php" for 104.23.217.110 at 2026-02-27 16:01:31 +0000
+2026-02-27T16:01:31.513Z I, [2026-02-27T16:01:31.513305 #1]  INFO -- : [7553096f-8d06-4a61-b1b5-83898574c5e5] Processing by ApplicationController#handle_routing_error as */*
+2026-02-27T16:01:31.513Z I, [2026-02-27T16:01:31.513425 #1]  INFO -- : [7553096f-8d06-4a61-b1b5-83898574c5e5]   Parameters: {"path"=>"wp-admin/setup-config"}
+2026-02-27T16:01:31.514Z I, [2026-02-27T16:01:31.514329 #1]  INFO -- : [7553096f-8d06-4a61-b1b5-83898574c5e5] Completed 500 Internal Server Error in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+2026-02-27T16:01:31.516Z E, [2026-02-27T16:01:31.516405 #1] ERROR -- : [7553096f-8d06-4a61-b1b5-83898574c5e5]
+2026-02-27T16:01:31.516Z [7553096f-8d06-4a61-b1b5-83898574c5e5] ArgumentError (wrong number of arguments (given 2, expected 0..1)):
+2026-02-27T16:01:31.516Z [7553096f-8d06-4a61-b1b5-83898574c5e5]
+2026-02-27T16:01:31.516Z [7553096f-8d06-4a61-b1b5-83898574c5e5] app/controllers/concerns/friendly_error_handling_concern.rb:26:in `handle_routing_error'
+2026-02-27T16:01:31.516Z [7553096f-8d06-4a61-b1b5-83898574c5e5] lib/middleware/clacky_health_check.rb:19:in `call'
+2026-02-27T16:03:36.726Z I, [2026-02-27T16:03:36.726073 #1]  INFO -- : [40bd5929-131b-4e56-8121-f8713faa5bcf] Started GET "/wordpress/wp-admin/setup-config.php" for 104.23.221.173 at 2026-02-27 16:03:36 +0000
+2026-02-27T16:03:36.728Z I, [2026-02-27T16:03:36.728736 #1]  INFO -- : [40bd5929-131b-4e56-8121-f8713faa5bcf] Processing by ApplicationController#handle_routing_error as */*
+2026-02-27T16:03:36.729Z I, [2026-02-27T16:03:36.728803 #1]  INFO -- : [40bd5929-131b-4e56-8121-f8713faa5bcf]   Parameters: {"path"=>"wordpress/wp-admin/setup-config"}
+2026-02-27T16:03:36.730Z I, [2026-02-27T16:03:36.730368 #1]  INFO -- : [40bd5929-131b-4e56-8121-f8713faa5bcf] Completed 500 Internal Server Error in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+2026-02-27T16:03:36.731Z E, [2026-02-27T16:03:36.731369 #1] ERROR -- : [40bd5929-131b-4e56-8121-f8713faa5bcf]
+2026-02-27T16:03:36.731Z [40bd5929-131b-4e56-8121-f8713faa5bcf] ArgumentError (wrong number of arguments (given 2, expected 0..1)):
+2026-02-27T16:03:36.731Z [40bd5929-131b-4e56-8121-f8713faa5bcf]
+2026-02-27T16:03:36.731Z [40bd5929-131b-4e56-8121-f8713faa5bcf] app/controllers/concerns/friendly_error_handling_concern.rb:26:in `handle_routing_error'
+2026-02-27T16:03:36.731Z [40bd5929-131b-4e56-8121-f8713faa5bcf] lib/middleware/clacky_health_check.rb:19:in `call'
+2026-02-27T16:03:46.003Z I, [2026-02-27T16:03:46.003359 #1]  INFO -- : [f16a2e5a-cbf9-4d65-8d89-beb2e0eb4822] Started GET "/wordpress/wp-admin/setup-config.php" for 162.158.183.63 at 2026-02-27 16:03:46 +0000
+2026-02-27T16:03:46.004Z I, [2026-02-27T16:03:46.004532 #1]  INFO -- : [f16a2e5a-cbf9-4d65-8d89-beb2e0eb4822] Processing by ApplicationController#handle_routing_error as */*
+2026-02-27T16:03:46.004Z I, [2026-02-27T16:03:46.004600 #1]  INFO -- : [f16a2e5a-cbf9-4d65-8d89-beb2e0eb4822]   Parameters: {"path"=>"wordpress/wp-admin/setup-config"}
+2026-02-27T16:03:46.005Z I, [2026-02-27T16:03:46.005352 #1]  INFO -- : [f16a2e5a-cbf9-4d65-8d89-beb2e0eb4822] Completed 500 Internal Server Error in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+2026-02-27T16:03:46.006Z E, [2026-02-27T16:03:46.006138 #1] ERROR -- : [f16a2e5a-cbf9-4d65-8d89-beb2e0eb4822]
+2026-02-27T16:03:46.006Z [f16a2e5a-cbf9-4d65-8d89-beb2e0eb4822] ArgumentError (wrong number of arguments (given 2, expected 0..1)):
+2026-02-27T16:03:46.006Z [f16a2e5a-cbf9-4d65-8d89-beb2e0eb4822]
+2026-02-27T16:03:46.006Z [f16a2e5a-cbf9-4d65-8d89-beb2e0eb4822] app/controllers/concerns/friendly_error_handling_concern.rb:26:in `handle_routing_error'
+2026-02-27T16:03:46.006Z [f16a2e5a-cbf9-4d65-8d89-beb2e0eb4822] lib/middleware/clacky_health_check.rb:19:in `call'
+2026-02-27T16:12:52.188Z I, [2026-02-27T16:12:52.187947 #1]  INFO -- : [636c3d76-06c1-4b5c-bce7-26e5669e53a9] Started GET "/" for 34.66.225.9 at 2026-02-27 16:12:52 +0000
+2026-02-27T16:12:52.191Z I, [2026-02-27T16:12:52.190692 #1]  INFO -- : [636c3d76-06c1-4b5c-bce7-26e5669e53a9] Processing by HomeController#index as HTML
+2026-02-27T16:12:52.211Z I, [2026-02-27T16:12:52.211573 #1]  INFO -- : [636c3d76-06c1-4b5c-bce7-26e5669e53a9]   Rendered layout layouts/application.html.erb (Duration: 15.3ms | GC: 0.2ms)
+2026-02-27T16:12:52.214Z I, [2026-02-27T16:12:52.213970 #1]  INFO -- : [636c3d76-06c1-4b5c-bce7-26e5669e53a9] Completed 200 OK in 22ms (Views: 17.8ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.2ms)
+2026-02-27T16:15:34.329Z I, [2026-02-27T16:15:34.329754 #1]  INFO -- : [9a325784-6a49-4c48-87a5-e53588dd5c0b] Started GET "/" for 192.243.120.74 at 2026-02-27 16:15:34 +0000
+2026-02-27T16:15:34.330Z I, [2026-02-27T16:15:34.330335 #1]  INFO -- : [9a325784-6a49-4c48-87a5-e53588dd5c0b] Processing by HomeController#index as HTML
+2026-02-27T16:15:34.387Z I, [2026-02-27T16:15:34.387548 #1]  INFO -- : [9a325784-6a49-4c48-87a5-e53588dd5c0b]   Rendered layout layouts/application.html.erb (Duration: 33.5ms | GC: 0.2ms)
+2026-02-27T16:15:34.388Z I, [2026-02-27T16:15:34.388315 #1]  INFO -- : [9a325784-6a49-4c48-87a5-e53588dd5c0b] Completed 200 OK in 58ms (Views: 30.4ms | ActiveRecord: 7.6ms (2 queries, 0 cached) | GC: 0.3ms)
+2026-02-27T16:15:38.060Z I, [2026-02-27T16:15:38.060311 #1]  INFO -- : [9a2491da-8c67-4e72-9e5b-c8c4ff957871] Started GET "/bots" for 192.243.120.74 at 2026-02-27 16:15:38 +0000
+2026-02-27T16:15:38.061Z I, [2026-02-27T16:15:38.061073 #1]  INFO -- : [9a2491da-8c67-4e72-9e5b-c8c4ff957871] Processing by BotsController#index as HTML
+2026-02-27T16:15:38.112Z I, [2026-02-27T16:15:38.112443 #1]  INFO -- : [9a2491da-8c67-4e72-9e5b-c8c4ff957871]   Rendered layout layouts/application.html.erb (Duration: 37.8ms | GC: 0.4ms)
+2026-02-27T16:15:38.113Z I, [2026-02-27T16:15:38.113014 #1]  INFO -- : [9a2491da-8c67-4e72-9e5b-c8c4ff957871] Completed 200 OK in 51ms (Views: 34.0ms | ActiveRecord: 4.9ms (7 queries, 1 cached) | GC: 0.4ms)
+2026-02-27T16:15:43.300Z I, [2026-02-27T16:15:43.300686 #1]  INFO -- : [f8c9a0c6-8ed9-4736-aa5c-51c2e49ae624] Started GET "/bots/1" for 192.243.120.74 at 2026-02-27 16:15:43 +0000
+2026-02-27T16:15:43.301Z I, [2026-02-27T16:15:43.301643 #1]  INFO -- : [f8c9a0c6-8ed9-4736-aa5c-51c2e49ae624] Processing by BotsController#show as HTML
+2026-02-27T16:15:43.302Z I, [2026-02-27T16:15:43.301948 #1]  INFO -- : [f8c9a0c6-8ed9-4736-aa5c-51c2e49ae624]   Parameters: {"id"=>"1"}
+2026-02-27T16:15:43.390Z I, [2026-02-27T16:15:43.390754 #1]  INFO -- : [f8c9a0c6-8ed9-4736-aa5c-51c2e49ae624]   Rendered layout layouts/application.html.erb (Duration: 78.0ms | GC: 0.5ms)
+2026-02-27T16:15:43.391Z I, [2026-02-27T16:15:43.391292 #1]  INFO -- : [f8c9a0c6-8ed9-4736-aa5c-51c2e49ae624] Completed 200 OK in 89ms (Views: 69.3ms | ActiveRecord: 9.7ms (14 queries, 1 cached) | GC: 0.5ms)
+2026-02-27T16:16:52.700Z I, [2026-02-27T16:16:52.700740 #1]  INFO -- : [e4f216c3-192c-4573-a7f5-3d40291b698e] Started GET "/cable?sdk_token=[FILTERED]&bot_id=1" for 192.243.120.74 at 2026-02-27 16:16:52 +0000
+2026-02-27T16:16:52.711Z I, [2026-02-27T16:16:52.711536 #1]  INFO -- : [e4f216c3-192c-4573-a7f5-3d40291b698e] Started GET "/cable?sdk_token=[FILTERED]&bot_id=1" [WebSocket] for 192.243.120.74 at 2026-02-27 16:16:52 +0000
+2026-02-27T16:16:52.711Z I, [2026-02-27T16:16:52.711597 #1]  INFO -- : [e4f216c3-192c-4573-a7f5-3d40291b698e] Successfully upgraded to WebSocket (REQUEST_METHOD: GET, HTTP_CONNECTION: Upgrade, HTTP_UPGRADE: websocket)
+2026-02-27T16:16:52.721Z I, [2026-02-27T16:16:52.720845 #1]  INFO -- : [ActionCable] New WebSocket connection attempt
+2026-02-27T16:16:52.721Z I, [2026-02-27T16:16:52.720904 #1]  INFO -- : [ActionCable] Query string: sdk_token=1184da956068f173e953ad4240459136ae37e7c17eee98fc1cee7db639a4b91a&bot_id=1
+2026-02-27T16:16:52.721Z I, [2026-02-27T16:16:52.721112 #1]  INFO -- : [ActionCable] Bot authentication attempt with token: 1184da95...
+2026-02-27T16:16:52.723Z I, [2026-02-27T16:16:52.723676 #1]  INFO -- : [ActionCable] ✅ Bot authenticated: Bot#1 - 龙虾
+2026-02-27T16:16:52.725Z I, [2026-02-27T16:16:52.725340 #1]  INFO -- : Registered connection (Z2lkOi8vbXlhcHAvQm90LzE)
+2026-02-27T16:16:53.318Z I, [2026-02-27T16:16:53.318354 #1]  INFO -- : [BotChannel] Bot 1 subscribed to bot_1 and bot_1_commands
+2026-02-27T16:16:53.321Z I, [2026-02-27T16:16:53.320890 #1]  INFO -- : BotChannel is streaming from bot_1
+2026-02-27T16:16:53.322Z I, [2026-02-27T16:16:53.321883 #1]  INFO -- : BotChannel is streaming from bot_1_commands
+2026-02-27T16:16:58.670Z I, [2026-02-27T16:16:58.670295 #1]  INFO -- : [69b4113d-9143-4af7-9c53-dd2cfcda9fa8] Started GET "/bots/1" for 192.243.120.74 at 2026-02-27 16:16:58 +0000
+2026-02-27T16:16:58.671Z I, [2026-02-27T16:16:58.671401 #1]  INFO -- : [69b4113d-9143-4af7-9c53-dd2cfcda9fa8] Processing by BotsController#show as HTML
+2026-02-27T16:16:58.671Z I, [2026-02-27T16:16:58.671471 #1]  INFO -- : [69b4113d-9143-4af7-9c53-dd2cfcda9fa8]   Parameters: {"id"=>"1"}
+2026-02-27T16:16:58.700Z I, [2026-02-27T16:16:58.700636 #1]  INFO -- : [69b4113d-9143-4af7-9c53-dd2cfcda9fa8]   Rendered layout layouts/application.html.erb (Duration: 19.2ms | GC: 0.6ms)
+2026-02-27T16:16:58.701Z I, [2026-02-27T16:16:58.701115 #1]  INFO -- : [69b4113d-9143-4af7-9c53-dd2cfcda9fa8] Completed 200 OK in 30ms (Views: 18.6ms | ActiveRecord: 2.2ms (10 queries, 2 cached) | GC: 1.2ms)
+2026-02-27T16:17:10.590Z I, [2026-02-27T16:17:10.590396 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] Started POST "/sse/rokid" for 47.110.95.58 at 2026-02-27 16:17:10 +0000
+2026-02-27T16:17:10.594Z I, [2026-02-27T16:17:10.594421 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] Processing by RokidSseController#sse as */*
+2026-02-27T16:17:10.594Z I, [2026-02-27T16:17:10.594540 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8]   Parameters: {"metadata"=>{"lang"=>"zh-CN", "location"=>"广东省深圳市南山区南头街道南山大道3011号", "company_id"=>1, "latitude"=>"22.542234929782865", "longitude"=>"113.92189012676448", "currentTime"=>"2026-02-28 00:17:07", "weather"=>"1. 今日：当前天气多云，21度，最低20度，最高26度。\n2. 明天：小雨，最低19度，最高21度\n3. 后天：阴，最低20度，最高25度", "battery"=>"28", "runningApp"=>""}, "agent_id"=>"a4b8c2a2ef1342f1a4eb56dc492c2702", "user_id"=>"CB655E39993E42E7BCC98DB38A402690", "message_id"=>"1772209027922", "message"=>[{"role"=>"user", "type"=>"text", "text"=>"你好", "image_url"=>nil}], "rokid_sse"=>{"metadata"=>{"lang"=>"zh-CN", "location"=>"广东省深圳市南山区南头街道南山大道3011号", "company_id"=>1, "latitude"=>"22.542234929782865", "longitude"=>"113.92189012676448", "currentTime"=>"2026-02-28 00:17:07", "weather"=>"1. 今日：当前天气多云，21度，最低20度，最高26度。\n2. 明天：小雨，最低19度，最高21度\n3. 后天：阴，最低20度，最高25度", "battery"=>"28", "runningApp"=>""}, "agent_id"=>"a4b8c2a2ef1342f1a4eb56dc492c2702", "user_id"=>"CB655E39993E42E7BCC98DB38A402690", "message_id"=>"1772209027922", "message"=>[{"role"=>"user", "type"=>"text", "text"=>"你好", "image_url"=>nil}]}}
+2026-02-27T16:17:10.595Z I, [2026-02-27T16:17:10.595827 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] Rack hijack available: true
+2026-02-27T16:17:10.595Z I, [2026-02-27T16:17:10.595867 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] Using hijack mode
+2026-02-27T16:17:10.631Z I, [2026-02-27T16:17:10.631382 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] Created trace trace_98a2929655f9e787 for message_id=1772209027922
+2026-02-27T16:17:10.631Z I, [2026-02-27T16:17:10.631442 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] Bot not found for agent_id: a4b8c2a2ef1342f1a4eb56dc492c2702, sending take_photo command
+2026-02-27T16:17:10.631Z I, [2026-02-27T16:17:10.631497 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] ⏰ Writing message at 00:17:10.631
+2026-02-27T16:17:10.631Z I, [2026-02-27T16:17:10.631767 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] ✅ Wrote+flushed message in 0.28ms (at 00:17:10.631)
+2026-02-27T16:17:10.631Z I, [2026-02-27T16:17:10.631808 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] Sending take_photo command for binding in hijack mode
+2026-02-27T16:17:10.632Z I, [2026-02-27T16:17:10.631834 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] ⏰ Writing message at 00:17:10.631
+2026-02-27T16:17:10.632Z I, [2026-02-27T16:17:10.632077 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] ✅ Wrote+flushed message in 0.16ms (at 00:17:10.631)
+2026-02-27T16:17:10.632Z I, [2026-02-27T16:17:10.632148 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] ⏰ Writing message at 00:17:10.632
+2026-02-27T16:17:10.632Z I, [2026-02-27T16:17:10.632315 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] ✅ Wrote+flushed message in 0.16ms (at 00:17:10.632)
+2026-02-27T16:17:10.632Z I, [2026-02-27T16:17:10.632350 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] ⏰ Writing done at 00:17:10.632
+2026-02-27T16:17:10.633Z I, [2026-02-27T16:17:10.632493 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] [RokidSSE] ✅ Wrote+flushed done in 0.13ms (at 00:17:10.632)
+2026-02-27T16:17:10.636Z I, [2026-02-27T16:17:10.635985 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] No template found for RokidSseController#sse, rendering head :no_content
+2026-02-27T16:17:10.637Z I, [2026-02-27T16:17:10.637420 #1]  INFO -- : [e37f85f0-459a-4dd4-bc06-0e98b0e7b9b8] Completed 204 No Content in 42ms (ActiveRecord: 10.2ms (7 queries, 0 cached) | GC: 0.0ms)
+2026-02-27T16:17:18.576Z I, [2026-02-27T16:17:18.576637 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] Started POST "/sse/rokid" for 47.98.111.53 at 2026-02-27 16:17:18 +0000
+2026-02-27T16:17:18.580Z I, [2026-02-27T16:17:18.579061 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] Processing by RokidSseController#sse as */*
+2026-02-27T16:17:18.580Z I, [2026-02-27T16:17:18.580206 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d]   Parameters: {"metadata"=>{"lang"=>"zh-CN", "location"=>"广东省深圳市南山区南头街道南山大道3011号", "company_id"=>1, "latitude"=>"22.542234929782865", "longitude"=>"113.92189012676448", "currentTime"=>"2026-02-28 00:17:13", "weather"=>"1. 今日：当前天气多云，21度，最低20度，最高26度。\n2. 明天：小雨，最低19度，最高21度\n3. 后天：阴，最低20度，最高25度", "battery"=>"28", "runningApp"=>""}, "agent_id"=>"a4b8c2a2ef1342f1a4eb56dc492c2702", "user_id"=>"CB655E39993E42E7BCC98DB38A402690", "message_id"=>"1772209027922", "message"=>[{"role"=>"user", "type"=>"image", "text"=>nil, "image_url"=>"https://basecloud.rokidcdn.com/basecloud/prod/coze/image/dff246d2-88b1-4759-88f6-0c715b8292f0.webp"}], "rokid_sse"=>{"metadata"=>{"lang"=>"zh-CN", "location"=>"广东省深圳市南山区南头街道南山大道3011号", "company_id"=>1, "latitude"=>"22.542234929782865", "longitude"=>"113.92189012676448", "currentTime"=>"2026-02-28 00:17:13", "weather"=>"1. 今日：当前天气多云，21度，最低20度，最高26度。\n2. 明天：小雨，最低19度，最高21度\n3. 后天：阴，最低20度，最高25度", "battery"=>"28", "runningApp"=>""}, "agent_id"=>"a4b8c2a2ef1342f1a4eb56dc492c2702", "user_id"=>"CB655E39993E42E7BCC98DB38A402690", "message_id"=>"1772209027922", "message"=>[{"role"=>"user", "type"=>"image", "text"=>nil, "image_url"=>"https://basecloud.rokidcdn.com/basecloud/prod/coze/image/dff246d2-88b1-4759-88f6-0c715b8292f0.webp"}]}}
+2026-02-27T16:17:18.581Z I, [2026-02-27T16:17:18.581456 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] Rack hijack available: true
+2026-02-27T16:17:18.581Z I, [2026-02-27T16:17:18.581664 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] Using hijack mode
+2026-02-27T16:17:18.587Z I, [2026-02-27T16:17:18.587436 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] Received binding photo for message_id: 1772209027922
+2026-02-27T16:17:18.587Z I, [2026-02-27T16:17:18.587495 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] Processing binding photo result for agent_id: a4b8c2a2ef1342f1a4eb56dc492c2702
+2026-02-27T16:17:18.587Z I, [2026-02-27T16:17:18.587516 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] Image URL: https://basecloud.rokidcdn.com/basecloud/prod/coze/image/dff246d2-88b1-4759-88f6-0c715b8292f0.webp
+2026-02-27T16:17:23.997Z I, [2026-02-27T16:17:23.997764 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] QR decode API response code: 200
+2026-02-27T16:17:23.997Z I, [2026-02-27T16:17:23.997821 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] QR decode API response body: {"code":0,"message":"ok","data":{"contents":["8a1a4398f6d7b926aef1a8e856a4d65b"]}}
+2026-02-27T16:17:23.997Z I, [2026-02-27T16:17:23.997863 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] QR code decoded: 8a1a4398f6d7b926aef1a8e856a4d65b
+2026-02-27T16:17:24.013Z I, [2026-02-27T16:17:24.013364 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] Successfully bound agent_id a4b8c2a2ef1342f1a4eb56dc492c2702 and user_id CB655E39993E42E7BCC98DB38A402690 to Bot 1 using token 8a1a4398f6d7b926aef1a8e856a4d65b
+2026-02-27T16:17:24.013Z I, [2026-02-27T16:17:24.013450 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] ⏰ Writing message at 00:17:24.013
+2026-02-27T16:17:24.013Z I, [2026-02-27T16:17:24.013622 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] ✅ Wrote+flushed message in 0.18ms (at 00:17:24.013)
+2026-02-27T16:17:24.013Z I, [2026-02-27T16:17:24.013659 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] ⏰ Writing done at 00:17:24.013
+2026-02-27T16:17:24.014Z I, [2026-02-27T16:17:24.013744 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] [RokidSSE] ✅ Wrote+flushed done in 0.09ms (at 00:17:24.013)
+2026-02-27T16:17:24.014Z I, [2026-02-27T16:17:24.013907 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] No template found for RokidSseController#sse, rendering head :no_content
+2026-02-27T16:17:24.014Z I, [2026-02-27T16:17:24.014639 #1]  INFO -- : [2b2183cd-18a7-48df-9e59-88373dc97a4d] Completed 204 No Content in 5434ms (ActiveRecord: 7.6ms (9 queries, 0 cached) | GC: 3.0ms)
+2026-02-27T16:17:33.249Z I, [2026-02-27T16:17:33.249147 #1]  INFO -- : [ffe4f32d-4a60-4609-9b2d-99a37c98b409] Started GET "/bots/1" for 192.243.120.74 at 2026-02-27 16:17:33 +0000
+2026-02-27T16:17:33.250Z I, [2026-02-27T16:17:33.250030 #1]  INFO -- : [ffe4f32d-4a60-4609-9b2d-99a37c98b409] Processing by BotsController#show as HTML
+2026-02-27T16:17:33.250Z I, [2026-02-27T16:17:33.250074 #1]  INFO -- : [ffe4f32d-4a60-4609-9b2d-99a37c98b409]   Parameters: {"id"=>"1"}
+2026-02-27T16:17:33.272Z I, [2026-02-27T16:17:33.272141 #1]  INFO -- : [ffe4f32d-4a60-4609-9b2d-99a37c98b409]   Rendered layout layouts/application.html.erb (Duration: 14.3ms | GC: 0.0ms)
+2026-02-27T16:17:33.272Z I, [2026-02-27T16:17:33.272444 #1]  INFO -- : [ffe4f32d-4a60-4609-9b2d-99a37c98b409] Completed 200 OK in 22ms (Views: 11.3ms | ActiveRecord: 4.2ms (13 queries, 1 cached) | GC: 0.0ms)
+2026-02-27T16:17:38.133Z I, [2026-02-27T16:17:38.133078 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] Started POST "/sse/rokid" for 47.98.111.53 at 2026-02-27 16:17:38 +0000
+2026-02-27T16:17:38.137Z I, [2026-02-27T16:17:38.136458 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] Processing by RokidSseController#sse as */*
+2026-02-27T16:17:38.137Z I, [2026-02-27T16:17:38.136560 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b]   Parameters: {"metadata"=>{"lang"=>"zh-CN", "location"=>"广东省深圳市南山区南头街道南山大道3011号", "company_id"=>1, "latitude"=>"22.542234929782865", "longitude"=>"113.92189012676448", "currentTime"=>"2026-02-28 00:17:36", "weather"=>"1. 今日：当前天气多云，21度，最低20度，最高26度。\n2. 明天：小雨，最低19度，最高21度\n3. 后天：阴，最低20度，最高25度", "battery"=>"28", "runningApp"=>""}, "agent_id"=>"a4b8c2a2ef1342f1a4eb56dc492c2702", "user_id"=>"CB655E39993E42E7BCC98DB38A402690", "message_id"=>"1772209056436", "message"=>[{"role"=>"user", "type"=>"text", "text"=>"你好", "image_url"=>nil}], "rokid_sse"=>{"metadata"=>{"lang"=>"zh-CN", "location"=>"广东省深圳市南山区南头街道南山大道3011号", "company_id"=>1, "latitude"=>"22.542234929782865", "longitude"=>"113.92189012676448", "currentTime"=>"2026-02-28 00:17:36", "weather"=>"1. 今日：当前天气多云，21度，最低20度，最高26度。\n2. 明天：小雨，最低19度，最高21度\n3. 后天：阴，最低20度，最高25度", "battery"=>"28", "runningApp"=>""}, "agent_id"=>"a4b8c2a2ef1342f1a4eb56dc492c2702", "user_id"=>"CB655E39993E42E7BCC98DB38A402690", "message_id"=>"1772209056436", "message"=>[{"role"=>"user", "type"=>"text", "text"=>"你好", "image_url"=>nil}]}}
+2026-02-27T16:17:38.137Z I, [2026-02-27T16:17:38.137811 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] Rack hijack available: true
+2026-02-27T16:17:38.138Z I, [2026-02-27T16:17:38.137932 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] Using hijack mode
+2026-02-27T16:17:38.148Z I, [2026-02-27T16:17:38.148668 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] Created trace trace_ffb29e9cea418b88 for message_id=1772209056436
+2026-02-27T16:17:38.149Z I, [2026-02-27T16:17:38.148961 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] Found bot: 龙虾 (ID: 1)
+2026-02-27T16:17:38.151Z I, [2026-02-27T16:17:38.151591 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] Bot 1 is online (last ping: 2026-02-28 00:16:53 +0800)
+2026-02-27T16:17:38.153Z I, [2026-02-27T16:17:38.153302 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] Broadcasting command to bot_1_commands (trace_id=trace_ffb29e9cea418b88)
+2026-02-27T16:17:38.168Z I, [2026-02-27T16:17:38.167983 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [ActiveJob] [SolidCable::TrimJob] [d9ea2a34-502e-4b17-9189-a3a2091c4c74] Performing SolidCable::TrimJob (Job ID: d9ea2a34-502e-4b17-9189-a3a2091c4c74) from GoodJob(default)
+2026-02-27T16:17:38.169Z I, [2026-02-27T16:17:38.169521 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [ActiveJob] [SolidCable::TrimJob] [d9ea2a34-502e-4b17-9189-a3a2091c4c74] Performed SolidCable::TrimJob (Job ID: d9ea2a34-502e-4b17-9189-a3a2091c4c74) from GoodJob(default) in 2.05ms
+2026-02-27T16:17:38.170Z I, [2026-02-27T16:17:38.170700 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] Subscribed to channel: rokid_sse_1_1772209056436
+2026-02-27T16:17:44.983Z I, [2026-02-27T16:17:44.983609 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"嘿。", "session_id"=>"1772209056436", "sequence"=>0}
+2026-02-27T16:17:44.984Z I, [2026-02-27T16:17:44.983862 #1]  INFO -- : [BotChannel] Received stream_chunk #0 for session 1772209056436: 嘿。...
+2026-02-27T16:17:44.987Z I, [2026-02-27T16:17:44.987154 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [de7bee15-6e8e-4604-bf39-a9766841d63a] Performing SolidCable::TrimJob (Job ID: de7bee15-6e8e-4604-bf39-a9766841d63a) from GoodJob(default)
+2026-02-27T16:17:44.988Z I, [2026-02-27T16:17:44.988104 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [de7bee15-6e8e-4604-bf39-a9766841d63a] Performed SolidCable::TrimJob (Job ID: de7bee15-6e8e-4604-bf39-a9766841d63a) from GoodJob(default) in 1.0ms
+2026-02-27T16:17:44.990Z I, [2026-02-27T16:17:44.990499 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [2ce02e62-c955-4f3b-b48e-c70e1d8e7387] Performing SolidCable::TrimJob (Job ID: 2ce02e62-c955-4f3b-b48e-c70e1d8e7387) from GoodJob(default)
+2026-02-27T16:17:44.991Z I, [2026-02-27T16:17:44.991240 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [2ce02e62-c955-4f3b-b48e-c70e1d8e7387] Performed SolidCable::TrimJob (Job ID: 2ce02e62-c955-4f3b-b48e-c70e1d8e7387) from GoodJob(default) in 0.76ms
+2026-02-27T16:17:45.004Z I, [2026-02-27T16:17:45.004548 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:45.031Z I, [2026-02-27T16:17:45.031795 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"🦞", "session_id"=>"1772209056436", "sequence"=>1}
+2026-02-27T16:17:45.031Z I, [2026-02-27T16:17:45.031870 #1]  INFO -- : [BotChannel] Received stream_chunk #1 for session 1772209056436: 🦞...
+2026-02-27T16:17:45.034Z I, [2026-02-27T16:17:45.034799 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [767f15e6-ee23-409b-908d-6d8d7b838d74] Performing SolidCable::TrimJob (Job ID: 767f15e6-ee23-409b-908d-6d8d7b838d74) from GoodJob(default)
+2026-02-27T16:17:45.035Z I, [2026-02-27T16:17:45.035683 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"\n\n怎么样？", "session_id"=>"1772209056436", "sequence"=>2}
+2026-02-27T16:17:45.035Z I, [2026-02-27T16:17:45.035842 #1]  INFO -- : [BotChannel] Received stream_chunk #2 for session 1772209056436:
+2026-02-27T16:17:45.035Z 怎么样？...
+2026-02-27T16:17:45.037Z I, [2026-02-27T16:17:45.037572 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [767f15e6-ee23-409b-908d-6d8d7b838d74] Performed SolidCable::TrimJob (Job ID: 767f15e6-ee23-409b-908d-6d8d7b838d74) from GoodJob(default) in 2.8ms
+2026-02-27T16:17:45.039Z I, [2026-02-27T16:17:45.039386 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [9ca317f3-860f-4e10-b5e9-9580490d85cd] Performing SolidCable::TrimJob (Job ID: 9ca317f3-860f-4e10-b5e9-9580490d85cd) from GoodJob(default)
+2026-02-27T16:17:45.040Z I, [2026-02-27T16:17:45.040584 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [9ca317f3-860f-4e10-b5e9-9580490d85cd] Performed SolidCable::TrimJob (Job ID: 9ca317f3-860f-4e10-b5e9-9580490d85cd) from GoodJob(default) in 1.22ms
+2026-02-27T16:17:45.041Z I, [2026-02-27T16:17:45.041713 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [c5140a7b-6b4c-4b03-a759-e854e875c1c0] Performing SolidCable::TrimJob (Job ID: c5140a7b-6b4c-4b03-a759-e854e875c1c0) from GoodJob(default)
+2026-02-27T16:17:45.043Z I, [2026-02-27T16:17:45.043208 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [c5140a7b-6b4c-4b03-a759-e854e875c1c0] Performed SolidCable::TrimJob (Job ID: c5140a7b-6b4c-4b03-a759-e854e875c1c0) from GoodJob(default) in 1.51ms
+2026-02-27T16:17:45.044Z I, [2026-02-27T16:17:45.044226 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [073e92c8-bebc-49a3-9884-7a3b143bb2db] Performing SolidCable::TrimJob (Job ID: 073e92c8-bebc-49a3-9884-7a3b143bb2db) from GoodJob(default)
+2026-02-27T16:17:45.045Z I, [2026-02-27T16:17:45.044919 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [073e92c8-bebc-49a3-9884-7a3b143bb2db] Performed SolidCable::TrimJob (Job ID: 073e92c8-bebc-49a3-9884-7a3b143bb2db) from GoodJob(default) in 0.72ms
+2026-02-27T16:17:45.096Z I, [2026-02-27T16:17:45.095733 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] ⏰ Writing message at 00:17:45.095
+2026-02-27T16:17:45.096Z I, [2026-02-27T16:17:45.095939 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] ✅ Wrote+flushed message in 0.22ms (at 00:17:45.095)
+2026-02-27T16:17:45.107Z I, [2026-02-27T16:17:45.107715 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:45.108Z I, [2026-02-27T16:17:45.107785 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:45.132Z I, [2026-02-27T16:17:45.132056 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_end", "session_id"=>"1772209056436"}
+2026-02-27T16:17:45.132Z I, [2026-02-27T16:17:45.132134 #1]  INFO -- : [BotChannel] Stream ended for session 1772209056436
+2026-02-27T16:17:45.133Z I, [2026-02-27T16:17:45.133123 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_end", "session_id"=>"1772209056436"}
+2026-02-27T16:17:45.133Z I, [2026-02-27T16:17:45.133163 #1]  INFO -- : [BotChannel] Stream ended for session 1772209056436
+2026-02-27T16:17:45.136Z I, [2026-02-27T16:17:45.136701 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [35e88218-06dc-40e4-8ca1-d3833521a9ce] Performing SolidCable::TrimJob (Job ID: 35e88218-06dc-40e4-8ca1-d3833521a9ce) from GoodJob(default)
+2026-02-27T16:17:45.137Z I, [2026-02-27T16:17:45.137555 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e969e21f-dac8-49a7-b5a3-c6f554f48e73] Performing SolidCable::TrimJob (Job ID: e969e21f-dac8-49a7-b5a3-c6f554f48e73) from GoodJob(default)
+2026-02-27T16:17:45.138Z I, [2026-02-27T16:17:45.138522 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [35e88218-06dc-40e4-8ca1-d3833521a9ce] Performed SolidCable::TrimJob (Job ID: 35e88218-06dc-40e4-8ca1-d3833521a9ce) from GoodJob(default) in 1.85ms
+2026-02-27T16:17:45.139Z I, [2026-02-27T16:17:45.139206 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e969e21f-dac8-49a7-b5a3-c6f554f48e73] Performed SolidCable::TrimJob (Job ID: e969e21f-dac8-49a7-b5a3-c6f554f48e73) from GoodJob(default) in 1.67ms
+2026-02-27T16:17:45.207Z I, [2026-02-27T16:17:45.207827 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] ⏰ Writing message at 00:17:45.207
+2026-02-27T16:17:45.208Z I, [2026-02-27T16:17:45.208106 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] ✅ Wrote+flushed message in 0.25ms (at 00:17:45.208)
+2026-02-27T16:17:45.212Z I, [2026-02-27T16:17:45.212152 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:45.212Z I, [2026-02-27T16:17:45.212367 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:45.218Z I, [2026-02-27T16:17:45.217931 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] ⏰ Writing message at 00:17:45.217
+2026-02-27T16:17:45.218Z I, [2026-02-27T16:17:45.218149 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] ✅ Wrote+flushed message in 0.23ms (at 00:17:45.218)
+2026-02-27T16:17:45.222Z I, [2026-02-27T16:17:45.222350 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] Stream ended for session 1772209056436
+2026-02-27T16:17:45.223Z I, [2026-02-27T16:17:45.223684 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] ⏰ Writing message at 00:17:45.223
+2026-02-27T16:17:45.223Z I, [2026-02-27T16:17:45.223842 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] ✅ Wrote+flushed message in 0.17ms (at 00:17:45.223)
+2026-02-27T16:17:45.224Z I, [2026-02-27T16:17:45.223910 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] ⏰ Writing done at 00:17:45.223
+2026-02-27T16:17:45.224Z I, [2026-02-27T16:17:45.224057 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] ✅ Wrote+flushed done in 0.15ms (at 00:17:45.224)
+2026-02-27T16:17:45.226Z I, [2026-02-27T16:17:45.226906 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] [trace_ffb29e9cea418b88] Trace finalized: status=completed, SDK chunks=3, SSE chunks=3
+2026-02-27T16:17:45.227Z I, [2026-02-27T16:17:45.226972 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] [RokidSSE] Unsubscribed from channel: rokid_sse_1_1772209056436
+2026-02-27T16:17:45.234Z I, [2026-02-27T16:17:45.234327 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] No template found for RokidSseController#sse, rendering head :no_content
+2026-02-27T16:17:45.234Z I, [2026-02-27T16:17:45.234680 #1]  INFO -- : [4ed87bdd-f6e4-46df-8831-3bd5dbf9e12b] Completed 204 No Content in 7098ms (ActiveRecord: 44.4ms (34 queries, 0 cached) | GC: 6.3ms)
+2026-02-27T16:17:54.230Z I, [2026-02-27T16:17:54.230736 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] Started POST "/sse/rokid" for 47.110.95.58 at 2026-02-27 16:17:54 +0000
+2026-02-27T16:17:54.233Z I, [2026-02-27T16:17:54.233021 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] Processing by RokidSseController#sse as */*
+2026-02-27T16:17:54.233Z I, [2026-02-27T16:17:54.233222 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce]   Parameters: {"metadata"=>{"lang"=>"zh-CN", "location"=>"广东省深圳市南山区南头街道南山大道3011号", "company_id"=>1, "latitude"=>"22.542234929782865", "longitude"=>"113.92189012676448", "currentTime"=>"2026-02-28 00:17:53", "weather"=>"1. 今日：当前天气多云，21度，最低20度，最高26度。\n2. 明天：小雨，最低19度，最高21度\n3. 后天：阴，最低20度，最高25度", "battery"=>"28", "runningApp"=>""}, "agent_id"=>"a4b8c2a2ef1342f1a4eb56dc492c2702", "user_id"=>"CB655E39993E42E7BCC98DB38A402690", "message_id"=>"1772209056436", "message"=>[{"role"=>"user", "type"=>"text", "text"=>"上次我们来到哪里了？", "image_url"=>nil}], "rokid_sse"=>{"metadata"=>{"lang"=>"zh-CN", "location"=>"广东省深圳市南山区南头街道南山大道3011号", "company_id"=>1, "latitude"=>"22.542234929782865", "longitude"=>"113.92189012676448", "currentTime"=>"2026-02-28 00:17:53", "weather"=>"1. 今日：当前天气多云，21度，最低20度，最高26度。\n2. 明天：小雨，最低19度，最高21度\n3. 后天：阴，最低20度，最高25度", "battery"=>"28", "runningApp"=>""}, "agent_id"=>"a4b8c2a2ef1342f1a4eb56dc492c2702", "user_id"=>"CB655E39993E42E7BCC98DB38A402690", "message_id"=>"1772209056436", "message"=>[{"role"=>"user", "type"=>"text", "text"=>"上次我们来到哪里了？", "image_url"=>nil}]}}
+2026-02-27T16:17:54.234Z I, [2026-02-27T16:17:54.234204 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] Rack hijack available: true
+2026-02-27T16:17:54.234Z I, [2026-02-27T16:17:54.234237 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] Using hijack mode
+2026-02-27T16:17:54.251Z I, [2026-02-27T16:17:54.251529 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] Created trace trace_5cca029b8e281c42 for message_id=1772209056436
+2026-02-27T16:17:54.251Z I, [2026-02-27T16:17:54.251581 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] Found bot: 龙虾 (ID: 1)
+2026-02-27T16:17:54.253Z I, [2026-02-27T16:17:54.253799 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] Bot 1 is online (last ping: 2026-02-28 00:17:53 +0800)
+2026-02-27T16:17:54.256Z I, [2026-02-27T16:17:54.256575 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] Broadcasting command to bot_1_commands (trace_id=trace_5cca029b8e281c42)
+2026-02-27T16:17:54.259Z I, [2026-02-27T16:17:54.258940 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [ActiveJob] [SolidCable::TrimJob] [408d4d20-7df7-486d-8316-205a9b9d0f00] Performing SolidCable::TrimJob (Job ID: 408d4d20-7df7-486d-8316-205a9b9d0f00) from GoodJob(default)
+2026-02-27T16:17:54.259Z I, [2026-02-27T16:17:54.259666 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [ActiveJob] [SolidCable::TrimJob] [408d4d20-7df7-486d-8316-205a9b9d0f00] Performed SolidCable::TrimJob (Job ID: 408d4d20-7df7-486d-8316-205a9b9d0f00) from GoodJob(default) in 0.75ms
+2026-02-27T16:17:54.260Z I, [2026-02-27T16:17:54.260282 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] Subscribed to channel: rokid_sse_1_1772209056436
+2026-02-27T16:17:57.981Z I, [2026-02-27T16:17:57.980944 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"上次我们聊到", "session_id"=>"1772209056436", "sequence"=>0}
+2026-02-27T16:17:57.981Z I, [2026-02-27T16:17:57.981021 #1]  INFO -- : [BotChannel] Received stream_chunk #0 for session 1772209056436: 上次我们聊到...
+2026-02-27T16:17:57.984Z I, [2026-02-27T16:17:57.984348 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [fc45acc3-2eab-4934-b03c-f7fe45669adf] Performing SolidCable::TrimJob (Job ID: fc45acc3-2eab-4934-b03c-f7fe45669adf) from GoodJob(default)
+2026-02-27T16:17:57.985Z I, [2026-02-27T16:17:57.985259 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [fc45acc3-2eab-4934-b03c-f7fe45669adf] Performed SolidCable::TrimJob (Job ID: fc45acc3-2eab-4934-b03c-f7fe45669adf) from GoodJob(default) in 0.93ms
+2026-02-27T16:17:57.988Z I, [2026-02-27T16:17:57.988064 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>" EYECLAW 项目的", "session_id"=>"1772209056436", "sequence"=>1}
+2026-02-27T16:17:57.988Z I, [2026-02-27T16:17:57.988860 #1]  INFO -- : [BotChannel] Received stream_chunk #1 for session 1772209056436:  EYECLAW 项目的...
+2026-02-27T16:17:57.989Z I, [2026-02-27T16:17:57.988773 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"度", "session_id"=>"1772209056436", "sequence"=>3}
+2026-02-27T16:17:57.989Z I, [2026-02-27T16:17:57.989633 #1]  INFO -- : [BotChannel] Received stream_chunk #3 for session 1772209056436: 度...
+2026-02-27T16:17:57.992Z I, [2026-02-27T16:17:57.988530 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"进", "session_id"=>"1772209056436", "sequence"=>2}
+2026-02-27T16:17:57.992Z I, [2026-02-27T16:17:57.992262 #1]  INFO -- : [BotChannel] Received stream_chunk #2 for session 1772209056436: 进...
+2026-02-27T16:17:57.998Z I, [2026-02-27T16:17:57.998071 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [52135e3c-a48a-44e8-84e1-1b2ad3c606c0] Performing SolidCable::TrimJob (Job ID: 52135e3c-a48a-44e8-84e1-1b2ad3c606c0) from GoodJob(default)
+2026-02-27T16:17:57.999Z I, [2026-02-27T16:17:57.998783 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [52483e6c-bf24-45aa-beb5-30f3226593d7] Performing SolidCable::TrimJob (Job ID: 52483e6c-bf24-45aa-beb5-30f3226593d7) from GoodJob(default)
+2026-02-27T16:17:58.003Z I, [2026-02-27T16:17:58.003893 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [52135e3c-a48a-44e8-84e1-1b2ad3c606c0] Performed SolidCable::TrimJob (Job ID: 52135e3c-a48a-44e8-84e1-1b2ad3c606c0) from GoodJob(default) in 5.96ms
+2026-02-27T16:17:58.006Z I, [2026-02-27T16:17:58.005487 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"。", "session_id"=>"1772209056436", "sequence"=>4}
+2026-02-27T16:17:58.006Z I, [2026-02-27T16:17:58.006188 #1]  INFO -- : [BotChannel] Received stream_chunk #4 for session 1772209056436: 。...
+2026-02-27T16:17:58.008Z I, [2026-02-27T16:17:58.006016 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [52483e6c-bf24-45aa-beb5-30f3226593d7] Performed SolidCable::TrimJob (Job ID: 52483e6c-bf24-45aa-beb5-30f3226593d7) from GoodJob(default) in 7.27ms
+2026-02-27T16:17:58.020Z I, [2026-02-27T16:17:58.018204 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [83c86e80-512c-4b71-bd9b-c1dfeead6bab] Performing SolidCable::TrimJob (Job ID: 83c86e80-512c-4b71-bd9b-c1dfeead6bab) from GoodJob(default)
+2026-02-27T16:17:58.026Z I, [2026-02-27T16:17:58.024210 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [1c4ea4c0-78af-4506-8b76-4ef154d2d630] Performing SolidCable::TrimJob (Job ID: 1c4ea4c0-78af-4506-8b76-4ef154d2d630) from GoodJob(default)
+2026-02-27T16:17:58.026Z I, [2026-02-27T16:17:58.026761 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [83c86e80-512c-4b71-bd9b-c1dfeead6bab] Performed SolidCable::TrimJob (Job ID: 83c86e80-512c-4b71-bd9b-c1dfeead6bab) from GoodJob(default) in 8.59ms
+2026-02-27T16:17:58.029Z I, [2026-02-27T16:17:58.028314 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [1c4ea4c0-78af-4506-8b76-4ef154d2d630] Performed SolidCable::TrimJob (Job ID: 1c4ea4c0-78af-4506-8b76-4ef154d2d630) from GoodJob(default) in 4.13ms
+2026-02-27T16:17:58.035Z I, [2026-02-27T16:17:58.035822 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [47c7cf60-ca5a-4e26-9321-6b716ceed970] Performing SolidCable::TrimJob (Job ID: 47c7cf60-ca5a-4e26-9321-6b716ceed970) from GoodJob(default)
+2026-02-27T16:17:58.038Z I, [2026-02-27T16:17:58.038260 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [47c7cf60-ca5a-4e26-9321-6b716ceed970] Performed SolidCable::TrimJob (Job ID: 47c7cf60-ca5a-4e26-9321-6b716ceed970) from GoodJob(default) in 2.47ms
+2026-02-27T16:17:58.056Z I, [2026-02-27T16:17:58.056200 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [4d95e903-85a1-4dff-af74-6fb5aa6f0a59] Performing SolidCable::TrimJob (Job ID: 4d95e903-85a1-4dff-af74-6fb5aa6f0a59) from GoodJob(default)
+2026-02-27T16:17:58.058Z I, [2026-02-27T16:17:58.058120 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [4d95e903-85a1-4dff-af74-6fb5aa6f0a59] Performed SolidCable::TrimJob (Job ID: 4d95e903-85a1-4dff-af74-6fb5aa6f0a59) from GoodJob(default) in 1.94ms
+2026-02-27T16:17:58.061Z I, [2026-02-27T16:17:58.059150 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e9dd172d-3fae-41b1-9502-c8ed2f32d45e] Performing SolidCable::TrimJob (Job ID: e9dd172d-3fae-41b1-9502-c8ed2f32d45e) from GoodJob(default)
+2026-02-27T16:17:58.061Z I, [2026-02-27T16:17:58.061630 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e9dd172d-3fae-41b1-9502-c8ed2f32d45e] Performed SolidCable::TrimJob (Job ID: e9dd172d-3fae-41b1-9502-c8ed2f32d45e) from GoodJob(default) in 2.53ms
+2026-02-27T16:17:58.063Z I, [2026-02-27T16:17:58.063634 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [69a2ed7d-72d4-43eb-94d7-376eb51b407f] Performing SolidCable::TrimJob (Job ID: 69a2ed7d-72d4-43eb-94d7-376eb51b407f) from GoodJob(default)
+2026-02-27T16:17:58.065Z I, [2026-02-27T16:17:58.065420 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [69a2ed7d-72d4-43eb-94d7-376eb51b407f] Performed SolidCable::TrimJob (Job ID: 69a2ed7d-72d4-43eb-94d7-376eb51b407f) from GoodJob(default) in 1.79ms
+2026-02-27T16:17:58.066Z I, [2026-02-27T16:17:58.066775 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [3abf26c5-916f-49ef-b158-d16937c564ad] Performing SolidCable::TrimJob (Job ID: 3abf26c5-916f-49ef-b158-d16937c564ad) from GoodJob(default)
+2026-02-27T16:17:58.068Z I, [2026-02-27T16:17:58.068011 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [3abf26c5-916f-49ef-b158-d16937c564ad] Performed SolidCable::TrimJob (Job ID: 3abf26c5-916f-49ef-b158-d16937c564ad) from GoodJob(default) in 1.09ms
+2026-02-27T16:17:58.075Z I, [2026-02-27T16:17:58.075657 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.077Z I, [2026-02-27T16:17:58.075783 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.078Z I, [2026-02-27T16:17:58.075926 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.078Z I, [2026-02-27T16:17:58.076070 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.078Z I, [2026-02-27T16:17:58.076156 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.119Z I, [2026-02-27T16:17:58.119282 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"🦞\n\n**简", "session_id"=>"1772209056436", "sequence"=>5}
+2026-02-27T16:17:58.119Z I, [2026-02-27T16:17:58.119344 #1]  INFO -- : [BotChannel] Received stream_chunk #5 for session 1772209056436: 🦞
+2026-02-27T16:17:58.119Z **简...
+2026-02-27T16:17:58.122Z I, [2026-02-27T16:17:58.122314 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [8e5bac34-2aca-4621-8371-8946dce32ba0] Performing SolidCable::TrimJob (Job ID: 8e5bac34-2aca-4621-8371-8946dce32ba0) from GoodJob(default)
+2026-02-27T16:17:58.123Z I, [2026-02-27T16:17:58.123061 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [8e5bac34-2aca-4621-8371-8946dce32ba0] Performed SolidCable::TrimJob (Job ID: 8e5bac34-2aca-4621-8371-8946dce32ba0) from GoodJob(default) in 0.78ms
+2026-02-27T16:17:58.124Z I, [2026-02-27T16:17:58.124417 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"单", "session_id"=>"1772209056436", "sequence"=>6}
+2026-02-27T16:17:58.124Z I, [2026-02-27T16:17:58.124900 #1]  INFO -- : [BotChannel] Received stream_chunk #6 for session 1772209056436: 单...
+2026-02-27T16:17:58.125Z I, [2026-02-27T16:17:58.124825 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"顾：**", "session_id"=>"1772209056436", "sequence"=>8}
+2026-02-27T16:17:58.125Z I, [2026-02-27T16:17:58.125881 #1]  INFO -- : [BotChannel] Received stream_chunk #8 for session 1772209056436: 顾：**...
+2026-02-27T16:17:58.126Z I, [2026-02-27T16:17:58.124649 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"回", "session_id"=>"1772209056436", "sequence"=>7}
+2026-02-27T16:17:58.127Z I, [2026-02-27T16:17:58.126931 #1]  INFO -- : [BotChannel] Received stream_chunk #7 for session 1772209056436: 回...
+2026-02-27T16:17:58.128Z I, [2026-02-27T16:17:58.128867 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [7d995b5f-75ba-47fa-ad31-dab63cf65a33] Performing SolidCable::TrimJob (Job ID: 7d995b5f-75ba-47fa-ad31-dab63cf65a33) from GoodJob(default)
+2026-02-27T16:17:58.130Z I, [2026-02-27T16:17:58.130005 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [7d995b5f-75ba-47fa-ad31-dab63cf65a33] Performed SolidCable::TrimJob (Job ID: 7d995b5f-75ba-47fa-ad31-dab63cf65a33) from GoodJob(default) in 1.18ms
+2026-02-27T16:17:58.131Z I, [2026-02-27T16:17:58.130929 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [032c908b-4920-4cb1-a4c2-267c54872c38] Performing SolidCable::TrimJob (Job ID: 032c908b-4920-4cb1-a4c2-267c54872c38) from GoodJob(default)
+2026-02-27T16:17:58.131Z I, [2026-02-27T16:17:58.131631 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [9ac9687c-e2c5-42ff-9bca-a02c3a0518d4] Performing SolidCable::TrimJob (Job ID: 9ac9687c-e2c5-42ff-9bca-a02c3a0518d4) from GoodJob(default)
+2026-02-27T16:17:58.132Z I, [2026-02-27T16:17:58.132067 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [41531cea-a858-40bc-a207-d22a231ad7ca] Performing SolidCable::TrimJob (Job ID: 41531cea-a858-40bc-a207-d22a231ad7ca) from GoodJob(default)
+2026-02-27T16:17:58.133Z I, [2026-02-27T16:17:58.133570 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [032c908b-4920-4cb1-a4c2-267c54872c38] Performed SolidCable::TrimJob (Job ID: 032c908b-4920-4cb1-a4c2-267c54872c38) from GoodJob(default) in 2.68ms
+2026-02-27T16:17:58.136Z I, [2026-02-27T16:17:58.135722 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [9ac9687c-e2c5-42ff-9bca-a02c3a0518d4] Performed SolidCable::TrimJob (Job ID: 9ac9687c-e2c5-42ff-9bca-a02c3a0518d4) from GoodJob(default) in 4.1ms
+2026-02-27T16:17:58.137Z I, [2026-02-27T16:17:58.136223 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [41531cea-a858-40bc-a207-d22a231ad7ca] Performed SolidCable::TrimJob (Job ID: 41531cea-a858-40bc-a207-d22a231ad7ca) from GoodJob(default) in 4.16ms
+2026-02-27T16:17:58.139Z I, [2026-02-27T16:17:58.137888 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [4316a327-6aaa-41f7-bed9-a4054b15ef03] Performing SolidCable::TrimJob (Job ID: 4316a327-6aaa-41f7-bed9-a4054b15ef03) from GoodJob(default)
+2026-02-27T16:17:58.140Z I, [2026-02-27T16:17:58.140721 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [4316a327-6aaa-41f7-bed9-a4054b15ef03] Performed SolidCable::TrimJob (Job ID: 4316a327-6aaa-41f7-bed9-a4054b15ef03) from GoodJob(default) in 2.85ms
+2026-02-27T16:17:58.142Z I, [2026-02-27T16:17:58.142012 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [00b8fa01-df92-47c2-90b3-06f3816adc59] Performing SolidCable::TrimJob (Job ID: 00b8fa01-df92-47c2-90b3-06f3816adc59) from GoodJob(default)
+2026-02-27T16:17:58.143Z I, [2026-02-27T16:17:58.142954 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [044c2292-31d5-49a3-990a-7921c1fc9d1d] Performing SolidCable::TrimJob (Job ID: 044c2292-31d5-49a3-990a-7921c1fc9d1d) from GoodJob(default)
+2026-02-27T16:17:58.145Z I, [2026-02-27T16:17:58.144497 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [044c2292-31d5-49a3-990a-7921c1fc9d1d] Performed SolidCable::TrimJob (Job ID: 044c2292-31d5-49a3-990a-7921c1fc9d1d) from GoodJob(default) in 1.57ms
+2026-02-27T16:17:58.145Z I, [2026-02-27T16:17:58.144933 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [00b8fa01-df92-47c2-90b3-06f3816adc59] Performed SolidCable::TrimJob (Job ID: 00b8fa01-df92-47c2-90b3-06f3816adc59) from GoodJob(default) in 2.93ms
+2026-02-27T16:17:58.175Z I, [2026-02-27T16:17:58.175376 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.175
+2026-02-27T16:17:58.176Z I, [2026-02-27T16:17:58.175910 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.55ms (at 00:17:58.175)
+2026-02-27T16:17:58.181Z I, [2026-02-27T16:17:58.181379 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.184Z I, [2026-02-27T16:17:58.181513 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.184Z I, [2026-02-27T16:17:58.181913 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.184Z I, [2026-02-27T16:17:58.181995 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.189Z I, [2026-02-27T16:17:58.189009 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.188
+2026-02-27T16:17:58.189Z I, [2026-02-27T16:17:58.189266 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.27ms (at 00:17:58.189)
+2026-02-27T16:17:58.200Z I, [2026-02-27T16:17:58.200527 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.200
+2026-02-27T16:17:58.201Z I, [2026-02-27T16:17:58.200837 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.32ms (at 00:17:58.200)
+2026-02-27T16:17:58.209Z I, [2026-02-27T16:17:58.208913 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.208
+2026-02-27T16:17:58.209Z I, [2026-02-27T16:17:58.209428 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.51ms (at 00:17:58.209)
+2026-02-27T16:17:58.213Z I, [2026-02-27T16:17:58.213527 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.213
+2026-02-27T16:17:58.213Z I, [2026-02-27T16:17:58.213784 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.55ms (at 00:17:58.213)
+2026-02-27T16:17:58.221Z I, [2026-02-27T16:17:58.221076 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.221
+2026-02-27T16:17:58.221Z I, [2026-02-27T16:17:58.221244 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.18ms (at 00:17:58.221)
+2026-02-27T16:17:58.228Z I, [2026-02-27T16:17:58.227864 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.227
+2026-02-27T16:17:58.228Z I, [2026-02-27T16:17:58.228019 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.17ms (at 00:17:58.227)
+2026-02-27T16:17:58.235Z I, [2026-02-27T16:17:58.235326 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.235
+2026-02-27T16:17:58.235Z I, [2026-02-27T16:17:58.235606 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.29ms (at 00:17:58.235)
+2026-02-27T16:17:58.245Z I, [2026-02-27T16:17:58.244804 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"\n\n-", "session_id"=>"1772209056436", "sequence"=>9}
+2026-02-27T16:17:58.245Z I, [2026-02-27T16:17:58.244984 #1]  INFO -- : [BotChannel] Received stream_chunk #9 for session 1772209056436:
+2026-02-27T16:17:58.245Z -...
+2026-02-27T16:17:58.248Z I, [2026-02-27T16:17:58.248359 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.247
+2026-02-27T16:17:58.249Z I, [2026-02-27T16:17:58.249340 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>" EYECLAW 第", "session_id"=>"1772209056436", "sequence"=>10}
+2026-02-27T16:17:58.250Z I, [2026-02-27T16:17:58.250257 #1]  INFO -- : [BotChannel] Received stream_chunk #10 for session 1772209056436:  EYECLAW 第...
+2026-02-27T16:17:58.253Z I, [2026-02-27T16:17:58.251486 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 3.74ms (at 00:17:58.250)
+2026-02-27T16:17:58.255Z I, [2026-02-27T16:17:58.255889 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [8b08fc44-c34e-44da-b29b-632e7e071fde] Performing SolidCable::TrimJob (Job ID: 8b08fc44-c34e-44da-b29b-632e7e071fde) from GoodJob(default)
+2026-02-27T16:17:58.257Z I, [2026-02-27T16:17:58.257252 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [8b08fc44-c34e-44da-b29b-632e7e071fde] Performed SolidCable::TrimJob (Job ID: 8b08fc44-c34e-44da-b29b-632e7e071fde) from GoodJob(default) in 1.39ms
+2026-02-27T16:17:58.261Z I, [2026-02-27T16:17:58.260994 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [52cc4933-5454-428e-8760-c2ae775ff53f] Performing SolidCable::TrimJob (Job ID: 52cc4933-5454-428e-8760-c2ae775ff53f) from GoodJob(default)
+2026-02-27T16:17:58.262Z I, [2026-02-27T16:17:58.262821 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [52cc4933-5454-428e-8760-c2ae775ff53f] Performed SolidCable::TrimJob (Job ID: 52cc4933-5454-428e-8760-c2ae775ff53f) from GoodJob(default) in 1.92ms
+2026-02-27T16:17:58.264Z I, [2026-02-27T16:17:58.264269 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [2d3253c0-48b0-4c9a-be3c-79da2e55f208] Performing SolidCable::TrimJob (Job ID: 2d3253c0-48b0-4c9a-be3c-79da2e55f208) from GoodJob(default)
+2026-02-27T16:17:58.265Z I, [2026-02-27T16:17:58.265447 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [2d3253c0-48b0-4c9a-be3c-79da2e55f208] Performed SolidCable::TrimJob (Job ID: 2d3253c0-48b0-4c9a-be3c-79da2e55f208) from GoodJob(default) in 1.2ms
+2026-02-27T16:17:58.266Z I, [2026-02-27T16:17:58.266708 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [7e41ae53-e43c-4060-bac6-dedd2b9a14df] Performing SolidCable::TrimJob (Job ID: 7e41ae53-e43c-4060-bac6-dedd2b9a14df) from GoodJob(default)
+2026-02-27T16:17:58.267Z I, [2026-02-27T16:17:58.267273 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [7e41ae53-e43c-4060-bac6-dedd2b9a14df] Performed SolidCable::TrimJob (Job ID: 7e41ae53-e43c-4060-bac6-dedd2b9a14df) from GoodJob(default) in 0.59ms
+2026-02-27T16:17:58.287Z I, [2026-02-27T16:17:58.287121 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.288Z I, [2026-02-27T16:17:58.287346 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.294Z I, [2026-02-27T16:17:58.294431 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"一版", "session_id"=>"1772209056436", "sequence"=>11}
+2026-02-27T16:17:58.294Z I, [2026-02-27T16:17:58.294496 #1]  INFO -- : [BotChannel] Received stream_chunk #11 for session 1772209056436: 一版...
+2026-02-27T16:17:58.298Z I, [2026-02-27T16:17:58.298144 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [50a71b0a-2e7d-411e-b7e8-2c157640904c] Performing SolidCable::TrimJob (Job ID: 50a71b0a-2e7d-411e-b7e8-2c157640904c) from GoodJob(default)
+2026-02-27T16:17:58.298Z I, [2026-02-27T16:17:58.298812 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"已完", "session_id"=>"1772209056436", "sequence"=>12}
+2026-02-27T16:17:58.298Z I, [2026-02-27T16:17:58.298904 #1]  INFO -- : [BotChannel] Received stream_chunk #12 for session 1772209056436: 已完...
+2026-02-27T16:17:58.301Z I, [2026-02-27T16:17:58.300934 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [50a71b0a-2e7d-411e-b7e8-2c157640904c] Performed SolidCable::TrimJob (Job ID: 50a71b0a-2e7d-411e-b7e8-2c157640904c) from GoodJob(default) in 2.85ms
+2026-02-27T16:17:58.305Z I, [2026-02-27T16:17:58.305167 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [c28702dd-a65d-4187-8134-61667355a845] Performing SolidCable::TrimJob (Job ID: c28702dd-a65d-4187-8134-61667355a845) from GoodJob(default)
+2026-02-27T16:17:58.306Z I, [2026-02-27T16:17:58.306396 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [66b4b361-c2a8-490f-8f05-87b65c33afc8] Performing SolidCable::TrimJob (Job ID: 66b4b361-c2a8-490f-8f05-87b65c33afc8) from GoodJob(default)
+2026-02-27T16:17:58.306Z I, [2026-02-27T16:17:58.306844 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [c28702dd-a65d-4187-8134-61667355a845] Performed SolidCable::TrimJob (Job ID: c28702dd-a65d-4187-8134-61667355a845) from GoodJob(default) in 1.76ms
+2026-02-27T16:17:58.309Z I, [2026-02-27T16:17:58.309378 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"成，提", "session_id"=>"1772209056436", "sequence"=>13}
+2026-02-27T16:17:58.309Z I, [2026-02-27T16:17:58.309747 #1]  INFO -- : [BotChannel] Received stream_chunk #13 for session 1772209056436: 成，提...
+2026-02-27T16:17:58.311Z I, [2026-02-27T16:17:58.311767 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"交", "session_id"=>"1772209056436", "sequence"=>14}
+2026-02-27T16:17:58.312Z I, [2026-02-27T16:17:58.311952 #1]  INFO -- : [BotChannel] Received stream_chunk #14 for session 1772209056436: 交...
+2026-02-27T16:17:58.313Z I, [2026-02-27T16:17:58.312306 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [66b4b361-c2a8-490f-8f05-87b65c33afc8] Performed SolidCable::TrimJob (Job ID: 66b4b361-c2a8-490f-8f05-87b65c33afc8) from GoodJob(default) in 5.93ms
+2026-02-27T16:17:58.313Z I, [2026-02-27T16:17:58.313341 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"审", "session_id"=>"1772209056436", "sequence"=>15}
+2026-02-27T16:17:58.313Z I, [2026-02-27T16:17:58.313492 #1]  INFO -- : [BotChannel] Received stream_chunk #15 for session 1772209056436: 审...
+2026-02-27T16:17:58.315Z I, [2026-02-27T16:17:58.315798 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [cb7a89ad-3ef4-4cd3-bbec-0e7d8447242d] Performing SolidCable::TrimJob (Job ID: cb7a89ad-3ef4-4cd3-bbec-0e7d8447242d) from GoodJob(default)
+2026-02-27T16:17:58.317Z I, [2026-02-27T16:17:58.317617 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [1da8073f-3f2a-4059-86c4-4646d4f0c604] Performing SolidCable::TrimJob (Job ID: 1da8073f-3f2a-4059-86c4-4646d4f0c604) from GoodJob(default)
+2026-02-27T16:17:58.318Z I, [2026-02-27T16:17:58.318284 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [c2539fa6-1476-46bd-9a56-66cd08057b11] Performing SolidCable::TrimJob (Job ID: c2539fa6-1476-46bd-9a56-66cd08057b11) from GoodJob(default)
+2026-02-27T16:17:58.318Z I, [2026-02-27T16:17:58.318654 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [cb7a89ad-3ef4-4cd3-bbec-0e7d8447242d] Performed SolidCable::TrimJob (Job ID: cb7a89ad-3ef4-4cd3-bbec-0e7d8447242d) from GoodJob(default) in 2.91ms
+2026-02-27T16:17:58.319Z I, [2026-02-27T16:17:58.319704 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [a4213cb3-f043-46c7-9e20-5f82c2f7f5da] Performing SolidCable::TrimJob (Job ID: a4213cb3-f043-46c7-9e20-5f82c2f7f5da) from GoodJob(default)
+2026-02-27T16:17:58.320Z I, [2026-02-27T16:17:58.320442 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [1da8073f-3f2a-4059-86c4-4646d4f0c604] Performed SolidCable::TrimJob (Job ID: 1da8073f-3f2a-4059-86c4-4646d4f0c604) from GoodJob(default) in 3.27ms
+2026-02-27T16:17:58.321Z I, [2026-02-27T16:17:58.321264 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [c2539fa6-1476-46bd-9a56-66cd08057b11] Performed SolidCable::TrimJob (Job ID: c2539fa6-1476-46bd-9a56-66cd08057b11) from GoodJob(default) in 2.99ms
+2026-02-27T16:17:58.322Z I, [2026-02-27T16:17:58.322469 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [a4213cb3-f043-46c7-9e20-5f82c2f7f5da] Performed SolidCable::TrimJob (Job ID: a4213cb3-f043-46c7-9e20-5f82c2f7f5da) from GoodJob(default) in 2.78ms
+2026-02-27T16:17:58.324Z I, [2026-02-27T16:17:58.324291 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [ad365e17-8ba5-4a25-b4a1-66d65b798739] Performing SolidCable::TrimJob (Job ID: ad365e17-8ba5-4a25-b4a1-66d65b798739) from GoodJob(default)
+2026-02-27T16:17:58.325Z I, [2026-02-27T16:17:58.325168 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [16952821-607f-4bad-a4ed-5ec4d48e1a58] Performing SolidCable::TrimJob (Job ID: 16952821-607f-4bad-a4ed-5ec4d48e1a58) from GoodJob(default)
+2026-02-27T16:17:58.326Z I, [2026-02-27T16:17:58.326193 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [b866113f-322b-4ef0-960a-1c47cdf6d8d5] Performing SolidCable::TrimJob (Job ID: b866113f-322b-4ef0-960a-1c47cdf6d8d5) from GoodJob(default)
+2026-02-27T16:17:58.327Z I, [2026-02-27T16:17:58.326769 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [ad365e17-8ba5-4a25-b4a1-66d65b798739] Performed SolidCable::TrimJob (Job ID: ad365e17-8ba5-4a25-b4a1-66d65b798739) from GoodJob(default) in 2.34ms
+2026-02-27T16:17:58.327Z I, [2026-02-27T16:17:58.327741 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"核了", "session_id"=>"1772209056436", "sequence"=>16}
+2026-02-27T16:17:58.327Z I, [2026-02-27T16:17:58.327865 #1]  INFO -- : [BotChannel] Received stream_chunk #16 for session 1772209056436: 核了...
+2026-02-27T16:17:58.329Z I, [2026-02-27T16:17:58.329501 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [16952821-607f-4bad-a4ed-5ec4d48e1a58] Performed SolidCable::TrimJob (Job ID: 16952821-607f-4bad-a4ed-5ec4d48e1a58) from GoodJob(default) in 4.35ms
+2026-02-27T16:17:58.330Z I, [2026-02-27T16:17:58.330054 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [b866113f-322b-4ef0-960a-1c47cdf6d8d5] Performed SolidCable::TrimJob (Job ID: b866113f-322b-4ef0-960a-1c47cdf6d8d5) from GoodJob(default) in 3.88ms
+2026-02-27T16:17:58.333Z I, [2026-02-27T16:17:58.333622 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [a250ed5d-60ce-4959-893b-43354e9afe43] Performing SolidCable::TrimJob (Job ID: a250ed5d-60ce-4959-893b-43354e9afe43) from GoodJob(default)
+2026-02-27T16:17:58.334Z I, [2026-02-27T16:17:58.334327 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [a250ed5d-60ce-4959-893b-43354e9afe43] Performed SolidCable::TrimJob (Job ID: a250ed5d-60ce-4959-893b-43354e9afe43) from GoodJob(default) in 0.72ms
+2026-02-27T16:17:58.337Z I, [2026-02-27T16:17:58.337008 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [5bce11a5-860f-4af1-9fd6-957604159c61] Performing SolidCable::TrimJob (Job ID: 5bce11a5-860f-4af1-9fd6-957604159c61) from GoodJob(default)
+2026-02-27T16:17:58.337Z I, [2026-02-27T16:17:58.337697 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [5bce11a5-860f-4af1-9fd6-957604159c61] Performed SolidCable::TrimJob (Job ID: 5bce11a5-860f-4af1-9fd6-957604159c61) from GoodJob(default) in 0.71ms
+2026-02-27T16:17:58.352Z I, [2026-02-27T16:17:58.352201 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"\n- 发", "session_id"=>"1772209056436", "sequence"=>17}
+2026-02-27T16:17:58.352Z I, [2026-02-27T16:17:58.352252 #1]  INFO -- : [BotChannel] Received stream_chunk #17 for session 1772209056436:
+2026-02-27T16:17:58.352Z - 发...
+2026-02-27T16:17:58.355Z I, [2026-02-27T16:17:58.354954 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [1a320465-1580-4046-af7a-832d302bfadd] Performing SolidCable::TrimJob (Job ID: 1a320465-1580-4046-af7a-832d302bfadd) from GoodJob(default)
+2026-02-27T16:17:58.355Z I, [2026-02-27T16:17:58.355733 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [1a320465-1580-4046-af7a-832d302bfadd] Performed SolidCable::TrimJob (Job ID: 1a320465-1580-4046-af7a-832d302bfadd) from GoodJob(default) in 0.8ms
+2026-02-27T16:17:58.357Z I, [2026-02-27T16:17:58.357809 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [5f24218e-7ed3-4ae7-8c7f-339d2f017c6c] Performing SolidCable::TrimJob (Job ID: 5f24218e-7ed3-4ae7-8c7f-339d2f017c6c) from GoodJob(default)
+2026-02-27T16:17:58.358Z I, [2026-02-27T16:17:58.358549 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [5f24218e-7ed3-4ae7-8c7f-339d2f017c6c] Performed SolidCable::TrimJob (Job ID: 5f24218e-7ed3-4ae7-8c7f-339d2f017c6c) from GoodJob(default) in 0.76ms
+2026-02-27T16:17:58.371Z I, [2026-02-27T16:17:58.370972 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.370
+2026-02-27T16:17:58.371Z I, [2026-02-27T16:17:58.371147 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.19ms (at 00:17:58.371)
+2026-02-27T16:17:58.379Z I, [2026-02-27T16:17:58.379040 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"现了一", "session_id"=>"1772209056436", "sequence"=>18}
+2026-02-27T16:17:58.379Z I, [2026-02-27T16:17:58.379398 #1]  INFO -- : [BotChannel] Received stream_chunk #18 for session 1772209056436: 现了一...
+2026-02-27T16:17:58.380Z I, [2026-02-27T16:17:58.380268 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.380
+2026-02-27T16:17:58.380Z I, [2026-02-27T16:17:58.380556 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.3ms (at 00:17:58.380)
+2026-02-27T16:17:58.382Z I, [2026-02-27T16:17:58.381959 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [baafd07a-0d15-480e-98d3-ccc21b356533] Performing SolidCable::TrimJob (Job ID: baafd07a-0d15-480e-98d3-ccc21b356533) from GoodJob(default)
+2026-02-27T16:17:58.383Z I, [2026-02-27T16:17:58.383402 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [baafd07a-0d15-480e-98d3-ccc21b356533] Performed SolidCable::TrimJob (Job ID: baafd07a-0d15-480e-98d3-ccc21b356533) from GoodJob(default) in 1.47ms
+2026-02-27T16:17:58.388Z I, [2026-02-27T16:17:58.388015 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [5f9c3bfa-a3bf-48f5-a391-8fca7a0099c5] Performing SolidCable::TrimJob (Job ID: 5f9c3bfa-a3bf-48f5-a391-8fca7a0099c5) from GoodJob(default)
+2026-02-27T16:17:58.388Z I, [2026-02-27T16:17:58.388772 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [5f9c3bfa-a3bf-48f5-a391-8fca7a0099c5] Performed SolidCable::TrimJob (Job ID: 5f9c3bfa-a3bf-48f5-a391-8fca7a0099c5) from GoodJob(default) in 0.78ms
+2026-02-27T16:17:58.390Z I, [2026-02-27T16:17:58.390782 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.393Z I, [2026-02-27T16:17:58.390854 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.393Z I, [2026-02-27T16:17:58.390898 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.393Z I, [2026-02-27T16:17:58.390959 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.393Z I, [2026-02-27T16:17:58.391030 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.393Z I, [2026-02-27T16:17:58.391072 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.394Z I, [2026-02-27T16:17:58.391233 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.394Z I, [2026-02-27T16:17:58.391289 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.413Z I, [2026-02-27T16:17:58.413664 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"个关", "session_id"=>"1772209056436", "sequence"=>19}
+2026-02-27T16:17:58.413Z I, [2026-02-27T16:17:58.413723 #1]  INFO -- : [BotChannel] Received stream_chunk #19 for session 1772209056436: 个关...
+2026-02-27T16:17:58.416Z I, [2026-02-27T16:17:58.416597 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [b2adaa13-86e4-48a9-b2fc-795e137800e7] Performing SolidCable::TrimJob (Job ID: b2adaa13-86e4-48a9-b2fc-795e137800e7) from GoodJob(default)
+2026-02-27T16:17:58.417Z I, [2026-02-27T16:17:58.417284 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [b2adaa13-86e4-48a9-b2fc-795e137800e7] Performed SolidCable::TrimJob (Job ID: b2adaa13-86e4-48a9-b2fc-795e137800e7) from GoodJob(default) in 0.71ms
+2026-02-27T16:17:58.419Z I, [2026-02-27T16:17:58.419739 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [a0c8d479-20cd-46b2-9d0a-75696ca5ab1d] Performing SolidCable::TrimJob (Job ID: a0c8d479-20cd-46b2-9d0a-75696ca5ab1d) from GoodJob(default)
+2026-02-27T16:17:58.420Z I, [2026-02-27T16:17:58.420366 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [a0c8d479-20cd-46b2-9d0a-75696ca5ab1d] Performed SolidCable::TrimJob (Job ID: a0c8d479-20cd-46b2-9d0a-75696ca5ab1d) from GoodJob(default) in 0.65ms
+2026-02-27T16:17:58.495Z I, [2026-02-27T16:17:58.495211 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.495
+2026-02-27T16:17:58.496Z I, [2026-02-27T16:17:58.495897 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.496Z I, [2026-02-27T16:17:58.496846 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 1.66ms (at 00:17:58.496)
+2026-02-27T16:17:58.509Z I, [2026-02-27T16:17:58.508922 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.508
+2026-02-27T16:17:58.509Z I, [2026-02-27T16:17:58.509200 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.28ms (at 00:17:58.509)
+2026-02-27T16:17:58.521Z I, [2026-02-27T16:17:58.520955 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.520
+2026-02-27T16:17:58.521Z I, [2026-02-27T16:17:58.521138 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.19ms (at 00:17:58.521)
+2026-02-27T16:17:58.529Z I, [2026-02-27T16:17:58.529256 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.529
+2026-02-27T16:17:58.529Z I, [2026-02-27T16:17:58.529437 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.17ms (at 00:17:58.529)
+2026-02-27T16:17:58.536Z I, [2026-02-27T16:17:58.536379 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.536
+2026-02-27T16:17:58.536Z I, [2026-02-27T16:17:58.536525 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.16ms (at 00:17:58.536)
+2026-02-27T16:17:58.541Z I, [2026-02-27T16:17:58.540956 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.540
+2026-02-27T16:17:58.541Z I, [2026-02-27T16:17:58.541299 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.36ms (at 00:17:58.541)
+2026-02-27T16:17:58.545Z I, [2026-02-27T16:17:58.545303 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.545
+2026-02-27T16:17:58.545Z I, [2026-02-27T16:17:58.545423 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.12ms (at 00:17:58.545)
+2026-02-27T16:17:58.552Z I, [2026-02-27T16:17:58.552644 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.552
+2026-02-27T16:17:58.553Z I, [2026-02-27T16:17:58.552914 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.28ms (at 00:17:58.552)
+2026-02-27T16:17:58.561Z I, [2026-02-27T16:17:58.560939 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.560
+2026-02-27T16:17:58.561Z I, [2026-02-27T16:17:58.561051 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.12ms (at 00:17:58.561)
+2026-02-27T16:17:58.630Z I, [2026-02-27T16:17:58.630193 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"键", "session_id"=>"1772209056436", "sequence"=>20}
+2026-02-27T16:17:58.630Z I, [2026-02-27T16:17:58.630253 #1]  INFO -- : [BotChannel] Received stream_chunk #20 for session 1772209056436: 键...
+2026-02-27T16:17:58.634Z I, [2026-02-27T16:17:58.633961 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>" bug：用", "session_id"=>"1772209056436", "sequence"=>21}
+2026-02-27T16:17:58.635Z I, [2026-02-27T16:17:58.635106 #1]  INFO -- : [BotChannel] Received stream_chunk #21 for session 1772209056436:  bug：用...
+2026-02-27T16:17:58.636Z I, [2026-02-27T16:17:58.634992 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"绑定问", "session_id"=>"1772209056436", "sequence"=>23}
+2026-02-27T16:17:58.636Z I, [2026-02-27T16:17:58.636260 #1]  INFO -- : [BotChannel] Received stream_chunk #23 for session 1772209056436: 绑定问...
+2026-02-27T16:17:58.637Z I, [2026-02-27T16:17:58.635763 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [43f08fbd-4292-4ece-89b3-3291f59e4b8c] Performing SolidCable::TrimJob (Job ID: 43f08fbd-4292-4ece-89b3-3291f59e4b8c) from GoodJob(default)
+2026-02-27T16:17:58.637Z I, [2026-02-27T16:17:58.634237 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"户", "session_id"=>"1772209056436", "sequence"=>22}
+2026-02-27T16:17:58.637Z I, [2026-02-27T16:17:58.637595 #1]  INFO -- : [BotChannel] Received stream_chunk #22 for session 1772209056436: 户...
+2026-02-27T16:17:58.639Z I, [2026-02-27T16:17:58.639609 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [43f08fbd-4292-4ece-89b3-3291f59e4b8c] Performed SolidCable::TrimJob (Job ID: 43f08fbd-4292-4ece-89b3-3291f59e4b8c) from GoodJob(default) in 3.87ms
+2026-02-27T16:17:58.640Z I, [2026-02-27T16:17:58.640693 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e1e1bebe-92a6-41bd-8d06-dda72e3e0abf] Performing SolidCable::TrimJob (Job ID: e1e1bebe-92a6-41bd-8d06-dda72e3e0abf) from GoodJob(default)
+2026-02-27T16:17:58.642Z I, [2026-02-27T16:17:58.642544 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [1267a95b-7db1-4bc5-a41d-402ba82b26a0] Performing SolidCable::TrimJob (Job ID: 1267a95b-7db1-4bc5-a41d-402ba82b26a0) from GoodJob(default)
+2026-02-27T16:17:58.643Z I, [2026-02-27T16:17:58.643212 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [dd0cf316-b57e-4cf1-b552-5b8d939b82bb] Performing SolidCable::TrimJob (Job ID: dd0cf316-b57e-4cf1-b552-5b8d939b82bb) from GoodJob(default)
+2026-02-27T16:17:58.643Z I, [2026-02-27T16:17:58.643574 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e1e1bebe-92a6-41bd-8d06-dda72e3e0abf] Performed SolidCable::TrimJob (Job ID: e1e1bebe-92a6-41bd-8d06-dda72e3e0abf) from GoodJob(default) in 2.91ms
+2026-02-27T16:17:58.645Z I, [2026-02-27T16:17:58.645638 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [d869af03-23e3-4757-8368-ae88559b26e1] Performing SolidCable::TrimJob (Job ID: d869af03-23e3-4757-8368-ae88559b26e1) from GoodJob(default)
+2026-02-27T16:17:58.646Z I, [2026-02-27T16:17:58.646634 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [1267a95b-7db1-4bc5-a41d-402ba82b26a0] Performed SolidCable::TrimJob (Job ID: 1267a95b-7db1-4bc5-a41d-402ba82b26a0) from GoodJob(default) in 4.11ms
+2026-02-27T16:17:58.652Z I, [2026-02-27T16:17:58.652029 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [d869af03-23e3-4757-8368-ae88559b26e1] Performed SolidCable::TrimJob (Job ID: d869af03-23e3-4757-8368-ae88559b26e1) from GoodJob(default) in 6.41ms
+2026-02-27T16:17:58.652Z I, [2026-02-27T16:17:58.652673 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"题，", "session_id"=>"1772209056436", "sequence"=>24}
+2026-02-27T16:17:58.652Z I, [2026-02-27T16:17:58.652796 #1]  INFO -- : [BotChannel] Received stream_chunk #24 for session 1772209056436: 题，...
+2026-02-27T16:17:58.655Z I, [2026-02-27T16:17:58.654972 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [8a37897a-c364-4c80-a6d1-5b9039d6ea23] Performing SolidCable::TrimJob (Job ID: 8a37897a-c364-4c80-a6d1-5b9039d6ea23) from GoodJob(default)
+2026-02-27T16:17:58.658Z I, [2026-02-27T16:17:58.658526 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [16e28db7-c72f-4558-ba38-f95b4d1d89b2] Performing SolidCable::TrimJob (Job ID: 16e28db7-c72f-4558-ba38-f95b4d1d89b2) from GoodJob(default)
+2026-02-27T16:17:58.660Z I, [2026-02-27T16:17:58.659749 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [8a37897a-c364-4c80-a6d1-5b9039d6ea23] Performed SolidCable::TrimJob (Job ID: 8a37897a-c364-4c80-a6d1-5b9039d6ea23) from GoodJob(default) in 4.79ms
+2026-02-27T16:17:58.660Z I, [2026-02-27T16:17:58.660565 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"所有用户都连到同", "session_id"=>"1772209056436", "sequence"=>25}
+2026-02-27T16:17:58.660Z I, [2026-02-27T16:17:58.660808 #1]  INFO -- : [BotChannel] Received stream_chunk #25 for session 1772209056436: 所有用户都连到同...
+2026-02-27T16:17:58.661Z I, [2026-02-27T16:17:58.661877 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [ec7ba1bd-9543-4708-872b-764a6660d2ca] Performing SolidCable::TrimJob (Job ID: ec7ba1bd-9543-4708-872b-764a6660d2ca) from GoodJob(default)
+2026-02-27T16:17:58.663Z I, [2026-02-27T16:17:58.662296 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [16e28db7-c72f-4558-ba38-f95b4d1d89b2] Performed SolidCable::TrimJob (Job ID: 16e28db7-c72f-4558-ba38-f95b4d1d89b2) from GoodJob(default) in 3.79ms
+2026-02-27T16:17:58.664Z I, [2026-02-27T16:17:58.664106 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"一个", "session_id"=>"1772209056436", "sequence"=>26}
+2026-02-27T16:17:58.664Z I, [2026-02-27T16:17:58.664343 #1]  INFO -- : [BotChannel] Received stream_chunk #26 for session 1772209056436: 一个...
+2026-02-27T16:17:58.669Z I, [2026-02-27T16:17:58.669069 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [ec7ba1bd-9543-4708-872b-764a6660d2ca] Performed SolidCable::TrimJob (Job ID: ec7ba1bd-9543-4708-872b-764a6660d2ca) from GoodJob(default) in 7.17ms
+2026-02-27T16:17:58.670Z I, [2026-02-27T16:17:58.670515 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [dd0cf316-b57e-4cf1-b552-5b8d939b82bb] Performed SolidCable::TrimJob (Job ID: dd0cf316-b57e-4cf1-b552-5b8d939b82bb) from GoodJob(default) in 27.32ms
+2026-02-27T16:17:58.671Z I, [2026-02-27T16:17:58.671855 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [137bb1ea-d400-4cbc-a68a-21fe624482df] Performing SolidCable::TrimJob (Job ID: 137bb1ea-d400-4cbc-a68a-21fe624482df) from GoodJob(default)
+2026-02-27T16:17:58.673Z I, [2026-02-27T16:17:58.673491 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e5f88812-d4b8-4458-9449-84fd2290396f] Performing SolidCable::TrimJob (Job ID: e5f88812-d4b8-4458-9449-84fd2290396f) from GoodJob(default)
+2026-02-27T16:17:58.675Z I, [2026-02-27T16:17:58.675826 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [137bb1ea-d400-4cbc-a68a-21fe624482df] Performed SolidCable::TrimJob (Job ID: 137bb1ea-d400-4cbc-a68a-21fe624482df) from GoodJob(default) in 3.99ms
+2026-02-27T16:17:58.680Z I, [2026-02-27T16:17:58.680149 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e5f88812-d4b8-4458-9449-84fd2290396f] Performed SolidCable::TrimJob (Job ID: e5f88812-d4b8-4458-9449-84fd2290396f) from GoodJob(default) in 7.64ms
+2026-02-27T16:17:58.680Z I, [2026-02-27T16:17:58.678648 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [ed1fd4cb-7682-4b0e-a9bf-300c4c5e84db] Performing SolidCable::TrimJob (Job ID: ed1fd4cb-7682-4b0e-a9bf-300c4c5e84db) from GoodJob(default)
+2026-02-27T16:17:58.682Z I, [2026-02-27T16:17:58.681958 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [56189686-c922-4570-a8fa-89a81d58c652] Performing SolidCable::TrimJob (Job ID: 56189686-c922-4570-a8fa-89a81d58c652) from GoodJob(default)
+2026-02-27T16:17:58.683Z I, [2026-02-27T16:17:58.683510 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [ed1fd4cb-7682-4b0e-a9bf-300c4c5e84db] Performed SolidCable::TrimJob (Job ID: ed1fd4cb-7682-4b0e-a9bf-300c4c5e84db) from GoodJob(default) in 6.84ms
+2026-02-27T16:17:58.684Z I, [2026-02-27T16:17:58.683988 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"龙虾实例\n-", "session_id"=>"1772209056436", "sequence"=>27}
+2026-02-27T16:17:58.684Z I, [2026-02-27T16:17:58.684419 #1]  INFO -- : [BotChannel] Received stream_chunk #27 for session 1772209056436: 龙虾实例
+2026-02-27T16:17:58.684Z -...
+2026-02-27T16:17:58.685Z I, [2026-02-27T16:17:58.685429 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [56189686-c922-4570-a8fa-89a81d58c652] Performed SolidCable::TrimJob (Job ID: 56189686-c922-4570-a8fa-89a81d58c652) from GoodJob(default) in 3.47ms
+2026-02-27T16:17:58.686Z I, [2026-02-27T16:17:58.686874 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>" 你", "session_id"=>"1772209056436", "sequence"=>28}
+2026-02-27T16:17:58.687Z I, [2026-02-27T16:17:58.687370 #1]  INFO -- : [BotChannel] Received stream_chunk #28 for session 1772209056436:  你...
+2026-02-27T16:17:58.687Z I, [2026-02-27T16:17:58.687301 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [28bdcd2e-13db-4e36-a5ab-62d9759a66f9] Performing SolidCable::TrimJob (Job ID: 28bdcd2e-13db-4e36-a5ab-62d9759a66f9) from GoodJob(default)
+2026-02-27T16:17:58.688Z I, [2026-02-27T16:17:58.685985 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [2cab6a94-a751-40e0-b796-56b652e1b31b] Performing SolidCable::TrimJob (Job ID: 2cab6a94-a751-40e0-b796-56b652e1b31b) from GoodJob(default)
+2026-02-27T16:17:58.697Z I, [2026-02-27T16:17:58.697416 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [28bdcd2e-13db-4e36-a5ab-62d9759a66f9] Performed SolidCable::TrimJob (Job ID: 28bdcd2e-13db-4e36-a5ab-62d9759a66f9) from GoodJob(default) in 10.09ms
+2026-02-27T16:17:58.698Z I, [2026-02-27T16:17:58.698468 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [2cab6a94-a751-40e0-b796-56b652e1b31b] Performed SolidCable::TrimJob (Job ID: 2cab6a94-a751-40e0-b796-56b652e1b31b) from GoodJob(default) in 12.48ms
+2026-02-27T16:17:58.699Z I, [2026-02-27T16:17:58.699316 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [7c6ffa99-a725-4d9f-a33e-34e7b24766b4] Performing SolidCable::TrimJob (Job ID: 7c6ffa99-a725-4d9f-a33e-34e7b24766b4) from GoodJob(default)
+2026-02-27T16:17:58.701Z I, [2026-02-27T16:17:58.701533 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [edde1588-ee90-419b-9dc0-f8a5028064f8] Performing SolidCable::TrimJob (Job ID: edde1588-ee90-419b-9dc0-f8a5028064f8) from GoodJob(default)
+2026-02-27T16:17:58.702Z I, [2026-02-27T16:17:58.702304 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [7c6ffa99-a725-4d9f-a33e-34e7b24766b4] Performed SolidCable::TrimJob (Job ID: 7c6ffa99-a725-4d9f-a33e-34e7b24766b4) from GoodJob(default) in 3.02ms
+2026-02-27T16:17:58.705Z I, [2026-02-27T16:17:58.704964 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.707Z I, [2026-02-27T16:17:58.705022 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.708Z I, [2026-02-27T16:17:58.708512 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [edde1588-ee90-419b-9dc0-f8a5028064f8] Performed SolidCable::TrimJob (Job ID: edde1588-ee90-419b-9dc0-f8a5028064f8) from GoodJob(default) in 7.01ms
+2026-02-27T16:17:58.709Z I, [2026-02-27T16:17:58.705103 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.709Z I, [2026-02-27T16:17:58.705175 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.710Z I, [2026-02-27T16:17:58.705247 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.710Z I, [2026-02-27T16:17:58.705329 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.710Z I, [2026-02-27T16:17:58.705366 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.710Z I, [2026-02-27T16:17:58.705397 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.710Z I, [2026-02-27T16:17:58.705068 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.712Z I, [2026-02-27T16:17:58.711991 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e000d7c6-674b-466e-b270-caa613ef78a5] Performing SolidCable::TrimJob (Job ID: e000d7c6-674b-466e-b270-caa613ef78a5) from GoodJob(default)
+2026-02-27T16:17:58.713Z I, [2026-02-27T16:17:58.712818 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [89b3ba1c-ef0f-4e67-a13f-4f4d6aca4764] Performing SolidCable::TrimJob (Job ID: 89b3ba1c-ef0f-4e67-a13f-4f4d6aca4764) from GoodJob(default)
+2026-02-27T16:17:58.713Z I, [2026-02-27T16:17:58.713806 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e000d7c6-674b-466e-b270-caa613ef78a5] Performed SolidCable::TrimJob (Job ID: e000d7c6-674b-466e-b270-caa613ef78a5) from GoodJob(default) in 1.83ms
+2026-02-27T16:17:58.714Z I, [2026-02-27T16:17:58.714706 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [89b3ba1c-ef0f-4e67-a13f-4f4d6aca4764] Performed SolidCable::TrimJob (Job ID: 89b3ba1c-ef0f-4e67-a13f-4f4d6aca4764) from GoodJob(default) in 1.9ms
+2026-02-27T16:17:58.715Z I, [2026-02-27T16:17:58.715803 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"说", "session_id"=>"1772209056436", "sequence"=>29}
+2026-02-27T16:17:58.715Z I, [2026-02-27T16:17:58.715847 #1]  INFO -- : [BotChannel] Received stream_chunk #29 for session 1772209056436: 说...
+2026-02-27T16:17:58.716Z I, [2026-02-27T16:17:58.716632 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"了", "session_id"=>"1772209056436", "sequence"=>30}
+2026-02-27T16:17:58.716Z I, [2026-02-27T16:17:58.716746 #1]  INFO -- : [BotChannel] Received stream_chunk #30 for session 1772209056436: 了...
+2026-02-27T16:17:58.719Z I, [2026-02-27T16:17:58.719050 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [23c07fba-7b7f-49ff-a5b8-851a404a0524] Performing SolidCable::TrimJob (Job ID: 23c07fba-7b7f-49ff-a5b8-851a404a0524) from GoodJob(default)
+2026-02-27T16:17:58.720Z I, [2026-02-27T16:17:58.720259 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [7999e680-bd36-4af4-b2cb-ba035e7ebe1f] Performing SolidCable::TrimJob (Job ID: 7999e680-bd36-4af4-b2cb-ba035e7ebe1f) from GoodJob(default)
+2026-02-27T16:17:58.720Z I, [2026-02-27T16:17:58.720687 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [23c07fba-7b7f-49ff-a5b8-851a404a0524] Performed SolidCable::TrimJob (Job ID: 23c07fba-7b7f-49ff-a5b8-851a404a0524) from GoodJob(default) in 1.67ms
+2026-02-27T16:17:58.721Z I, [2026-02-27T16:17:58.721541 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"根", "session_id"=>"1772209056436", "sequence"=>31}
+2026-02-27T16:17:58.721Z I, [2026-02-27T16:17:58.721671 #1]  INFO -- : [BotChannel] Received stream_chunk #31 for session 1772209056436: 根...
+2026-02-27T16:17:58.723Z I, [2026-02-27T16:17:58.722939 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [7999e680-bd36-4af4-b2cb-ba035e7ebe1f] Performed SolidCable::TrimJob (Job ID: 7999e680-bd36-4af4-b2cb-ba035e7ebe1f) from GoodJob(default) in 2.69ms
+2026-02-27T16:17:58.724Z I, [2026-02-27T16:17:58.724328 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [30411bed-4a13-42a7-9af4-057b8e0282a1] Performing SolidCable::TrimJob (Job ID: 30411bed-4a13-42a7-9af4-057b8e0282a1) from GoodJob(default)
+2026-02-27T16:17:58.725Z I, [2026-02-27T16:17:58.725456 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [30411bed-4a13-42a7-9af4-057b8e0282a1] Performed SolidCable::TrimJob (Job ID: 30411bed-4a13-42a7-9af4-057b8e0282a1) from GoodJob(default) in 1.14ms
+2026-02-27T16:17:58.727Z I, [2026-02-27T16:17:58.727262 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [934209e7-ac4d-4894-9d7e-88007a5c9a93] Performing SolidCable::TrimJob (Job ID: 934209e7-ac4d-4894-9d7e-88007a5c9a93) from GoodJob(default)
+2026-02-27T16:17:58.728Z I, [2026-02-27T16:17:58.727829 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e8665a82-b108-4f55-800a-6c75f90b63f7] Performing SolidCable::TrimJob (Job ID: e8665a82-b108-4f55-800a-6c75f90b63f7) from GoodJob(default)
+2026-02-27T16:17:58.730Z I, [2026-02-27T16:17:58.729774 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [934209e7-ac4d-4894-9d7e-88007a5c9a93] Performed SolidCable::TrimJob (Job ID: 934209e7-ac4d-4894-9d7e-88007a5c9a93) from GoodJob(default) in 2.36ms
+2026-02-27T16:17:58.730Z I, [2026-02-27T16:17:58.730119 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e8665a82-b108-4f55-800a-6c75f90b63f7] Performed SolidCable::TrimJob (Job ID: e8665a82-b108-4f55-800a-6c75f90b63f7) from GoodJob(default) in 2.27ms
+2026-02-27T16:17:58.732Z I, [2026-02-27T16:17:58.732381 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e84c43c9-ffd2-4e47-a122-ef9700587149] Performing SolidCable::TrimJob (Job ID: e84c43c9-ffd2-4e47-a122-ef9700587149) from GoodJob(default)
+2026-02-27T16:17:58.733Z I, [2026-02-27T16:17:58.732999 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e84c43c9-ffd2-4e47-a122-ef9700587149] Performed SolidCable::TrimJob (Job ID: e84c43c9-ffd2-4e47-a122-ef9700587149) from GoodJob(default) in 0.63ms
+2026-02-27T16:17:58.748Z I, [2026-02-27T16:17:58.748344 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"源是", "session_id"=>"1772209056436", "sequence"=>32}
+2026-02-27T16:17:58.748Z I, [2026-02-27T16:17:58.748413 #1]  INFO -- : [BotChannel] Received stream_chunk #32 for session 1772209056436: 源是...
+2026-02-27T16:17:58.751Z I, [2026-02-27T16:17:58.750941 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [58c4941c-844e-413a-9e00-293ee17fa26a] Performing SolidCable::TrimJob (Job ID: 58c4941c-844e-413a-9e00-293ee17fa26a) from GoodJob(default)
+2026-02-27T16:17:58.751Z I, [2026-02-27T16:17:58.751625 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [58c4941c-844e-413a-9e00-293ee17fa26a] Performed SolidCable::TrimJob (Job ID: 58c4941c-844e-413a-9e00-293ee17fa26a) from GoodJob(default) in 0.72ms
+2026-02-27T16:17:58.753Z I, [2026-02-27T16:17:58.753576 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [0e07face-e3d6-464a-b4d7-70077de1eb8a] Performing SolidCable::TrimJob (Job ID: 0e07face-e3d6-464a-b4d7-70077de1eb8a) from GoodJob(default)
+2026-02-27T16:17:58.754Z I, [2026-02-27T16:17:58.754756 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [0e07face-e3d6-464a-b4d7-70077de1eb8a] Performed SolidCable::TrimJob (Job ID: 0e07face-e3d6-464a-b4d7-70077de1eb8a) from GoodJob(default) in 1.2ms
+2026-02-27T16:17:58.771Z I, [2026-02-27T16:17:58.771103 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.771
+2026-02-27T16:17:58.771Z I, [2026-02-27T16:17:58.771268 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.2ms (at 00:17:58.771)
+2026-02-27T16:17:58.775Z I, [2026-02-27T16:17:58.775148 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"代", "session_id"=>"1772209056436", "sequence"=>33}
+2026-02-27T16:17:58.775Z I, [2026-02-27T16:17:58.775212 #1]  INFO -- : [BotChannel] Received stream_chunk #33 for session 1772209056436: 代...
+2026-02-27T16:17:58.777Z I, [2026-02-27T16:17:58.777229 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [4cfa479a-d5a8-470f-a168-6a7841681b26] Performing SolidCable::TrimJob (Job ID: 4cfa479a-d5a8-470f-a168-6a7841681b26) from GoodJob(default)
+2026-02-27T16:17:58.778Z I, [2026-02-27T16:17:58.778532 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [4cfa479a-d5a8-470f-a168-6a7841681b26] Performed SolidCable::TrimJob (Job ID: 4cfa479a-d5a8-470f-a168-6a7841681b26) from GoodJob(default) in 1.33ms
+2026-02-27T16:17:58.780Z I, [2026-02-27T16:17:58.780151 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.780
+2026-02-27T16:17:58.780Z I, [2026-02-27T16:17:58.780373 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.23ms (at 00:17:58.780)
+2026-02-27T16:17:58.781Z I, [2026-02-27T16:17:58.781509 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e1710809-3e30-4ed0-b95d-5ad18ed5ba06] Performing SolidCable::TrimJob (Job ID: e1710809-3e30-4ed0-b95d-5ad18ed5ba06) from GoodJob(default)
+2026-02-27T16:17:58.783Z I, [2026-02-27T16:17:58.783345 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e1710809-3e30-4ed0-b95d-5ad18ed5ba06] Performed SolidCable::TrimJob (Job ID: e1710809-3e30-4ed0-b95d-5ad18ed5ba06) from GoodJob(default) in 1.85ms
+2026-02-27T16:17:58.788Z I, [2026-02-27T16:17:58.788760 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.788
+2026-02-27T16:17:58.789Z I, [2026-02-27T16:17:58.789067 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.32ms (at 00:17:58.789)
+2026-02-27T16:17:58.813Z I, [2026-02-27T16:17:58.813833 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.816Z I, [2026-02-27T16:17:58.813997 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.816Z I, [2026-02-27T16:17:58.814528 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.816Z I, [2026-02-27T16:17:58.814613 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.816Z I, [2026-02-27T16:17:58.814724 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.826Z I, [2026-02-27T16:17:58.826215 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.826
+2026-02-27T16:17:58.826Z I, [2026-02-27T16:17:58.826435 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.21ms (at 00:17:58.826)
+2026-02-27T16:17:58.830Z I, [2026-02-27T16:17:58.830127 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.830
+2026-02-27T16:17:58.830Z I, [2026-02-27T16:17:58.830257 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.17ms (at 00:17:58.830)
+2026-02-27T16:17:58.837Z I, [2026-02-27T16:17:58.837427 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.837
+2026-02-27T16:17:58.837Z I, [2026-02-27T16:17:58.837575 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.17ms (at 00:17:58.837)
+2026-02-27T16:17:58.840Z I, [2026-02-27T16:17:58.840487 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.840
+2026-02-27T16:17:58.840Z I, [2026-02-27T16:17:58.840629 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.15ms (at 00:17:58.840)
+2026-02-27T16:17:58.844Z I, [2026-02-27T16:17:58.844153 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.844
+2026-02-27T16:17:58.844Z I, [2026-02-27T16:17:58.844299 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.15ms (at 00:17:58.844)
+2026-02-27T16:17:58.849Z I, [2026-02-27T16:17:58.848674 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.848
+2026-02-27T16:17:58.849Z I, [2026-02-27T16:17:58.848824 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.16ms (at 00:17:58.848)
+2026-02-27T16:17:58.859Z I, [2026-02-27T16:17:58.859289 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.859
+2026-02-27T16:17:58.859Z I, [2026-02-27T16:17:58.859572 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.29ms (at 00:17:58.859)
+2026-02-27T16:17:58.866Z I, [2026-02-27T16:17:58.866343 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.866
+2026-02-27T16:17:58.866Z I, [2026-02-27T16:17:58.866616 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.28ms (at 00:17:58.866)
+2026-02-27T16:17:58.873Z I, [2026-02-27T16:17:58.873145 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.873
+2026-02-27T16:17:58.873Z I, [2026-02-27T16:17:58.873259 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.13ms (at 00:17:58.873)
+2026-02-27T16:17:58.880Z I, [2026-02-27T16:17:58.879870 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.879
+2026-02-27T16:17:58.880Z I, [2026-02-27T16:17:58.879978 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.12ms (at 00:17:58.879)
+2026-02-27T16:17:58.883Z I, [2026-02-27T16:17:58.883377 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.883
+2026-02-27T16:17:58.883Z I, [2026-02-27T16:17:58.883515 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.15ms (at 00:17:58.883)
+2026-02-27T16:17:58.892Z I, [2026-02-27T16:17:58.892242 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"码问题，今", "session_id"=>"1772209056436", "sequence"=>34}
+2026-02-27T16:17:58.892Z I, [2026-02-27T16:17:58.892292 #1]  INFO -- : [BotChannel] Received stream_chunk #34 for session 1772209056436: 码问题，今...
+2026-02-27T16:17:58.894Z I, [2026-02-27T16:17:58.894714 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [0241dba9-7fb1-4516-907e-6241e4f32d57] Performing SolidCable::TrimJob (Job ID: 0241dba9-7fb1-4516-907e-6241e4f32d57) from GoodJob(default)
+2026-02-27T16:17:58.895Z I, [2026-02-27T16:17:58.895278 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"晚可", "session_id"=>"1772209056436", "sequence"=>35}
+2026-02-27T16:17:58.895Z I, [2026-02-27T16:17:58.895366 #1]  INFO -- : [BotChannel] Received stream_chunk #35 for session 1772209056436: 晚可...
+2026-02-27T16:17:58.897Z I, [2026-02-27T16:17:58.896958 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [0241dba9-7fb1-4516-907e-6241e4f32d57] Performed SolidCable::TrimJob (Job ID: 0241dba9-7fb1-4516-907e-6241e4f32d57) from GoodJob(default) in 2.26ms
+2026-02-27T16:17:58.899Z I, [2026-02-27T16:17:58.899073 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [eb262be5-3fcf-41ff-ade8-6a6129a884b1] Performing SolidCable::TrimJob (Job ID: eb262be5-3fcf-41ff-ade8-6a6129a884b1) from GoodJob(default)
+2026-02-27T16:17:58.900Z I, [2026-02-27T16:17:58.900038 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [eb262be5-3fcf-41ff-ade8-6a6129a884b1] Performed SolidCable::TrimJob (Job ID: eb262be5-3fcf-41ff-ade8-6a6129a884b1) from GoodJob(default) in 0.96ms
+2026-02-27T16:17:58.901Z I, [2026-02-27T16:17:58.901012 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [b1772669-7d4c-4c82-a3f0-7d4cd42941e7] Performing SolidCable::TrimJob (Job ID: b1772669-7d4c-4c82-a3f0-7d4cd42941e7) from GoodJob(default)
+2026-02-27T16:17:58.902Z I, [2026-02-27T16:17:58.902178 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [b1772669-7d4c-4c82-a3f0-7d4cd42941e7] Performed SolidCable::TrimJob (Job ID: b1772669-7d4c-4c82-a3f0-7d4cd42941e7) from GoodJob(default) in 0.95ms
+2026-02-27T16:17:58.903Z I, [2026-02-27T16:17:58.903060 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [69062fc1-3b92-4b1a-a645-fe075b4bddd9] Performing SolidCable::TrimJob (Job ID: 69062fc1-3b92-4b1a-a645-fe075b4bddd9) from GoodJob(default)
+2026-02-27T16:17:58.903Z I, [2026-02-27T16:17:58.903761 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [69062fc1-3b92-4b1a-a645-fe075b4bddd9] Performed SolidCable::TrimJob (Job ID: 69062fc1-3b92-4b1a-a645-fe075b4bddd9) from GoodJob(default) in 0.72ms
+2026-02-27T16:17:58.919Z I, [2026-02-27T16:17:58.919438 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.920Z I, [2026-02-27T16:17:58.919546 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:58.956Z I, [2026-02-27T16:17:58.956334 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"以修好", "session_id"=>"1772209056436", "sequence"=>36}
+2026-02-27T16:17:58.956Z I, [2026-02-27T16:17:58.956395 #1]  INFO -- : [BotChannel] Received stream_chunk #36 for session 1772209056436: 以修好...
+2026-02-27T16:17:58.958Z I, [2026-02-27T16:17:58.958183 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"\n- 审核负责人对", "session_id"=>"1772209056436", "sequence"=>37}
+2026-02-27T16:17:58.958Z I, [2026-02-27T16:17:58.958436 #1]  INFO -- : [BotChannel] Received stream_chunk #37 for session 1772209056436:
+2026-02-27T16:17:58.958Z - 审核负责人对...
+2026-02-27T16:17:58.959Z I, [2026-02-27T16:17:58.958340 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"产品很看", "session_id"=>"1772209056436", "sequence"=>38}
+2026-02-27T16:17:58.959Z I, [2026-02-27T16:17:58.958948 #1]  INFO -- : [BotChannel] Received stream_chunk #38 for session 1772209056436: 产品很看...
+2026-02-27T16:17:58.960Z I, [2026-02-27T16:17:58.960776 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [fb60a2a8-5b67-45c8-bd84-ad800b38e937] Performing SolidCable::TrimJob (Job ID: fb60a2a8-5b67-45c8-bd84-ad800b38e937) from GoodJob(default)
+2026-02-27T16:17:58.961Z I, [2026-02-27T16:17:58.961742 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [fb60a2a8-5b67-45c8-bd84-ad800b38e937] Performed SolidCable::TrimJob (Job ID: fb60a2a8-5b67-45c8-bd84-ad800b38e937) from GoodJob(default) in 0.99ms
+2026-02-27T16:17:58.962Z I, [2026-02-27T16:17:58.962830 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"好", "session_id"=>"1772209056436", "sequence"=>39}
+2026-02-27T16:17:58.963Z I, [2026-02-27T16:17:58.962939 #1]  INFO -- : [BotChannel] Received stream_chunk #39 for session 1772209056436: 好...
+2026-02-27T16:17:58.964Z I, [2026-02-27T16:17:58.964305 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [77f684d0-155e-4c40-8cd6-dbdde781f4b4] Performing SolidCable::TrimJob (Job ID: 77f684d0-155e-4c40-8cd6-dbdde781f4b4) from GoodJob(default)
+2026-02-27T16:17:58.965Z I, [2026-02-27T16:17:58.964844 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [8faf171f-a229-4396-b452-8a9fd6b84e97] Performing SolidCable::TrimJob (Job ID: 8faf171f-a229-4396-b452-8a9fd6b84e97) from GoodJob(default)
+2026-02-27T16:17:58.966Z I, [2026-02-27T16:17:58.966702 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [77f684d0-155e-4c40-8cd6-dbdde781f4b4] Performed SolidCable::TrimJob (Job ID: 77f684d0-155e-4c40-8cd6-dbdde781f4b4) from GoodJob(default) in 2.41ms
+2026-02-27T16:17:58.968Z I, [2026-02-27T16:17:58.967867 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [9b2e0f9f-8d0c-48ab-b1a6-f25b9ec99420] Performing SolidCable::TrimJob (Job ID: 9b2e0f9f-8d0c-48ab-b1a6-f25b9ec99420) from GoodJob(default)
+2026-02-27T16:17:58.968Z I, [2026-02-27T16:17:58.968267 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [8faf171f-a229-4396-b452-8a9fd6b84e97] Performed SolidCable::TrimJob (Job ID: 8faf171f-a229-4396-b452-8a9fd6b84e97) from GoodJob(default) in 3.46ms
+2026-02-27T16:17:58.969Z I, [2026-02-27T16:17:58.969348 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [588c1a58-6849-47da-befa-634cb86a4a0d] Performing SolidCable::TrimJob (Job ID: 588c1a58-6849-47da-befa-634cb86a4a0d) from GoodJob(default)
+2026-02-27T16:17:58.970Z I, [2026-02-27T16:17:58.970462 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [9b2e0f9f-8d0c-48ab-b1a6-f25b9ec99420] Performed SolidCable::TrimJob (Job ID: 9b2e0f9f-8d0c-48ab-b1a6-f25b9ec99420) from GoodJob(default) in 2.62ms
+2026-02-27T16:17:58.971Z I, [2026-02-27T16:17:58.971266 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [588c1a58-6849-47da-befa-634cb86a4a0d] Performed SolidCable::TrimJob (Job ID: 588c1a58-6849-47da-befa-634cb86a4a0d) from GoodJob(default) in 1.93ms
+2026-02-27T16:17:58.972Z I, [2026-02-27T16:17:58.972493 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [37babcc4-23da-4515-b24c-88fbfccbf45c] Performing SolidCable::TrimJob (Job ID: 37babcc4-23da-4515-b24c-88fbfccbf45c) from GoodJob(default)
+2026-02-27T16:17:58.973Z I, [2026-02-27T16:17:58.973040 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [31cda03c-d602-43b8-9b89-0d86337373dc] Performing SolidCable::TrimJob (Job ID: 31cda03c-d602-43b8-9b89-0d86337373dc) from GoodJob(default)
+2026-02-27T16:17:58.974Z I, [2026-02-27T16:17:58.974451 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [37babcc4-23da-4515-b24c-88fbfccbf45c] Performed SolidCable::TrimJob (Job ID: 37babcc4-23da-4515-b24c-88fbfccbf45c) from GoodJob(default) in 1.97ms
+2026-02-27T16:17:58.975Z I, [2026-02-27T16:17:58.975004 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [31cda03c-d602-43b8-9b89-0d86337373dc] Performed SolidCable::TrimJob (Job ID: 31cda03c-d602-43b8-9b89-0d86337373dc) from GoodJob(default) in 1.99ms
+2026-02-27T16:17:58.975Z I, [2026-02-27T16:17:58.975750 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [3bc7e116-f8cb-4931-9f30-eff40d11ed7c] Performing SolidCable::TrimJob (Job ID: 3bc7e116-f8cb-4931-9f30-eff40d11ed7c) from GoodJob(default)
+2026-02-27T16:17:58.976Z I, [2026-02-27T16:17:58.976386 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [3bc7e116-f8cb-4931-9f30-eff40d11ed7c] Performed SolidCable::TrimJob (Job ID: 3bc7e116-f8cb-4931-9f30-eff40d11ed7c) from GoodJob(default) in 0.65ms
+2026-02-27T16:17:58.992Z I, [2026-02-27T16:17:58.992313 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.992
+2026-02-27T16:17:58.992Z I, [2026-02-27T16:17:58.992459 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.16ms (at 00:17:58.992)
+2026-02-27T16:17:59.000Z I, [2026-02-27T16:17:58.999854 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:58.999
+2026-02-27T16:17:59.000Z I, [2026-02-27T16:17:59.000043 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.2ms (at 00:17:59.000)
+2026-02-27T16:17:59.023Z I, [2026-02-27T16:17:59.023675 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.025Z I, [2026-02-27T16:17:59.023748 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.025Z I, [2026-02-27T16:17:59.023948 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.025Z I, [2026-02-27T16:17:59.023988 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.089Z I, [2026-02-27T16:17:59.089700 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"，计划", "session_id"=>"1772209056436", "sequence"=>40}
+2026-02-27T16:17:59.089Z I, [2026-02-27T16:17:59.089762 #1]  INFO -- : [BotChannel] Received stream_chunk #40 for session 1772209056436: ，计划...
+2026-02-27T16:17:59.092Z I, [2026-02-27T16:17:59.092776 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [270989a9-b01b-4767-b850-37037cf94365] Performing SolidCable::TrimJob (Job ID: 270989a9-b01b-4767-b850-37037cf94365) from GoodJob(default)
+2026-02-27T16:17:59.093Z I, [2026-02-27T16:17:59.093496 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [270989a9-b01b-4767-b850-37037cf94365] Performed SolidCable::TrimJob (Job ID: 270989a9-b01b-4767-b850-37037cf94365) from GoodJob(default) in 0.74ms
+2026-02-27T16:17:59.095Z I, [2026-02-27T16:17:59.095618 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [825bf478-1f0a-46b0-87ac-d651993aa6e0] Performing SolidCable::TrimJob (Job ID: 825bf478-1f0a-46b0-87ac-d651993aa6e0) from GoodJob(default)
+2026-02-27T16:17:59.096Z I, [2026-02-27T16:17:59.096218 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [825bf478-1f0a-46b0-87ac-d651993aa6e0] Performed SolidCable::TrimJob (Job ID: 825bf478-1f0a-46b0-87ac-d651993aa6e0) from GoodJob(default) in 0.62ms
+2026-02-27T16:17:59.097Z I, [2026-02-27T16:17:59.097869 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"拉运", "session_id"=>"1772209056436", "sequence"=>41}
+2026-02-27T16:17:59.098Z I, [2026-02-27T16:17:59.098369 #1]  INFO -- : [BotChannel] Received stream_chunk #41 for session 1772209056436: 拉运...
+2026-02-27T16:17:59.098Z I, [2026-02-27T16:17:59.098321 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"广\n\n**现", "session_id"=>"1772209056436", "sequence"=>43}
+2026-02-27T16:17:59.098Z I, [2026-02-27T16:17:59.098859 #1]  INFO -- : [BotChannel] Received stream_chunk #43 for session 1772209056436: 广
+2026-02-27T16:17:59.098Z **现...
+2026-02-27T16:17:59.099Z I, [2026-02-27T16:17:59.098135 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"营团队推", "session_id"=>"1772209056436", "sequence"=>42}
+2026-02-27T16:17:59.099Z I, [2026-02-27T16:17:59.099357 #1]  INFO -- : [BotChannel] Received stream_chunk #42 for session 1772209056436: 营团队推...
+2026-02-27T16:17:59.101Z I, [2026-02-27T16:17:59.101646 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [a09de700-5728-438d-ba25-dc0b5d5d9e26] Performing SolidCable::TrimJob (Job ID: a09de700-5728-438d-ba25-dc0b5d5d9e26) from GoodJob(default)
+2026-02-27T16:17:59.102Z I, [2026-02-27T16:17:59.102656 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [a09de700-5728-438d-ba25-dc0b5d5d9e26] Performed SolidCable::TrimJob (Job ID: a09de700-5728-438d-ba25-dc0b5d5d9e26) from GoodJob(default) in 1.03ms
+2026-02-27T16:17:59.104Z I, [2026-02-27T16:17:59.104206 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [b813674e-13fb-44ce-b578-e0f6f0c9b927] Performing SolidCable::TrimJob (Job ID: b813674e-13fb-44ce-b578-e0f6f0c9b927) from GoodJob(default)
+2026-02-27T16:17:59.105Z I, [2026-02-27T16:17:59.104792 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e5ff9f63-a74b-4679-8d36-98380f66a76d] Performing SolidCable::TrimJob (Job ID: e5ff9f63-a74b-4679-8d36-98380f66a76d) from GoodJob(default)
+2026-02-27T16:17:59.106Z I, [2026-02-27T16:17:59.106706 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [b813674e-13fb-44ce-b578-e0f6f0c9b927] Performed SolidCable::TrimJob (Job ID: b813674e-13fb-44ce-b578-e0f6f0c9b927) from GoodJob(default) in 2.51ms
+2026-02-27T16:17:59.107Z I, [2026-02-27T16:17:59.107336 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e5ff9f63-a74b-4679-8d36-98380f66a76d] Performed SolidCable::TrimJob (Job ID: e5ff9f63-a74b-4679-8d36-98380f66a76d) from GoodJob(default) in 2.56ms
+2026-02-27T16:17:59.109Z I, [2026-02-27T16:17:59.109288 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [279ca264-e9b5-482d-8649-025d2daee677] Performing SolidCable::TrimJob (Job ID: 279ca264-e9b5-482d-8649-025d2daee677) from GoodJob(default)
+2026-02-27T16:17:59.111Z I, [2026-02-27T16:17:59.111705 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [138d8459-dbb9-4186-bcec-979b345783ff] Performing SolidCable::TrimJob (Job ID: 138d8459-dbb9-4186-bcec-979b345783ff) from GoodJob(default)
+2026-02-27T16:17:59.112Z I, [2026-02-27T16:17:59.112020 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [279ca264-e9b5-482d-8649-025d2daee677] Performed SolidCable::TrimJob (Job ID: 279ca264-e9b5-482d-8649-025d2daee677) from GoodJob(default) in 2.75ms
+2026-02-27T16:17:59.113Z I, [2026-02-27T16:17:59.113399 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [130b9b8a-61ca-4d9f-b5e4-da81827c2962] Performing SolidCable::TrimJob (Job ID: 130b9b8a-61ca-4d9f-b5e4-da81827c2962) from GoodJob(default)
+2026-02-27T16:17:59.114Z I, [2026-02-27T16:17:59.114291 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"在的", "session_id"=>"1772209056436", "sequence"=>44}
+2026-02-27T16:17:59.114Z I, [2026-02-27T16:17:59.114504 #1]  INFO -- : [BotChannel] Received stream_chunk #44 for session 1772209056436: 在的...
+2026-02-27T16:17:59.115Z I, [2026-02-27T16:17:59.115596 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [138d8459-dbb9-4186-bcec-979b345783ff] Performed SolidCable::TrimJob (Job ID: 138d8459-dbb9-4186-bcec-979b345783ff) from GoodJob(default) in 3.92ms
+2026-02-27T16:17:59.116Z I, [2026-02-27T16:17:59.116200 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [130b9b8a-61ca-4d9f-b5e4-da81827c2962] Performed SolidCable::TrimJob (Job ID: 130b9b8a-61ca-4d9f-b5e4-da81827c2962) from GoodJob(default) in 2.81ms
+2026-02-27T16:17:59.116Z I, [2026-02-27T16:17:59.116566 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.116
+2026-02-27T16:17:59.117Z I, [2026-02-27T16:17:59.116793 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.24ms (at 00:17:59.116)
+2026-02-27T16:17:59.118Z I, [2026-02-27T16:17:59.118359 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [109afca0-6807-4787-adc2-6709373969c1] Performing SolidCable::TrimJob (Job ID: 109afca0-6807-4787-adc2-6709373969c1) from GoodJob(default)
+2026-02-27T16:17:59.119Z I, [2026-02-27T16:17:59.118971 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [109afca0-6807-4787-adc2-6709373969c1] Performed SolidCable::TrimJob (Job ID: 109afca0-6807-4787-adc2-6709373969c1) from GoodJob(default) in 0.63ms
+2026-02-27T16:17:59.121Z I, [2026-02-27T16:17:59.121486 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [54a694c6-1c8c-4170-a0d9-e0a7460ea5a0] Performing SolidCable::TrimJob (Job ID: 54a694c6-1c8c-4170-a0d9-e0a7460ea5a0) from GoodJob(default)
+2026-02-27T16:17:59.122Z I, [2026-02-27T16:17:59.122541 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [54a694c6-1c8c-4170-a0d9-e0a7460ea5a0] Performed SolidCable::TrimJob (Job ID: 54a694c6-1c8c-4170-a0d9-e0a7460ea5a0) from GoodJob(default) in 1.07ms
+2026-02-27T16:17:59.124Z I, [2026-02-27T16:17:59.124566 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"关", "session_id"=>"1772209056436", "sequence"=>45}
+2026-02-27T16:17:59.124Z I, [2026-02-27T16:17:59.124602 #1]  INFO -- : [BotChannel] Received stream_chunk #45 for session 1772209056436: 关...
+2026-02-27T16:17:59.127Z I, [2026-02-27T16:17:59.126971 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [cd09f8e2-49b1-4e0d-a6fc-5bba24225227] Performing SolidCable::TrimJob (Job ID: cd09f8e2-49b1-4e0d-a6fc-5bba24225227) from GoodJob(default)
+2026-02-27T16:17:59.129Z I, [2026-02-27T16:17:59.129527 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.131Z I, [2026-02-27T16:17:59.129598 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.131Z I, [2026-02-27T16:17:59.129623 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.132Z I, [2026-02-27T16:17:59.129664 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.132Z I, [2026-02-27T16:17:59.129709 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.132Z I, [2026-02-27T16:17:59.129829 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.132Z I, [2026-02-27T16:17:59.130512 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [cd09f8e2-49b1-4e0d-a6fc-5bba24225227] Performed SolidCable::TrimJob (Job ID: cd09f8e2-49b1-4e0d-a6fc-5bba24225227) from GoodJob(default) in 3.57ms
+2026-02-27T16:17:59.134Z I, [2026-02-27T16:17:59.134582 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [b4cb2606-3d3e-435e-8206-084118657f66] Performing SolidCable::TrimJob (Job ID: b4cb2606-3d3e-435e-8206-084118657f66) from GoodJob(default)
+2026-02-27T16:17:59.135Z I, [2026-02-27T16:17:59.135660 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [b4cb2606-3d3e-435e-8206-084118657f66] Performed SolidCable::TrimJob (Job ID: b4cb2606-3d3e-435e-8206-084118657f66) from GoodJob(default) in 1.09ms
+2026-02-27T16:17:59.141Z I, [2026-02-27T16:17:59.140545 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.140
+2026-02-27T16:17:59.141Z I, [2026-02-27T16:17:59.140650 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.12ms (at 00:17:59.140)
+2026-02-27T16:17:59.144Z I, [2026-02-27T16:17:59.144416 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"键：**", "session_id"=>"1772209056436", "sequence"=>46}
+2026-02-27T16:17:59.144Z I, [2026-02-27T16:17:59.144451 #1]  INFO -- : [BotChannel] Received stream_chunk #46 for session 1772209056436: 键：**...
+2026-02-27T16:17:59.145Z I, [2026-02-27T16:17:59.145677 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.145
+2026-02-27T16:17:59.146Z I, [2026-02-27T16:17:59.146135 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.47ms (at 00:17:59.146)
+2026-02-27T16:17:59.147Z I, [2026-02-27T16:17:59.147296 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [a82dfdfa-2df5-4af9-a972-7c88603450c7] Performing SolidCable::TrimJob (Job ID: a82dfdfa-2df5-4af9-a972-7c88603450c7) from GoodJob(default)
+2026-02-27T16:17:59.149Z I, [2026-02-27T16:17:59.149166 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [a82dfdfa-2df5-4af9-a972-7c88603450c7] Performed SolidCable::TrimJob (Job ID: a82dfdfa-2df5-4af9-a972-7c88603450c7) from GoodJob(default) in 1.89ms
+2026-02-27T16:17:59.151Z I, [2026-02-27T16:17:59.151562 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.151
+2026-02-27T16:17:59.152Z I, [2026-02-27T16:17:59.152025 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.47ms (at 00:17:59.151)
+2026-02-27T16:17:59.154Z I, [2026-02-27T16:17:59.153096 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [f7f21ed4-d8f7-473a-8d64-13a64ea188fa] Performing SolidCable::TrimJob (Job ID: f7f21ed4-d8f7-473a-8d64-13a64ea188fa) from GoodJob(default)
+2026-02-27T16:17:59.154Z I, [2026-02-27T16:17:59.153986 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [f7f21ed4-d8f7-473a-8d64-13a64ea188fa] Performed SolidCable::TrimJob (Job ID: f7f21ed4-d8f7-473a-8d64-13a64ea188fa) from GoodJob(default) in 0.93ms
+2026-02-27T16:17:59.161Z I, [2026-02-27T16:17:59.161029 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.161
+2026-02-27T16:17:59.161Z I, [2026-02-27T16:17:59.161366 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.34ms (at 00:17:59.161)
+2026-02-27T16:17:59.172Z I, [2026-02-27T16:17:59.172006 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.171
+2026-02-27T16:17:59.172Z I, [2026-02-27T16:17:59.172388 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.39ms (at 00:17:59.172)
+2026-02-27T16:17:59.184Z I, [2026-02-27T16:17:59.184451 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.184
+2026-02-27T16:17:59.184Z I, [2026-02-27T16:17:59.184568 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.13ms (at 00:17:59.184)
+2026-02-27T16:17:59.188Z I, [2026-02-27T16:17:59.187945 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.187
+2026-02-27T16:17:59.188Z I, [2026-02-27T16:17:59.188064 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.14ms (at 00:17:59.188)
+2026-02-27T16:17:59.194Z I, [2026-02-27T16:17:59.194816 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.194
+2026-02-27T16:17:59.195Z I, [2026-02-27T16:17:59.194952 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.15ms (at 00:17:59.194)
+2026-02-27T16:17:59.198Z I, [2026-02-27T16:17:59.198144 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.198
+2026-02-27T16:17:59.198Z I, [2026-02-27T16:17:59.198279 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.15ms (at 00:17:59.198)
+2026-02-27T16:17:59.204Z I, [2026-02-27T16:17:59.204003 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>" 稳", "session_id"=>"1772209056436", "sequence"=>47}
+2026-02-27T16:17:59.204Z I, [2026-02-27T16:17:59.204045 #1]  INFO -- : [BotChannel] Received stream_chunk #47 for session 1772209056436:  稳...
+2026-02-27T16:17:59.206Z I, [2026-02-27T16:17:59.206249 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [96a9353f-d057-4d55-b940-d2647e590f21] Performing SolidCable::TrimJob (Job ID: 96a9353f-d057-4d55-b940-d2647e590f21) from GoodJob(default)
+2026-02-27T16:17:59.207Z I, [2026-02-27T16:17:59.206983 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [96a9353f-d057-4d55-b940-d2647e590f21] Performed SolidCable::TrimJob (Job ID: 96a9353f-d057-4d55-b940-d2647e590f21) from GoodJob(default) in 0.76ms
+2026-02-27T16:17:59.208Z I, [2026-02-27T16:17:59.208874 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [175051b2-00c1-4fe1-94cf-58cb73ca666d] Performing SolidCable::TrimJob (Job ID: 175051b2-00c1-4fe1-94cf-58cb73ca666d) from GoodJob(default)
+2026-02-27T16:17:59.209Z I, [2026-02-27T16:17:59.209548 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [175051b2-00c1-4fe1-94cf-58cb73ca666d] Performed SolidCable::TrimJob (Job ID: 175051b2-00c1-4fe1-94cf-58cb73ca666d) from GoodJob(default) in 0.68ms
+2026-02-27T16:17:59.226Z I, [2026-02-27T16:17:59.225945 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"稳地修这", "session_id"=>"1772209056436", "sequence"=>48}
+2026-02-27T16:17:59.226Z I, [2026-02-27T16:17:59.225995 #1]  INFO -- : [BotChannel] Received stream_chunk #48 for session 1772209056436: 稳地修这...
+2026-02-27T16:17:59.229Z I, [2026-02-27T16:17:59.229246 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [dfc612e3-01a8-46c7-b0e4-e03515bbc9db] Performing SolidCable::TrimJob (Job ID: dfc612e3-01a8-46c7-b0e4-e03515bbc9db) from GoodJob(default)
+2026-02-27T16:17:59.229Z I, [2026-02-27T16:17:59.229894 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [dfc612e3-01a8-46c7-b0e4-e03515bbc9db] Performed SolidCable::TrimJob (Job ID: dfc612e3-01a8-46c7-b0e4-e03515bbc9db) from GoodJob(default) in 0.67ms
+2026-02-27T16:17:59.233Z I, [2026-02-27T16:17:59.233848 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [510e4794-aed2-45b9-ac60-30b4e1e5e1d9] Performing SolidCable::TrimJob (Job ID: 510e4794-aed2-45b9-ac60-30b4e1e5e1d9) from GoodJob(default)
+2026-02-27T16:17:59.234Z I, [2026-02-27T16:17:59.234421 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.235Z I, [2026-02-27T16:17:59.234582 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.236Z I, [2026-02-27T16:17:59.234638 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.236Z I, [2026-02-27T16:17:59.236885 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [510e4794-aed2-45b9-ac60-30b4e1e5e1d9] Performed SolidCable::TrimJob (Job ID: 510e4794-aed2-45b9-ac60-30b4e1e5e1d9) from GoodJob(default) in 3.05ms
+2026-02-27T16:17:59.250Z I, [2026-02-27T16:17:59.250689 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"个 bug，别", "session_id"=>"1772209056436", "sequence"=>49}
+2026-02-27T16:17:59.250Z I, [2026-02-27T16:17:59.250740 #1]  INFO -- : [BotChannel] Received stream_chunk #49 for session 1772209056436: 个 bug，别...
+2026-02-27T16:17:59.254Z I, [2026-02-27T16:17:59.254188 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [077ebd99-f695-48be-8d04-6807d1384652] Performing SolidCable::TrimJob (Job ID: 077ebd99-f695-48be-8d04-6807d1384652) from GoodJob(default)
+2026-02-27T16:17:59.254Z I, [2026-02-27T16:17:59.254876 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [077ebd99-f695-48be-8d04-6807d1384652] Performed SolidCable::TrimJob (Job ID: 077ebd99-f695-48be-8d04-6807d1384652) from GoodJob(default) in 0.71ms
+2026-02-27T16:17:59.257Z I, [2026-02-27T16:17:59.257464 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [2a1cc66d-4b68-4769-9205-ab3b80792e42] Performing SolidCable::TrimJob (Job ID: 2a1cc66d-4b68-4769-9205-ab3b80792e42) from GoodJob(default)
+2026-02-27T16:17:59.258Z I, [2026-02-27T16:17:59.258045 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [2a1cc66d-4b68-4769-9205-ab3b80792e42] Performed SolidCable::TrimJob (Job ID: 2a1cc66d-4b68-4769-9205-ab3b80792e42) from GoodJob(default) in 0.61ms
+2026-02-27T16:17:59.299Z I, [2026-02-27T16:17:59.299190 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"熬夜", "session_id"=>"1772209056436", "sequence"=>50}
+2026-02-27T16:17:59.299Z I, [2026-02-27T16:17:59.299245 #1]  INFO -- : [BotChannel] Received stream_chunk #50 for session 1772209056436: 熬夜...
+2026-02-27T16:17:59.302Z I, [2026-02-27T16:17:59.301907 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [56a8fbf9-fed1-495d-b311-1c100a45ac5e] Performing SolidCable::TrimJob (Job ID: 56a8fbf9-fed1-495d-b311-1c100a45ac5e) from GoodJob(default)
+2026-02-27T16:17:59.304Z I, [2026-02-27T16:17:59.303309 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [56a8fbf9-fed1-495d-b311-1c100a45ac5e] Performed SolidCable::TrimJob (Job ID: 56a8fbf9-fed1-495d-b311-1c100a45ac5e) from GoodJob(default) in 1.42ms
+2026-02-27T16:17:59.307Z I, [2026-02-27T16:17:59.306960 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [6fa17ddd-f44f-4e57-974f-2b69704f0308] Performing SolidCable::TrimJob (Job ID: 6fa17ddd-f44f-4e57-974f-2b69704f0308) from GoodJob(default)
+2026-02-27T16:17:59.307Z I, [2026-02-27T16:17:59.307688 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.307
+2026-02-27T16:17:59.308Z I, [2026-02-27T16:17:59.307982 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [6fa17ddd-f44f-4e57-974f-2b69704f0308] Performed SolidCable::TrimJob (Job ID: 6fa17ddd-f44f-4e57-974f-2b69704f0308) from GoodJob(default) in 1.04ms
+2026-02-27T16:17:59.308Z I, [2026-02-27T16:17:59.308142 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.46ms (at 00:17:59.308)
+2026-02-27T16:17:59.316Z I, [2026-02-27T16:17:59.316140 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.316
+2026-02-27T16:17:59.316Z I, [2026-02-27T16:17:59.316270 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.14ms (at 00:17:59.316)
+2026-02-27T16:17:59.325Z I, [2026-02-27T16:17:59.325504 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.325
+2026-02-27T16:17:59.325Z I, [2026-02-27T16:17:59.325630 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.14ms (at 00:17:59.325)
+2026-02-27T16:17:59.338Z I, [2026-02-27T16:17:59.338066 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.339Z I, [2026-02-27T16:17:59.338264 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.436Z I, [2026-02-27T16:17:59.436263 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.436
+2026-02-27T16:17:59.436Z I, [2026-02-27T16:17:59.436461 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.21ms (at 00:17:59.436)
+2026-02-27T16:17:59.449Z I, [2026-02-27T16:17:59.449065 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.449
+2026-02-27T16:17:59.449Z I, [2026-02-27T16:17:59.449215 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.16ms (at 00:17:59.449)
+2026-02-27T16:17:59.684Z I, [2026-02-27T16:17:59.683808 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"钻牛角尖，", "session_id"=>"1772209056436", "sequence"=>51}
+2026-02-27T16:17:59.684Z I, [2026-02-27T16:17:59.683877 #1]  INFO -- : [BotChannel] Received stream_chunk #51 for session 1772209056436: 钻牛角尖，...
+2026-02-27T16:17:59.685Z I, [2026-02-27T16:17:59.685147 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"改", "session_id"=>"1772209056436", "sequence"=>52}
+2026-02-27T16:17:59.685Z I, [2026-02-27T16:17:59.685224 #1]  INFO -- : [BotChannel] Received stream_chunk #52 for session 1772209056436: 改...
+2026-02-27T16:17:59.689Z I, [2026-02-27T16:17:59.689132 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [9b595044-c62e-4c6b-b36c-3d54e52921ab] Performing SolidCable::TrimJob (Job ID: 9b595044-c62e-4c6b-b36c-3d54e52921ab) from GoodJob(default)
+2026-02-27T16:17:59.689Z I, [2026-02-27T16:17:59.689619 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [9c06e3a4-eab2-4efb-a3e3-c8bffa4548bd] Performing SolidCable::TrimJob (Job ID: 9c06e3a4-eab2-4efb-a3e3-c8bffa4548bd) from GoodJob(default)
+2026-02-27T16:17:59.691Z I, [2026-02-27T16:17:59.691075 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [9b595044-c62e-4c6b-b36c-3d54e52921ab] Performed SolidCable::TrimJob (Job ID: 9b595044-c62e-4c6b-b36c-3d54e52921ab) from GoodJob(default) in 2.01ms
+2026-02-27T16:17:59.692Z I, [2026-02-27T16:17:59.692196 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [9c06e3a4-eab2-4efb-a3e3-c8bffa4548bd] Performed SolidCable::TrimJob (Job ID: 9c06e3a4-eab2-4efb-a3e3-c8bffa4548bd) from GoodJob(default) in 2.59ms
+2026-02-27T16:17:59.694Z I, [2026-02-27T16:17:59.693988 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e8a28c50-956c-4ad0-8b48-9c8ee6da37f3] Performing SolidCable::TrimJob (Job ID: e8a28c50-956c-4ad0-8b48-9c8ee6da37f3) from GoodJob(default)
+2026-02-27T16:17:59.694Z I, [2026-02-27T16:17:59.694835 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e8a28c50-956c-4ad0-8b48-9c8ee6da37f3] Performed SolidCable::TrimJob (Job ID: e8a28c50-956c-4ad0-8b48-9c8ee6da37f3) from GoodJob(default) in 0.86ms
+2026-02-27T16:17:59.695Z I, [2026-02-27T16:17:59.695451 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [fab9c199-c6cb-4750-8914-6afb5e2105ac] Performing SolidCable::TrimJob (Job ID: fab9c199-c6cb-4750-8914-6afb5e2105ac) from GoodJob(default)
+2026-02-27T16:17:59.700Z I, [2026-02-27T16:17:59.700310 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [fab9c199-c6cb-4750-8914-6afb5e2105ac] Performed SolidCable::TrimJob (Job ID: fab9c199-c6cb-4750-8914-6afb5e2105ac) from GoodJob(default) in 4.88ms
+2026-02-27T16:17:59.748Z I, [2026-02-27T16:17:59.748840 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.750Z I, [2026-02-27T16:17:59.748950 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.762Z I, [2026-02-27T16:17:59.761852 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.761
+2026-02-27T16:17:59.762Z I, [2026-02-27T16:17:59.762111 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.25ms (at 00:17:59.762)
+2026-02-27T16:17:59.768Z I, [2026-02-27T16:17:59.768369 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"好就", "session_id"=>"1772209056436", "sequence"=>53}
+2026-02-27T16:17:59.768Z I, [2026-02-27T16:17:59.768680 #1]  INFO -- : [BotChannel] Received stream_chunk #53 for session 1772209056436: 好就...
+2026-02-27T16:17:59.770Z I, [2026-02-27T16:17:59.768907 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"上", "session_id"=>"1772209056436", "sequence"=>54}
+2026-02-27T16:17:59.770Z I, [2026-02-27T16:17:59.770770 #1]  INFO -- : [BotChannel] Received stream_chunk #54 for session 1772209056436: 上...
+2026-02-27T16:17:59.771Z I, [2026-02-27T16:17:59.769272 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"\n\n现", "session_id"=>"1772209056436", "sequence"=>56}
+2026-02-27T16:17:59.772Z I, [2026-02-27T16:17:59.772079 #1]  INFO -- : [BotChannel] Received stream_chunk #56 for session 1772209056436:
+2026-02-27T16:17:59.772Z 现...
+2026-02-27T16:17:59.772Z I, [2026-02-27T16:17:59.769127 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"线。", "session_id"=>"1772209056436", "sequence"=>55}
+2026-02-27T16:17:59.773Z I, [2026-02-27T16:17:59.772912 #1]  INFO -- : [BotChannel] Received stream_chunk #55 for session 1772209056436: 线。...
+2026-02-27T16:17:59.792Z I, [2026-02-27T16:17:59.791999 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [b3d50a58-9de7-4807-b69b-62534a9da57f] Performing SolidCable::TrimJob (Job ID: b3d50a58-9de7-4807-b69b-62534a9da57f) from GoodJob(default)
+2026-02-27T16:17:59.793Z I, [2026-02-27T16:17:59.792882 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [c9eb46ec-b0f3-405b-bf95-862e0c3a9ef7] Performing SolidCable::TrimJob (Job ID: c9eb46ec-b0f3-405b-bf95-862e0c3a9ef7) from GoodJob(default)
+2026-02-27T16:17:59.794Z I, [2026-02-27T16:17:59.794224 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [ae3e5a33-8e7d-40a5-ae55-ec2a48ace385] Performing SolidCable::TrimJob (Job ID: ae3e5a33-8e7d-40a5-ae55-ec2a48ace385) from GoodJob(default)
+2026-02-27T16:17:59.800Z I, [2026-02-27T16:17:59.800344 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [72e31a48-617b-431e-8382-dbe8a3f84ef3] Performing SolidCable::TrimJob (Job ID: 72e31a48-617b-431e-8382-dbe8a3f84ef3) from GoodJob(default)
+2026-02-27T16:17:59.802Z I, [2026-02-27T16:17:59.802768 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [b3d50a58-9de7-4807-b69b-62534a9da57f] Performed SolidCable::TrimJob (Job ID: b3d50a58-9de7-4807-b69b-62534a9da57f) from GoodJob(default) in 10.78ms
+2026-02-27T16:17:59.806Z I, [2026-02-27T16:17:59.806561 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [c9eb46ec-b0f3-405b-bf95-862e0c3a9ef7] Performed SolidCable::TrimJob (Job ID: c9eb46ec-b0f3-405b-bf95-862e0c3a9ef7) from GoodJob(default) in 13.66ms
+2026-02-27T16:17:59.808Z I, [2026-02-27T16:17:59.808228 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [ae3e5a33-8e7d-40a5-ae55-ec2a48ace385] Performed SolidCable::TrimJob (Job ID: ae3e5a33-8e7d-40a5-ae55-ec2a48ace385) from GoodJob(default) in 14.01ms
+2026-02-27T16:17:59.811Z I, [2026-02-27T16:17:59.811881 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [72e31a48-617b-431e-8382-dbe8a3f84ef3] Performed SolidCable::TrimJob (Job ID: 72e31a48-617b-431e-8382-dbe8a3f84ef3) from GoodJob(default) in 12.48ms
+2026-02-27T16:17:59.815Z I, [2026-02-27T16:17:59.815171 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e2380f6c-a8b3-4732-97c7-e6fffabee394] Performing SolidCable::TrimJob (Job ID: e2380f6c-a8b3-4732-97c7-e6fffabee394) from GoodJob(default)
+2026-02-27T16:17:59.816Z I, [2026-02-27T16:17:59.816157 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [0b071f41-7f30-4e8f-b9c3-1943859882e9] Performing SolidCable::TrimJob (Job ID: 0b071f41-7f30-4e8f-b9c3-1943859882e9) from GoodJob(default)
+2026-02-27T16:17:59.817Z I, [2026-02-27T16:17:59.817764 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [1d83cf02-4f0c-41c2-91a5-55ba925f52e6] Performing SolidCable::TrimJob (Job ID: 1d83cf02-4f0c-41c2-91a5-55ba925f52e6) from GoodJob(default)
+2026-02-27T16:17:59.819Z I, [2026-02-27T16:17:59.818727 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [758d01c6-0970-4740-9913-7f5fc97aad14] Performing SolidCable::TrimJob (Job ID: 758d01c6-0970-4740-9913-7f5fc97aad14) from GoodJob(default)
+2026-02-27T16:17:59.819Z I, [2026-02-27T16:17:59.819011 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [e2380f6c-a8b3-4732-97c7-e6fffabee394] Performed SolidCable::TrimJob (Job ID: e2380f6c-a8b3-4732-97c7-e6fffabee394) from GoodJob(default) in 3.86ms
+2026-02-27T16:17:59.820Z I, [2026-02-27T16:17:59.819991 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"在修", "session_id"=>"1772209056436", "sequence"=>57}
+2026-02-27T16:17:59.820Z I, [2026-02-27T16:17:59.820643 #1]  INFO -- : [BotChannel] Received stream_chunk #57 for session 1772209056436: 在修...
+2026-02-27T16:17:59.821Z I, [2026-02-27T16:17:59.820299 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [0b071f41-7f30-4e8f-b9c3-1943859882e9] Performed SolidCable::TrimJob (Job ID: 0b071f41-7f30-4e8f-b9c3-1943859882e9) from GoodJob(default) in 4.16ms
+2026-02-27T16:17:59.822Z I, [2026-02-27T16:17:59.821932 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"得", "session_id"=>"1772209056436", "sequence"=>58}
+2026-02-27T16:17:59.822Z I, [2026-02-27T16:17:59.822152 #1]  INFO -- : [BotChannel] Received stream_chunk #58 for session 1772209056436: 得...
+2026-02-27T16:17:59.823Z I, [2026-02-27T16:17:59.822447 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [1d83cf02-4f0c-41c2-91a5-55ba925f52e6] Performed SolidCable::TrimJob (Job ID: 1d83cf02-4f0c-41c2-91a5-55ba925f52e6) from GoodJob(default) in 4.7ms
+2026-02-27T16:17:59.823Z I, [2026-02-27T16:17:59.823466 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_chunk", "content"=>"怎么样了？", "session_id"=>"1772209056436", "sequence"=>59}
+2026-02-27T16:17:59.823Z I, [2026-02-27T16:17:59.823629 #1]  INFO -- : [BotChannel] Received stream_chunk #59 for session 1772209056436: 怎么样了？...
+2026-02-27T16:17:59.824Z I, [2026-02-27T16:17:59.823223 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [758d01c6-0970-4740-9913-7f5fc97aad14] Performed SolidCable::TrimJob (Job ID: 758d01c6-0970-4740-9913-7f5fc97aad14) from GoodJob(default) in 4.51ms
+2026-02-27T16:17:59.824Z I, [2026-02-27T16:17:59.824725 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_end", "session_id"=>"1772209056436"}
+2026-02-27T16:17:59.824Z I, [2026-02-27T16:17:59.824921 #1]  INFO -- : [BotChannel] Stream ended for session 1772209056436
+2026-02-27T16:17:59.825Z I, [2026-02-27T16:17:59.824152 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.824
+2026-02-27T16:17:59.826Z I, [2026-02-27T16:17:59.826079 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 1.94ms (at 00:17:59.826)
+2026-02-27T16:17:59.827Z I, [2026-02-27T16:17:59.827164 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [c1c1eaea-5d55-403d-bd36-3ec1cd112d44] Performing SolidCable::TrimJob (Job ID: c1c1eaea-5d55-403d-bd36-3ec1cd112d44) from GoodJob(default)
+2026-02-27T16:17:59.828Z I, [2026-02-27T16:17:59.828509 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [ea119843-f973-417f-af7a-7e1150e3f0dd] Performing SolidCable::TrimJob (Job ID: ea119843-f973-417f-af7a-7e1150e3f0dd) from GoodJob(default)
+2026-02-27T16:17:59.829Z I, [2026-02-27T16:17:59.829319 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [c358679c-ad78-43ca-935d-2d15116207a2] Performing SolidCable::TrimJob (Job ID: c358679c-ad78-43ca-935d-2d15116207a2) from GoodJob(default)
+2026-02-27T16:17:59.830Z I, [2026-02-27T16:17:59.829747 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [c1c1eaea-5d55-403d-bd36-3ec1cd112d44] Performed SolidCable::TrimJob (Job ID: c1c1eaea-5d55-403d-bd36-3ec1cd112d44) from GoodJob(default) in 2.6ms
+2026-02-27T16:17:59.831Z I, [2026-02-27T16:17:59.831663 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [426b9815-ba21-4af0-a1cb-d79a450fe6de] Performing SolidCable::TrimJob (Job ID: 426b9815-ba21-4af0-a1cb-d79a450fe6de) from GoodJob(default)
+2026-02-27T16:17:59.832Z I, [2026-02-27T16:17:59.832477 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [ea119843-f973-417f-af7a-7e1150e3f0dd] Performed SolidCable::TrimJob (Job ID: ea119843-f973-417f-af7a-7e1150e3f0dd) from GoodJob(default) in 3.99ms
+2026-02-27T16:17:59.833Z I, [2026-02-27T16:17:59.833581 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [c358679c-ad78-43ca-935d-2d15116207a2] Performed SolidCable::TrimJob (Job ID: c358679c-ad78-43ca-935d-2d15116207a2) from GoodJob(default) in 4.27ms
+2026-02-27T16:17:59.834Z I, [2026-02-27T16:17:59.834627 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [426b9815-ba21-4af0-a1cb-d79a450fe6de] Performed SolidCable::TrimJob (Job ID: 426b9815-ba21-4af0-a1cb-d79a450fe6de) from GoodJob(default) in 2.98ms
+2026-02-27T16:17:59.835Z I, [2026-02-27T16:17:59.834935 #1]  INFO -- : [BotChannel] receive called with data: {"type"=>"stream_end", "session_id"=>"1772209056436"}
+2026-02-27T16:17:59.835Z I, [2026-02-27T16:17:59.835038 #1]  INFO -- : [BotChannel] Stream ended for session 1772209056436
+2026-02-27T16:17:59.837Z I, [2026-02-27T16:17:59.837029 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [79183293-dfe1-4188-92ea-8eb893e29da6] Performing SolidCable::TrimJob (Job ID: 79183293-dfe1-4188-92ea-8eb893e29da6) from GoodJob(default)
+2026-02-27T16:17:59.838Z I, [2026-02-27T16:17:59.838676 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [53b9b4ae-ac06-4ef6-8e8d-ca23270a398a] Performing SolidCable::TrimJob (Job ID: 53b9b4ae-ac06-4ef6-8e8d-ca23270a398a) from GoodJob(default)
+2026-02-27T16:17:59.839Z I, [2026-02-27T16:17:59.839400 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [3e2d64e6-550d-4d0d-b68f-670f68b305e7] Performing SolidCable::TrimJob (Job ID: 3e2d64e6-550d-4d0d-b68f-670f68b305e7) from GoodJob(default)
+2026-02-27T16:17:59.840Z I, [2026-02-27T16:17:59.839769 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [79183293-dfe1-4188-92ea-8eb893e29da6] Performed SolidCable::TrimJob (Job ID: 79183293-dfe1-4188-92ea-8eb893e29da6) from GoodJob(default) in 2.76ms
+2026-02-27T16:17:59.841Z I, [2026-02-27T16:17:59.840896 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [1f455d5c-dc76-4ece-b73d-6df33e830e40] Performing SolidCable::TrimJob (Job ID: 1f455d5c-dc76-4ece-b73d-6df33e830e40) from GoodJob(default)
+2026-02-27T16:17:59.841Z I, [2026-02-27T16:17:59.841600 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [53b9b4ae-ac06-4ef6-8e8d-ca23270a398a] Performed SolidCable::TrimJob (Job ID: 53b9b4ae-ac06-4ef6-8e8d-ca23270a398a) from GoodJob(default) in 2.95ms
+2026-02-27T16:17:59.842Z I, [2026-02-27T16:17:59.842299 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [3e2d64e6-550d-4d0d-b68f-670f68b305e7] Performed SolidCable::TrimJob (Job ID: 3e2d64e6-550d-4d0d-b68f-670f68b305e7) from GoodJob(default) in 2.91ms
+2026-02-27T16:17:59.843Z I, [2026-02-27T16:17:59.842924 #1]  INFO -- : [ActiveJob] [SolidCable::TrimJob] [1f455d5c-dc76-4ece-b73d-6df33e830e40] Performed SolidCable::TrimJob (Job ID: 1f455d5c-dc76-4ece-b73d-6df33e830e40) from GoodJob(default) in 2.04ms
+2026-02-27T16:17:59.855Z I, [2026-02-27T16:17:59.855638 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.858Z I, [2026-02-27T16:17:59.855701 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.858Z I, [2026-02-27T16:17:59.855770 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.858Z I, [2026-02-27T16:17:59.856043 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.858Z I, [2026-02-27T16:17:59.856294 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.858Z I, [2026-02-27T16:17:59.856357 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.858Z I, [2026-02-27T16:17:59.856452 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.858Z I, [2026-02-27T16:17:59.856522 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.858Z I, [2026-02-27T16:17:59.856554 #1]  INFO -- : [RokidSSE] Received broadcast on rokid_sse_1_1772209056436
+2026-02-27T16:17:59.945Z I, [2026-02-27T16:17:59.945506 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.945
+2026-02-27T16:17:59.945Z I, [2026-02-27T16:17:59.945725 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.23ms (at 00:17:59.945)
+2026-02-27T16:17:59.959Z I, [2026-02-27T16:17:59.959541 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.959
+2026-02-27T16:17:59.960Z I, [2026-02-27T16:17:59.960300 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.78ms (at 00:17:59.960)
+2026-02-27T16:17:59.972Z I, [2026-02-27T16:17:59.972673 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.972
+2026-02-27T16:17:59.973Z I, [2026-02-27T16:17:59.972875 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.21ms (at 00:17:59.972)
+2026-02-27T16:17:59.977Z I, [2026-02-27T16:17:59.976895 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.976
+2026-02-27T16:17:59.977Z I, [2026-02-27T16:17:59.977198 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.31ms (at 00:17:59.977)
+2026-02-27T16:17:59.984Z I, [2026-02-27T16:17:59.984337 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] Stream ended for session 1772209056436
+2026-02-27T16:17:59.986Z I, [2026-02-27T16:17:59.986571 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing message at 00:17:59.986
+2026-02-27T16:17:59.986Z I, [2026-02-27T16:17:59.986892 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed message in 0.33ms (at 00:17:59.986)
+2026-02-27T16:17:59.987Z I, [2026-02-27T16:17:59.987290 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ⏰ Writing done at 00:17:59.987
+2026-02-27T16:17:59.987Z I, [2026-02-27T16:17:59.987459 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] ✅ Wrote+flushed done in 0.18ms (at 00:17:59.987)
+2026-02-27T16:17:59.991Z I, [2026-02-27T16:17:59.991319 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] [trace_5cca029b8e281c42] Trace finalized: status=completed, SDK chunks=58, SSE chunks=57
+2026-02-27T16:17:59.991Z I, [2026-02-27T16:17:59.991375 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] [RokidSSE] Unsubscribed from channel: rokid_sse_1_1772209056436
+2026-02-27T16:18:00.000Z I, [2026-02-27T16:18:00.000679 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] No template found for RokidSseController#sse, rendering head :no_content
+2026-02-27T16:18:00.001Z I, [2026-02-27T16:18:00.000974 #1]  INFO -- : [6a0fb653-d2b2-4f22-b955-593602b813ce] Completed 204 No Content in 5768ms (ActiveRecord: 464.2ms (361 queries, 0 cached) | GC: 25.1ms)
+2026-02-27T16:20:56.184Z I, [2026-02-27T16:20:56.184104 #1]  INFO -- : [83bb7429-5d2b-4034-bb74-361d705569be] Started GET "/admin/stream_traces" for 192.243.120.74 at 2026-02-27 16:20:56 +0000
+2026-02-27T16:20:56.184Z I, [2026-02-27T16:20:56.184840 #1]  INFO -- : [83bb7429-5d2b-4034-bb74-361d705569be] Processing by Admin::StreamTracesController#index as HTML
+2026-02-27T16:20:56.214Z I, [2026-02-27T16:20:56.214001 #1]  INFO -- : [83bb7429-5d2b-4034-bb74-361d705569be]   Rendered layout layouts/admin.html.erb (Duration: 24.9ms | GC: 0.0ms)
+2026-02-27T16:20:56.214Z I, [2026-02-27T16:20:56.214688 #1]  INFO -- : [83bb7429-5d2b-4034-bb74-361d705569be] Completed 200 OK in 30ms (Views: 22.8ms | ActiveRecord: 2.8ms (13 queries, 8 cached) | GC: 0.0ms)
+2026-02-27T16:20:58.030Z I, [2026-02-27T16:20:58.030394 #1]  INFO -- : [aaf1d556-1c89-405b-aea1-911b37bac41f] Started GET "/admin/stream_traces/49" for 192.243.120.74 at 2026-02-27 16:20:58 +0000
+2026-02-27T16:20:58.031Z I, [2026-02-27T16:20:58.031031 #1]  INFO -- : [aaf1d556-1c89-405b-aea1-911b37bac41f] Processing by Admin::StreamTracesController#show as HTML
+2026-02-27T16:20:58.031Z I, [2026-02-27T16:20:58.031068 #1]  INFO -- : [aaf1d556-1c89-405b-aea1-911b37bac41f]   Parameters: {"id"=>"49"}
+2026-02-27T16:20:58.038Z I, [2026-02-27T16:20:58.038570 #1]  INFO -- : [aaf1d556-1c89-405b-aea1-911b37bac41f]   Rendered layout layouts/admin.html.erb (Duration: 4.9ms | GC: 0.0ms)
+2026-02-27T16:20:58.039Z I, [2026-02-27T16:20:58.039343 #1]  INFO -- : [aaf1d556-1c89-405b-aea1-911b37bac41f] Completed 200 OK in 8ms (Views: 5.1ms | ActiveRecord: 0.6ms (3 queries, 0 cached) | GC: 0.0ms)
+2026-02-27T16:20:58.846Z I, [2026-02-27T16:20:58.846764 #1]  INFO -- : [e0883280-808f-4dc3-9bf8-c66c404e218d] Started GET "/admin/stream_traces/53" for 192.243.120.74 at 2026-02-27 16:20:58 +0000
+2026-02-27T16:20:58.847Z I, [2026-02-27T16:20:58.847396 #1]  INFO -- : [e0883280-808f-4dc3-9bf8-c66c404e218d] Processing by Admin::StreamTracesController#show as HTML
+2026-02-27T16:20:58.847Z I, [2026-02-27T16:20:58.847446 #1]  INFO -- : [e0883280-808f-4dc3-9bf8-c66c404e218d]   Parameters: {"id"=>"53"}
+2026-02-27T16:20:58.858Z I, [2026-02-27T16:20:58.858470 #1]  INFO -- : [e0883280-808f-4dc3-9bf8-c66c404e218d]   Rendered layout layouts/admin.html.erb (Duration: 4.7ms | GC: 0.0ms)
+2026-02-27T16:20:58.858Z I, [2026-02-27T16:20:58.858678 #1]  INFO -- : [e0883280-808f-4dc3-9bf8-c66c404e218d] Completed 200 OK in 11ms (Views: 4.8ms | ActiveRecord: 0.7ms (3 queries, 0 cached) | GC: 0.0ms)

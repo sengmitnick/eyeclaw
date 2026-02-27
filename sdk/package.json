@@ -1,6 +1,6 @@
 {
   "name": "@eyeclaw/eyeclaw",
-  "version": "2.3.12",
+  "version": "2.4.0",
   "description": "EyeClaw plugin for OpenClaw - HTTP SSE streaming + WebSocket client",
   "type": "module",
   "main": "./index.ts",

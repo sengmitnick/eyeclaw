@@ -31,6 +31,10 @@ export class EyeClawWebSocketClient {
   private pingInterval: any = null
   private chunkSequence = 0 // 每个会话的 chunk 序号
   private accumulatedContent = '' // 累积完整内容用于兜底
+  
+  // 🔥 ACK 机制：追踪已发送和已确认的 chunks
+  private sentChunks = 0 // 已发送的 chunks 数量
+  private ackedChunks = new Set<number>() // 已确认的 chunk 序号集合
 
   constructor(api: OpenClawPluginApi, config: EyeClawConfig, getState: () => any) {
     this.api = api
@@ -163,6 +167,15 @@ export class EyeClawWebSocketClient {
       // 实际消息 - 从 Rails 发送的消息
       if (message.identifier && message.message) {
         const payload = message.message
+        
+        // 🔥 ACK 机制：处理 chunk_received 确认
+        if (payload.type === 'chunk_received') {
+          const sequence = payload.sequence
+          this.ackedChunks.add(sequence)
+          this.api.logger.debug(`[EyeClaw] ✅ Received ACK for chunk #${sequence}, total acked: ${this.ackedChunks.size}/${this.sentChunks}`)
+          return
+        }
+        
         this.handleCommand(payload)
       }
 
@@ -226,8 +239,10 @@ export class EyeClawWebSocketClient {
    * 调用自己的 HTTP 端点 /eyeclaw/chat
    */
   private async processWithOpenClaw(message: string, sessionId?: string, openclawSessionId?: string) {
-    // 重置 chunk 序号（每个新会话）
+    // 重置 chunk 序号和 ACK 计数器（每个新会话）
     this.chunkSequence = 0
+    this.sentChunks = 0
+    this.ackedChunks.clear()
     
     const state = this.getState()
     const gatewayPort = state.gatewayPort
@@ -269,14 +284,12 @@ export class EyeClawWebSocketClient {
       let currentEvent = ''
 
       // 解析 SSE 流式响应
+      let streamEnded = false
+      
       while (true) {
         const { done, value } = await reader.read()
         if (done) {
-          // 流结束，通知 Rails
-          this.sendMessage('stream_end', { session_id: sessionId })
-          
-          // 发送 stream_summary 用于兜底机制
-          this.sendStreamSummary(sessionId)
+          this.api.logger.info(`[EyeClaw] Reader done, stream ended flag: ${streamEnded}`)
           break
         }
 
@@ -316,20 +329,39 @@ export class EyeClawWebSocketClient {
               
               // stream_end 事件：流结束（由 HTTP handler 发送）
               if (currentEvent === 'stream_end') {
-                this.api.logger.info(`[EyeClaw] Stream ended: ${eventData.stream_id}`)
-                // 通知 Rails 流已结束
+                this.api.logger.info(`[EyeClaw] Received stream_end event: ${eventData.stream_id}`)
+                streamEnded = true
+                
+                // 🔥 等待所有 chunks 被确认后再发送 stream_end
+                await this.waitForAllAcks(sessionId)
+                
+                // 发送 stream_end 和 stream_summary
                 this.sendMessage('stream_end', { session_id: sessionId })
+                this.sendStreamSummary(sessionId)
+                
+                // 退出循环
+                return
               }
               
               // stream_error 事件：错误
               if (currentEvent === 'stream_error') {
                 this.api.logger.error(`[EyeClaw] Stream error: ${eventData.error}`)
+                this.sendMessage('stream_error', { error: eventData.error, session_id: sessionId })
+                return
               }
             } catch (e) {
               this.api.logger.warn(`[EyeClaw] Failed to parse SSE data: ${data}`)
             }
           }
         }
+      }
+      
+      // 如果循环正常结束（没有收到 stream_end 事件），也要等待 ACK
+      if (!streamEnded) {
+        this.api.logger.info(`[EyeClaw] Stream ended without stream_end event, waiting for ACKs`)
+        await this.waitForAllAcks(sessionId)
+        this.sendMessage('stream_end', { session_id: sessionId })
+        this.sendStreamSummary(sessionId)
       }
 
       this.api.logger.info(`[EyeClaw] Stream processing completed for session: ${sessionId}`)
@@ -355,6 +387,7 @@ export class EyeClawWebSocketClient {
   private sendChunk(content: string, sessionId?: string) {
     const timestamp = new Date().toISOString();
     const sequence = this.chunkSequence++;
+    this.sentChunks++; // 🔥 记录已发送数量
     
     // 累积完整内容用于兜底
     this.accumulatedContent += content;
@@ -365,6 +398,51 @@ export class EyeClawWebSocketClient {
       session_id: sessionId,
       sequence, // 添加序号
     })
+  }
+  
+  /**
+   * 🔥 等待所有 chunks 被 Rails 确认
+   * 实现 TCP 三次握手的应用层版本
+   * 超时 2 秒后强制返回，依赖 stream_summary 兜底机制
+   */
+  private async waitForAllAcks(sessionId?: string): Promise<void> {
+    const startTime = Date.now()
+    const timeout = 2000 // 2秒超时
+    const checkInterval = 50 // 每 50ms 检查一次
+    
+    this.api.logger.info(`[EyeClaw] 🕒 Waiting for all ACKs: sent=${this.sentChunks}, acked=${this.ackedChunks.size}`)
+    
+    while (this.ackedChunks.size < this.sentChunks) {
+      const elapsed = Date.now() - startTime
+      
+      if (elapsed >= timeout) {
+        const missing = this.sentChunks - this.ackedChunks.size
+        const missingSequences: number[] = []
+        for (let i = 0; i < this.sentChunks; i++) {
+          if (!this.ackedChunks.has(i)) {
+            missingSequences.push(i)
+          }
+        }
+        
+        this.api.logger.warn(
+          `[EyeClaw] ⚠️ ACK timeout after ${elapsed}ms: ` +
+          `sent=${this.sentChunks}, acked=${this.ackedChunks.size}, ` +
+          `missing=${missing}, missing_sequences=[${missingSequences.join(', ')}]`
+        )
+        this.api.logger.info(`[EyeClaw] Relying on stream_summary fallback mechanism`)
+        break
+      }
+      
+      // 等待 50ms 后再检查
+      await new Promise(resolve => setTimeout(resolve, checkInterval))
+    }
+    
+    if (this.ackedChunks.size === this.sentChunks) {
+      const elapsed = Date.now() - startTime
+      this.api.logger.info(
+        `[EyeClaw] ✅ All chunks ACKed: ${this.ackedChunks.size}/${this.sentChunks} in ${elapsed}ms`
+      )
+    }
   }
   
   /**

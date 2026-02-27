@@ -165,6 +165,32 @@ class RokidSseController < ApplicationController
       # 提取最后一条用户消息
       last_user_message = extract_last_user_message(messages)
       
+      # 🔥 关键修复：在广播命令之前先订阅频道
+      # 这样可以确保 SDK 发送的第一个 chunk 到达时，我们已经准备好接收
+      
+      subscription_channel = "rokid_sse_#{bot.id}_#{message_id}"
+      cable = ActionCable.server.pubsub
+      message_queue = Queue.new
+      stream_finished = false
+      
+      callback = ->(data) {
+        begin
+          Rails.logger.info "[RokidSSE] Received broadcast on #{subscription_channel}"
+          parsed_data = data.is_a?(String) ? JSON.parse(data) : data
+          message_queue << parsed_data
+          last_message_time = Time.current
+        rescue => e
+          Rails.logger.error "[RokidSSE] Error processing broadcast: #{e.message}"
+        end
+      }
+      
+      cable.subscribe(subscription_channel, callback)
+      Rails.logger.info "[RokidSSE] ✅ Subscribed to channel: #{subscription_channel}"
+      
+      # 等待 50ms 让订阅生效（防止 ActionCable 内部延迟）
+      sleep 0.05
+      
+      # 现在才广播命令
       # 通过 ActionCable 发送命令（带上 trace_id）
       command_payload = {
         type: 'execute_command',
@@ -188,7 +214,7 @@ class RokidSseController < ApplicationController
         timestamp: Time.current.iso8601
       })
       
-      Rails.logger.info "[RokidSSE] Broadcasting command to bot_#{bot.id}_commands (trace_id=#{trace_id})"
+      Rails.logger.info "[RokidSSE] 🚀 Broadcasting command to bot_#{bot.id}_commands (trace_id=#{trace_id})"
       ActionCable.server.broadcast("bot_#{bot.id}_commands", command_payload)
       
       # 订阅 ActionCable 频道以接收流式响应
@@ -200,25 +226,6 @@ class RokidSseController < ApplicationController
       # 用于按序号输出的状态
       next_expected_sequence = 0  # 下一个期望的序号
       pending_chunks = {}  # 缓存乱序到达的 chunks: {sequence => content}
-      
-      subscription_channel = "rokid_sse_#{bot.id}_#{message_id}"
-      cable = ActionCable.server.pubsub
-      message_queue = Queue.new
-      stream_finished = false
-      
-      callback = ->(data) {
-        begin
-          Rails.logger.info "[RokidSSE] Received broadcast on #{subscription_channel}"
-          parsed_data = data.is_a?(String) ? JSON.parse(data) : data
-          message_queue << parsed_data
-          last_message_time = Time.current
-        rescue => e
-          Rails.logger.error "[RokidSSE] Error processing broadcast: #{e.message}"
-        end
-      }
-      
-      cable.subscribe(subscription_channel, callback)
-      Rails.logger.info "[RokidSSE] Subscribed to channel: #{subscription_channel}"
       
       begin
         loop do
@@ -393,6 +400,9 @@ class RokidSseController < ApplicationController
                 content_hash: content_hash
               }) if stream_trace
               
+              # 🔥 记录 SDK total_chunks
+              stream_trace.update(sdk_total_chunks: sdk_total_chunks) if stream_trace
+              
               # 检测丢包并尝试补偿
               if stream_trace
                 diff = sdk_total_chunks - stream_trace.sse_chunk_count
@@ -440,6 +450,8 @@ class RokidSseController < ApplicationController
                   sdk_content: sdk_total_content,
                   sse_content: accumulated_content
                 )
+                
+                # 🔥 检测异常并进行详细分析
                 stream_trace.detect_anomaly!
               end
             end
@@ -563,39 +575,7 @@ class RokidSseController < ApplicationController
       # 提取最后一条用户消息
       last_user_message = extract_last_user_message(messages)
       
-      # 通过 ActionCable 发送命令到本地 openclaw（使用 bot_X_commands 频道）
-      # 这与 DashboardChannel#execute_command 的格式一致
-      # BotChannel 订阅了 bot_1_commands，所以 SDK 可以接收到此消息
-      command_payload = {
-        type: 'execute_command',
-        command: 'chat',
-        params: { message: last_user_message },
-        metadata: {
-          source: 'rokid_lingzhu',
-          agent_id: agent_id,
-          user_id: user_id,
-          full_messages: messages,
-          original_metadata: metadata,
-          session_id: message_id,  # 用于追踪响应
-          openclaw_session_id: metadata['openclaw_session_id'] || "bot_#{bot.id}"
-        },
-        timestamp: Time.current.iso8601
-      }
-      
-      Rails.logger.info "[RokidSSE] Broadcasting command to bot_#{bot.id}_commands"
-      Rails.logger.info "[RokidSSE] Command payload: #{command_payload.to_json[0..200]}"
-      
-      ActionCable.server.broadcast(
-        "bot_#{bot.id}_commands",
-        command_payload
-      )
-      
-      Rails.logger.info "[RokidSSE] Broadcast completed, checking active subscriptions..."
-      
-      # 检查有多少客户端订阅了这个频道
-      connections_count = ActionCable.server.connections.size
-      Rails.logger.info "[RokidSSE] Active ActionCable connections: #{connections_count}"
-      
+      # 🔥 关键修复：在广播命令之前先订阅频道
       # 订阅 ActionCable 频道以接收流式响应
       stream_id = nil
       accumulated_content = ""
@@ -617,9 +597,6 @@ class RokidSseController < ApplicationController
       # 创建一个队列来接收消息
       message_queue = Queue.new
       stream_finished = false
-      
-      # 订阅频道 - 对于 async adapter，我们需要直接从内部的广播系统监听
-      # 使用 Fiber 和 Queue 来实现异步监听
       
       callback = ->(data) {
         begin
@@ -647,7 +624,44 @@ class RokidSseController < ApplicationController
       
       # 直接订阅 ActionCable 的内部广播
       cable.subscribe(subscription_channel, callback)
-      Rails.logger.info "[RokidSSE] Subscribed to channel: #{subscription_channel}"
+      Rails.logger.info "[RokidSSE] ✅ Subscribed to channel: #{subscription_channel}"
+      
+      # 等待 50ms 让订阅生效
+      sleep 0.05
+      
+      # 现在才广播命令
+      # 通过 ActionCable 发送命令到本地 openclaw（使用 bot_X_commands 频道）
+      # 这与 DashboardChannel#execute_command 的格式一致
+      # BotChannel 订阅了 bot_1_commands，所以 SDK 可以接收到此消息
+      command_payload = {
+        type: 'execute_command',
+        command: 'chat',
+        params: { message: last_user_message },
+        metadata: {
+          source: 'rokid_lingzhu',
+          agent_id: agent_id,
+          user_id: user_id,
+          full_messages: messages,
+          original_metadata: metadata,
+          session_id: message_id,  # 用于追踪响应
+          openclaw_session_id: metadata['openclaw_session_id'] || "bot_#{bot.id}"
+        },
+        timestamp: Time.current.iso8601
+      }
+      
+      Rails.logger.info "[RokidSSE] 🚀 Broadcasting command to bot_#{bot.id}_commands"
+      Rails.logger.info "[RokidSSE] Command payload: #{command_payload.to_json[0..200]}"
+      
+      ActionCable.server.broadcast(
+        "bot_#{bot.id}_commands",
+        command_payload
+      )
+      
+      Rails.logger.info "[RokidSSE] Broadcast completed, checking active subscriptions..."
+      
+      # 检查有多少客户端订阅了这个频道
+      connections_count = ActionCable.server.connections.size
+      Rails.logger.info "[RokidSSE] Active ActionCable connections: #{connections_count}"
       
       begin
         # 循环接收流式消息

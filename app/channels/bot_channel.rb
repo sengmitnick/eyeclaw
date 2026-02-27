@@ -172,6 +172,17 @@ class BotChannel < ApplicationCable::Channel
         timestamp: Time.current.iso8601
       }
     )
+    
+    # 🔥 ACK 机制：立即向 SDK 确认收到此 chunk
+    # 这是 TCP 三次握手原理在应用层的实现
+    transmit({
+      type: 'chunk_received',
+      sequence: sequence,
+      session_id: session_id,
+      timestamp: Time.current.iso8601
+    })
+    
+    Rails.logger.debug "[BotChannel] ✅ ACK sent for chunk ##{sequence}"
   end
   
   # Handle stream end
