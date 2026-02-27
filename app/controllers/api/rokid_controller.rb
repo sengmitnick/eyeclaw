@@ -37,12 +37,9 @@ class Api::RokidController < ApplicationController
     end
     
     # 查找Bot
-    bot = if bot_id_param.present?
-            Bot.find_by(id: bot_id_param)
-          else
-            Bot.find_by(id: agent_id) || Bot.find_by(slug: agent_id)
-          end
-    
+    # 通过 user_id 查找（用户ID绑定模式）
+    bot = Bot.find_by_rokid_user(user_id) if user_id.present?
+
     unless bot
       return render json: { error: 'Bot not found' }, status: :not_found
     end

@@ -22,8 +22,11 @@ export class EyeClawWebSocketClient {
   private config: EyeClawConfig
   private getState: () => any
   private reconnectAttempts = 0
-  private maxReconnectAttempts = 5
-  private reconnectDelay = 3000
+  private maxReconnectAttempts = 10
+  private baseReconnectDelay = 1000 // 1 second
+  private maxReconnectDelay = 30000 // 30 seconds
+  private currentReconnectDelay = 1000
+  private reconnecting = false
   private subscribed = false
   private pingInterval: any = null
   private chunkSequence = 0 // 每个会话的 chunk 序号
@@ -84,11 +87,37 @@ export class EyeClawWebSocketClient {
    */
   stop() {
     this.stopPing()
+    this.reconnecting = false
+    this.resetReconnectDelay()
     if (this.ws) {
       this.ws.close()
       this.ws = null
     }
     this.subscribed = false
+  }
+
+  /**
+   * 重置重连延迟
+   */
+  private resetReconnectDelay() {
+    this.currentReconnectDelay = this.baseReconnectDelay
+    this.reconnectAttempts = 0
+  }
+
+  /**
+   * 计算下一次重连延迟（指数退避 + 随机抖动）
+   */
+  private calculateReconnectDelay(): number {
+    // 指数增长: 1s, 2s, 4s, 8s, 16s, 30s (cap)
+    const delay = Math.min(
+      this.currentReconnectDelay * 2,
+      this.maxReconnectDelay
+    )
+    this.currentReconnectDelay = delay
+    
+    // 添加随机抖动 (±25%)
+    const jitter = delay * 0.25 * (Math.random() * 2 - 1)
+    return Math.floor(delay + jitter)
   }
 
   /**
@@ -422,19 +451,33 @@ export class EyeClawWebSocketClient {
   }
 
   /**
-   * 计划重连
+   * 计划重连（带指数退避）
    */
   private scheduleReconnect() {
+    // 防止重复调度
+    if (this.reconnecting) {
+      return
+    }
+    this.reconnecting = true
+    
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      this.api.logger.error('[EyeClaw] Max reconnect attempts reached')
+      this.api.logger.error('[EyeClaw] Max reconnect attempts reached, will retry later...')
+      // 不放弃，继续重试（每 60 秒检查一次）
+      setTimeout(() => {
+        this.reconnecting = false
+        this.resetReconnectDelay()
+        this.scheduleReconnect()
+      }, 60000)
       return
     }
 
+    const delay = this.calculateReconnectDelay()
     this.reconnectAttempts++
-    this.api.logger.info(`[EyeClaw] Reconnecting in ${this.reconnectDelay}ms (attempt ${this.reconnectAttempts})`)
+    this.api.logger.info(`[EyeClaw] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`)
 
     setTimeout(() => {
+      this.reconnecting = false
       this.start()
-    }, this.reconnectDelay)
+    }, delay)
   }
 }

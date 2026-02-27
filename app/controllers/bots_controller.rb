@@ -50,7 +50,7 @@ class BotsController < ApplicationController
   end
 
   def unbind_rokid
-    if @bot.update(rokid_device_id: nil)
+    if @bot.update(rokid_device_id: nil, rokid_user_id: nil)
       redirect_to bot_path(@bot), notice: 'Rokid 绑定已解除，请重新扫码绑定。'
     else
       redirect_to bot_path(@bot), alert: '解除绑定失败，请稍后重试。'

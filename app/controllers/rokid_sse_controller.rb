@@ -95,13 +95,14 @@ class RokidSseController < ApplicationController
         image_message = extract_image_message(messages)
         if image_message && image_message['image_url'].present?
           Rails.logger.info "[RokidSSE] Received binding photo for message_id: #{message_id}"
-          handle_binding_photo_result_hijack(io, message_id, agent_id, image_message['image_url'])
+          handle_binding_photo_result_hijack(io, message_id, agent_id, user_id, image_message['image_url'])
           return
         end
       end
       
-      # 通过 agent_id 查找关联的 Bot
-      bot = Bot.find_by(rokid_device_id: agent_id) || Bot.find_by(id: agent_id)
+      # 通过 user_id 查找绑定的 Bot
+      # 这样每个用户的眼镜只能绑定到一个 Bot，防止盗用
+      bot = Bot.find_by_rokid_user(user_id)
       
       # 生成 trace_id 用于追踪（在 bot 查找之后）
       trace_id = "trace_#{SecureRandom.hex(8)}"
@@ -532,11 +533,9 @@ class RokidSseController < ApplicationController
         end
       end
       
-      # 通过 agent_id 查找关联的 Bot
-      # agent_id 可以是：
-      # 1. rokid_device_id（Rokid 眼镜绑定后的设备 ID）
-      # 2. bot.id（Web Chat 使用 Bot ID）
-      bot = Bot.find_by(rokid_device_id: agent_id) || Bot.find_by(id: agent_id)
+      # 通过 user_id 查找绑定的 Bot
+      # 这样每个用户的眼镜只能绑定到一个 Bot，防止盗用
+      bot = Bot.find_by_rokid_user(user_id)
       
       # 如果未找到绑定的 Bot，发送拍照指令让用户扫描网页上的二维码
       unless bot
@@ -914,23 +913,24 @@ class RokidSseController < ApplicationController
     # 获取关联的 Bot
     bot = binding_token.bot
     
-    # 检查 Bot 是否已绑定其他设备
-    if bot.rokid_device_id.present? && bot.rokid_device_id != agent_id
+    # 检查 Bot 是否已绑定其他用户（通过 user_id 判断）
+    if bot.rokid_user_id.present? && bot.rokid_user_id != user_id
       @@pending_binding_photos.delete(message_id)
-      error_message = "此 Bot 已被其他设备绑定，请先解绑后再试。"
+      error_message = "此 Bot 已被其他用户绑定，请先解绑后再试。"
       stream_response(message_id, agent_id, error_message, {})
       send_done_event(message_id, agent_id)
       return
     end
     
-    # 绑定 agent_id 到 Bot
-    if bot.update(rokid_device_id: agent_id)
+    # 绑定 agent_id 和 user_id 到 Bot
+    # 这样每个用户的眼镜只能绑定到一个 Bot
+    if bot.update(rokid_device_id: agent_id, rokid_user_id: user_id)
       # 标记令牌为已使用
       binding_token.mark_as_used!(agent_id)
       
       # 清除绑定状态
       @@pending_binding_photos.delete(message_id)
-      Rails.logger.info "[RokidSSE] Successfully bound agent_id #{agent_id} to Bot #{bot.id} using token #{binding_token.token}"
+      Rails.logger.info "[RokidSSE] Successfully bound agent_id #{agent_id} and user_id #{user_id} to Bot #{bot.id} using token #{binding_token.token}"
       success_message = "绑定成功！您现在可以使用 #{bot.name} 了。"
       stream_response(message_id, agent_id, success_message, {})
       send_done_event(message_id, agent_id)
@@ -1100,7 +1100,7 @@ class RokidSseController < ApplicationController
   end
   
   # hijack 版本的 handle_binding_photo_result
-  def handle_binding_photo_result_hijack(io, message_id, agent_id, image_url)
+  def handle_binding_photo_result_hijack(io, message_id, agent_id, user_id, image_url)
     Rails.logger.info "[RokidSSE] Processing binding photo result for agent_id: #{agent_id}"
     Rails.logger.info "[RokidSSE] Image URL: #{image_url}"
     
@@ -1196,10 +1196,10 @@ class RokidSseController < ApplicationController
     # 获取关联的 Bot
     bot = binding_token.bot
     
-    # 检查 Bot 是否已绑定其他设备
-    if bot.rokid_device_id.present? && bot.rokid_device_id != agent_id
+    # 检查 Bot 是否已绑定其他用户（通过 user_id 判断）
+    if bot.rokid_user_id.present? && bot.rokid_user_id != user_id
       @@pending_binding_photos.delete(message_id)
-      error_message = "此 Bot 已被其他设备绑定，请先解绑后再试。"
+      error_message = "此 Bot 已被其他用户绑定，请先解绑后再试。"
       error_data = {
         role: 'agent',
         type: 'answer',
@@ -1222,15 +1222,16 @@ class RokidSseController < ApplicationController
       return
     end
     
-    # 绑定 agent_id 到 Bot
-    if bot.update(rokid_device_id: agent_id)
+    # 绑定 agent_id 和 user_id 到 Bot
+    # 这样每个用户的眼镜只能绑定到一个 Bot
+    if bot.update(rokid_device_id: agent_id, rokid_user_id: user_id)
       # 标记令牌为已使用
       binding_token.mark_as_used!(agent_id)
       
       # 清除绑定状态
       @@pending_binding_photos.delete(message_id)
-      Rails.logger.info "[RokidSSE] Successfully bound agent_id #{agent_id} to Bot #{bot.id} using token #{binding_token.token}"
-      success_message = "绑定成功！您现在可以使用 #{bot.name} 了。"
+      Rails.logger.info "[RokidSSE] Successfully bound agent_id #{agent_id} and user_id #{user_id} to Bot #{bot.id} using token #{binding_token.token}"
+      success_message = "绑定成功！您现在可以使用 #{bot.name} 了。请刷新页面查看绑定状态。"
       success_data = {
         role: 'agent',
         type: 'answer',

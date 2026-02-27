@@ -2,7 +2,7 @@ class Admin::StreamTracesController < Admin::BaseController
   before_action :set_stream_trace, only: [:show, :edit, :update, :destroy]
 
   def index
-    @stream_traces = StreamTrace.page(params[:page]).per(10)
+    @stream_traces = StreamTrace.order(created_at: :desc).page(params[:page]).per(10)
   end
 
   def show

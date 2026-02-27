@@ -53,11 +53,18 @@
           <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @bot.status %></div>
         </div>
 
-        <!-- Rokid Device ID -->
-        <% if @bot.rokid_device_id.present? %>
+        <!-- Rokid 绑定信息 -->
+        <% if @bot.rokid_user_id.present? || @bot.rokid_device_id.present? %>
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Rokid Device ID</label>
-            <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @bot.rokid_device_id %></div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Rokid 绑定信息</label>
+            <div class="space-y-1">
+              <% if @bot.rokid_user_id.present? %>
+                <div class="text-sm font-mono text-gray-900 dark:text-gray-100">User ID: <%= @bot.rokid_user_id %></div>
+              <% end %>
+              <% if @bot.rokid_device_id.present? %>
+                <div class="text-sm font-mono text-gray-500 dark:text-gray-400">Device ID: <%= @bot.rokid_device_id %></div>
+              <% end %>
+            </div>
           </div>
         <% end %>
 

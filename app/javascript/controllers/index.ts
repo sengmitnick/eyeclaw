@@ -11,6 +11,7 @@ import FlashController from "./flash_controller"
 import McpController from "./_mcp_controller"
 import ChatController from "./chat_controller"
 import RokidSseController from "./rokid_sse_controller"
+import RokidBindingController from "./rokid_binding_controller"
 
 const application = Application.start()
 
@@ -25,5 +26,6 @@ application.register("flash", FlashController)
 application.register("-mcp", McpController)
 application.register("chat", ChatController)
 application.register("rokid-sse", RokidSseController)
+application.register("rokid-binding", RokidBindingController)
 
 window.Stimulus = application

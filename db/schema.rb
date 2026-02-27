@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_26_155626) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_27_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -116,8 +116,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_26_155626) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "rokid_device_id"
+    t.string "rokid_user_id"
     t.index ["api_key"], name: "index_bots_on_api_key", unique: true
     t.index ["rokid_device_id"], name: "index_bots_on_rokid_device_id"
+    t.index ["rokid_user_id"], name: "index_bots_on_rokid_user_id"
     t.index ["sdk_token"], name: "index_bots_on_sdk_token", unique: true
     t.index ["user_id"], name: "index_bots_on_user_id"
   end
