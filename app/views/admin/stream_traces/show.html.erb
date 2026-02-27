@@ -93,6 +93,67 @@
           <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @stream_trace.sse_chunk_count %></div>
         </div>
 
+        <!-- SDK Total Chunks -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">SDK Total Chunks</label>
+          <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @stream_trace.sdk_total_chunks || '-' %></div>
+        </div>
+
+        <!-- Missing Sequences -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Missing Sequences</label>
+          <div class="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <% if @stream_trace.missing_sequences.present? %>
+              <span class="text-red-600 dark:text-red-400">[<%= @stream_trace.missing_sequences.join(', ') %>]</span>
+            <% else %>
+              <span class="text-green-600 dark:text-green-400">None</span>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Loss Position -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Loss Position</label>
+          <div class="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <% if @stream_trace.loss_position.present? %>
+              <span class="px-2 py-1 rounded-md <%= case @stream_trace.loss_position
+                when 'head' then 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                when 'tail' then 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                when 'middle' then 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
+                when 'mixed' then 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                else 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+              end %>"><%= @stream_trace.loss_position.capitalize %></span>
+            <% else %>
+              -
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Timing Analysis -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Timing Analysis</label>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">First Chunk Delay</div>
+              <div class="text-lg font-semibold text-blue-700 dark:text-blue-300">
+                <%= @stream_trace.first_chunk_delay.present? ? "#{@stream_trace.first_chunk_delay}ms" : '-' %>
+              </div>
+            </div>
+            <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">Avg Chunk Interval</div>
+              <div class="text-lg font-semibold text-green-700 dark:text-green-300">
+                <%= @stream_trace.avg_chunk_interval.present? ? "#{@stream_trace.avg_chunk_interval}ms" : '-' %>
+              </div>
+            </div>
+            <div class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+              <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">Last Chunk Delay</div>
+              <div class="text-lg font-semibold text-purple-700 dark:text-purple-300">
+                <%= @stream_trace.last_chunk_delay.present? ? "#{@stream_trace.last_chunk_delay}ms" : '-' %>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Anomaly -->
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Anomaly</label>
