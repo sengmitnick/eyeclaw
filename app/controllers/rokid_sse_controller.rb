@@ -1295,7 +1295,7 @@ class RokidSseController < ApplicationController
     instructions_data = {
       role: 'agent',
       type: 'answer',
-      answer_stream: '你好！请先在网页上打开机器人页面查看绑定二维码，然后使用眼镜拍摄二维码完成绑定。',
+      answer_stream: '你好！请先在 https://eyeclaw.com/ 网站上创建或打开机器人页面，查看绑定二维码，然后使用眼镜拍摄二维码完成绑定。',
       message_id: message_id,
       agent_id: agent_id,
       is_finish: false
