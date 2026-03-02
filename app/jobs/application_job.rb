@@ -42,6 +42,6 @@ class ApplicationJob < ActiveJob::Base
     )
   rescue => broadcast_error
     # Silently fail if broadcast fails (don't disrupt job error handling)
-    Rails.logger.error("Failed to broadcast job error: #{broadcast_error.message}", broadcast: false)
+    Rails.logger.error("Failed to broadcast job error: #{broadcast_error.message}")
   end
 end

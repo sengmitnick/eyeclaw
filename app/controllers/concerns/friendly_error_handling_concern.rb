@@ -23,7 +23,7 @@ module FriendlyErrorHandlingConcern
   end
 
   def handle_routing_error
-    Rails.logger.error("404 - Path not found: #{request.method} #{request.path}", broadcast: false)
+    Rails.logger.error("404 - Path not found: #{request.method} #{request.path}")
 
     if request.format.json?
       render json: {
@@ -48,7 +48,7 @@ module FriendlyErrorHandlingConcern
 
   # Handle 404 Not Found errors (from ActiveRecord)
   def handle_not_found_error(exception)
-    Rails.logger.error("Record not found: #{exception.message}", broadcast: false)
+    Rails.logger.error("Record not found: #{exception.message}")
 
     if request.format.json?
       render json: {
@@ -70,7 +70,7 @@ module FriendlyErrorHandlingConcern
 
   # Handle validation errors (422 Unprocessable Entity)
   def handle_validation_error(exception)
-    Rails.logger.error("Validation failed: #{exception.record.errors.full_messages.join(', ')}", broadcast: false)
+    Rails.logger.error("Validation failed: #{exception.record.errors.full_messages.join(', ')}")
 
     if request.format.json?
       render json: {
@@ -92,7 +92,7 @@ module FriendlyErrorHandlingConcern
 
   # Handle missing parameters (400 Bad Request)
   def handle_parameter_missing_error(exception)
-    Rails.logger.error("Parameter missing: #{exception.message}", broadcast: false)
+    Rails.logger.error("Parameter missing: #{exception.message}")
 
     if request.format.json?
       render json: {
@@ -126,9 +126,9 @@ module FriendlyErrorHandlingConcern
   end
 
   def handle_migration_error(exception)
-    Rails.logger.error("Migration Error: #{exception.class.name}", broadcast: false)
-    Rails.logger.error("Message: #{exception.message}", broadcast: false)
-    Rails.logger.error(filter_user_backtrace(exception.backtrace).join("\n"), broadcast: false)
+    Rails.logger.error("Migration Error: #{exception.class.name}")
+    Rails.logger.error("Message: #{exception.message}")
+    Rails.logger.error(filter_user_backtrace(exception.backtrace).join("\n"))
 
     if request.format.html?
       @http_method = request.method
@@ -158,9 +158,9 @@ module FriendlyErrorHandlingConcern
       return
     end
 
-    Rails.logger.error("Application Error: #{exception.class.name}", broadcast: false)
-    Rails.logger.error("Message: #{exception.message}", broadcast: false)
-    Rails.logger.error(filter_user_backtrace(exception.backtrace).join("\n"), broadcast: false)
+    Rails.logger.error("Application Error: #{exception.class.name}")
+    Rails.logger.error("Message: #{exception.message}")
+    Rails.logger.error(filter_user_backtrace(exception.backtrace).join("\n"))
 
     if request.format.json?
       # JSON/API responses

@@ -13,8 +13,8 @@ module ApplicationCable
     private
 
     def handle_channel_error(e)
-      Rails.logger.error("Channel Error in #{self.class.name}: #{e.message}", broadcast: false)
-      Rails.logger.error(e.backtrace.join("\n"), broadcast: false)
+      Rails.logger.error("Channel Error in #{self.class.name}: #{e.message}")
+      Rails.logger.error(e.backtrace.join("\n"))
 
       # Send error to client via transmit (direct to this connection)
       transmit({
