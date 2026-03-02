@@ -31,6 +31,12 @@ export class EyeClawWebSocketClient {
   private pingInterval: any = null
   private chunkSequence = 0 // 每个会话的 chunk 序号
   private accumulatedContent = '' // 累积完整内容用于兜底
+  private lastConnectedAt = 0 // 上次连接成功时间戳
+  private deploymentDetected = false // 是否检测到部署重启
+  private wasConnected = false // 之前是否连接成功过
+  private reconnectTimer: any = null // 重连定时器引用
+  private healthCheckInterval: any = null // 健康检查定时器
+  private serverVersion = '' // 服务器版本（用于检测部署）
   
   // 🔥 ACK 机制：追踪已发送和已确认的 chunks
   private sentChunks = 0 // 已发送的 chunks 数量
@@ -63,6 +69,16 @@ export class EyeClawWebSocketClient {
       this.ws.onopen = () => {
         this.api.logger.info('[EyeClaw] WebSocket connected')
         this.reconnectAttempts = 0
+        this.lastConnectedAt = Date.now()
+        this.wasConnected = true
+        
+        // 如果检测到部署重启（之前已连接过），立即触发一次快速心跳
+        if (this.deploymentDetected) {
+          this.api.logger.info('[EyeClaw] 🚀 Deployment recovery detected, sending immediate ping')
+          this.deploymentDetected = false
+          // 延迟 500ms 确保订阅完成后再发心跳
+          setTimeout(() => this.sendPing(), 500)
+        }
       }
 
       this.ws.onmessage = (event) => {
@@ -77,6 +93,13 @@ export class EyeClawWebSocketClient {
         this.api.logger.warn('[EyeClaw] WebSocket disconnected')
         this.subscribed = false
         this.stopPing()
+        
+        // 检测是否是部署导致的断连（之前已成功连接过）
+        if (this.wasConnected && Date.now() - this.lastConnectedAt > 5000) {
+          this.deploymentDetected = true
+          this.api.logger.info('[EyeClaw] 🔄 Deployment detected, will reconnect immediately')
+        }
+        
         this.scheduleReconnect()
       }
 
@@ -93,11 +116,23 @@ export class EyeClawWebSocketClient {
     this.stopPing()
     this.reconnecting = false
     this.resetReconnectDelay()
+    
+    // 清理所有定时器
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer)
+      this.reconnectTimer = null
+    }
+    if (this.healthCheckInterval) {
+      clearInterval(this.healthCheckInterval)
+      this.healthCheckInterval = null
+    }
+    
     if (this.ws) {
       this.ws.close()
       this.ws = null
     }
     this.subscribed = false
+    this.wasConnected = false
   }
 
   /**
@@ -140,13 +175,13 @@ export class EyeClawWebSocketClient {
 
       // Ping/pong (WebSocket 协议级别的 ping 由浏览器自动响应，无需手动处理)
       if (message.type === 'ping') {
-        this.api.logger.debug('[EyeClaw] Received protocol-level ping (auto-handled by WebSocket)')
+        this.api.logger?.debug?.('[EyeClaw] Received protocol-level ping (auto-handled by WebSocket)')
         return
       }
       
       // 处理 Rails BotChannel 的 pong 响应
       if (message.type === 'pong') {
-        this.api.logger.debug('[EyeClaw] Received pong from server')
+        this.api.logger?.debug?.('[EyeClaw] Received pong from server')
         return
       }
 
@@ -172,7 +207,7 @@ export class EyeClawWebSocketClient {
         if (payload.type === 'chunk_received') {
           const sequence = payload.sequence
           this.ackedChunks.add(sequence)
-          this.api.logger.debug(`[EyeClaw] ✅ Received ACK for chunk #${sequence}, total acked: ${this.ackedChunks.size}/${this.sentChunks}`)
+          this.api.logger?.debug?.(`[EyeClaw] ✅ Received ACK for chunk #${sequence}, total acked: ${this.ackedChunks.size}/${this.sentChunks}`)
           return
         }
         
@@ -529,23 +564,40 @@ export class EyeClawWebSocketClient {
   }
 
   /**
-   * 计划重连（带指数退避）
+   * 计划重连（带指数退避、部署感知加速和健康检查）
    */
   private scheduleReconnect() {
-    // 防止重复调度
+    // 防止重复调度 - 先清理旧定时器
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer)
+      this.reconnectTimer = null
+    }
+    
     if (this.reconnecting) {
       return
     }
     this.reconnecting = true
     
+    // 如果超过最大重试次数，继续重试
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
       this.api.logger.error('[EyeClaw] Max reconnect attempts reached, will retry later...')
-      // 不放弃，继续重试（每 60 秒检查一次）
-      setTimeout(() => {
+      // 不放弃，继续重试（每 30 秒检查一次）
+      this.reconnectTimer = setTimeout(() => {
         this.reconnecting = false
         this.resetReconnectDelay()
         this.scheduleReconnect()
-      }, 60000)
+      }, 30000)
+      return
+    }
+
+    // 🚀 部署恢复场景：立即重连（无延迟）
+    if (this.deploymentDetected) {
+      this.api.logger.info('[EyeClaw] ⚡ Deployment recovery mode: immediate reconnect')
+      this.reconnectTimer = setTimeout(() => {
+        this.reconnecting = false
+        this.start()
+      }, 100) // 100ms 延迟（给服务器一点启动时间）
+      this.deploymentDetected = false // 重置标志
       return
     }
 
@@ -553,9 +605,65 @@ export class EyeClawWebSocketClient {
     this.reconnectAttempts++
     this.api.logger.info(`[EyeClaw] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`)
 
-    setTimeout(() => {
+    this.reconnectTimer = setTimeout(() => {
       this.reconnecting = false
-      this.start()
+      this.performHealthCheckAndReconnect()
     }, delay)
+  }
+  
+  /**
+   * 健康检查后重连
+   */
+  private async performHealthCheckAndReconnect() {
+    try {
+      // 尝试 HTTP 健康检查
+      const serverUrl = this.config.serverUrl.replace(/^http/, 'http') // 使用 http 而非 ws
+      const healthUrl = `${serverUrl}/api/v1/health`
+      
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 3000)
+      
+      const response = await fetch(healthUrl, {
+        method: 'GET',
+        signal: controller.signal,
+      })
+      
+      clearTimeout(timeoutId)
+      
+      if (response.ok) {
+        this.api.logger.info('[EyeClaw] ✅ Health check passed, proceeding with reconnect')
+        this.start()
+      } else {
+        this.api.logger.warn(`[EyeClaw] ⚠️ Health check failed (${response.status}), retrying soon...`)
+        // 健康检查失败，稍后重试
+        this.reconnectTimer = setTimeout(() => {
+          this.reconnecting = false
+          this.scheduleReconnect()
+        }, 2000)
+      }
+    } catch (error) {
+      this.api.logger.warn(`[EyeClaw] ⚠️ Health check error: ${error}, proceeding with reconnect anyway`)
+      // 即使健康检查失败也尝试重连
+      this.start()
+    }
+  }
+  
+  /**
+   * 主动发送 ping（用于部署恢复后的快速状态同步）
+   */
+  private sendPing() {
+    const channelIdentifier = JSON.stringify({
+      channel: 'BotChannel',
+      bot_id: this.config.botId,
+    })
+    
+    this.send({
+      command: 'message',
+      identifier: channelIdentifier,
+      data: JSON.stringify({
+        action: 'ping',
+        timestamp: new Date().toISOString(),
+      }),
+    })
   }
 }

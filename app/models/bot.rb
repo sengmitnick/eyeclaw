@@ -71,10 +71,20 @@ class Bot < ApplicationRecord
       session.update!(last_ping_at: Time.current)
       
       # If status is offline but we have an active session, it means SDK reconnected
-      # after deployment - restore online status
+      # after deployment - restore online status immediately
       if status == 'offline'
         Rails.logger.info "[Bot] #{id} reconnected via ping, restoring online status"
         update!(status: 'online')
+        
+        # Broadcast reconnection event to notify all listeners
+        ActionCable.server.broadcast(
+          "bot_#{id}",
+          {
+            type: 'bot_reconnected',
+            bot_id: id,
+            timestamp: Time.current.iso8601
+          }
+        )
       end
     else
       # No active session - create one (SDK reconnected after longer outage)

@@ -8,10 +8,26 @@
 
 ### 1. SDK 增强重连机制 (`sdk/src/websocket-client.ts`)
 
-- **指数退避重连**: 延迟从 1s → 2s → 4s → 8s → 16s → 30s (上限)
-- **随机抖动**: ±25% 随机延迟，避免多个客户端同时重连
-- **无限重试**: 超过最大次数后仍持续尝试（每 60 秒）
-- **最大重试次数**: 提升到 10 次
+#### 部署感知加速重连（新增）
+- **部署检测**：通过 `wasConnected` 和 `lastConnectedAt` 检测是否是部署导致的断连
+- **立即重连**：检测到部署后，100ms 内立即重连（而非等待指数退避）
+- **快速心跳**：重连成功后立即发送 ping 恢复 Bot 在线状态
+
+#### 指数退避重连
+- **延迟策略**：1s → 2s → 4s → 8s → 16s → 30s (上限)
+- **随机抖动**：±25% 随机延迟，避免多个客户端同时重连
+- **无限重试**：超过最大次数后仍持续尝试（每 30 秒）
+- **最大重试次数**：10 次
+
+#### 健康检查重连（新增）
+- 重连前先检查服务器健康状态
+- 如果服务器未就绪，等待后再重试
+- 避免无效的 WebSocket 连接尝试
+
+#### 定时器管理（新增）
+- 防止重复调度重连
+- 正确清理所有定时器，避免内存泄漏
+- stop() 方法清理所有资源
 
 ### 2. Bot 状态智能恢复 (`app/models/bot.rb`)
 
@@ -19,17 +35,29 @@
 
 - **断连时**: 立即标记 `offline`（包括部署断连和真正断连）
 - **SDK 重连时**: 通过 `ping!` 方法自动恢复 `online` 状态
+- **状态广播**: 重连后广播 `bot_reconnected` 事件通知所有监听者
 
-### 场景分析
+### 3. 部署最佳实践
 
-| 场景 | Bot 状态变化 | 恢复方式 |
-|------|-------------|---------|
-| 部署断连 | online → offline | SDK 几秒内重连 → ping! → online |
-| 电脑关机 | online → offline | SDK 持续重连失败 → 保持 offline |
+#### 使用 Puma tmp_restart
 
-**为什么这样设计**:
-- 部署断连：SDK 立即重连（秒级），用户无感知
-- 真正断开：SDK 不会重连，保持 offline 状态正确
+```ruby
+# config/puma.rb
+plugin :tmp_restart  # 已配置
+```
+
+#### Railway 部署优化
+
+确保 Railway 部署时使用优雅重启：
+- Railway 默认会发送 SIGTERM，Puma 会优雅处理
+- 配合 tmp_restart 插件可实现零断连部署
+
+#### 健康检查配置
+
+确保负载均衡器的健康检查正确：
+- 间隔: 10-30 秒
+- 超时: 5 秒
+- 不健康阈值: 3 次
 
 ## 重连流程
 
@@ -38,11 +66,14 @@
     ↓
 BotChannel#unsubscribed → Bot#disconnect! → status = 'offline'
     ↓
-SDK 检测到断连 → 指数退避重连 (1s, 2s, 4s...)
+SDK 检测到断连 → 部署感知判断
+    ↓
+[部署断连] → 100ms 立即重连
+[网络问题] → 指数退避重连 (1s, 2s, 4s...)
     ↓
 [成功] SDK 重新连接 → BotChannel#subscribed → Bot#connect!
     ↓
-SDK 发送 ping → Bot#ping! → status = 'online'
+SDK 发送 ping → Bot#ping! → status = 'online' + 广播 bot_reconnected
 ```
 
 ## SDK 心跳机制
@@ -53,7 +84,12 @@ SDK 每 60 秒发送一次 ping：
 // sdk/src/websocket-client.ts
 private startPing() {
   this.pingInterval = setInterval(() => {
-    this.send({ command: 'message', identifier: ..., data: JSON.stringify({ action: 'ping' }) })
+    // 调用 Rails BotChannel 的 ping 方法
+    this.send({
+      command: 'message',
+      identifier: channelIdentifier,
+      data: JSON.stringify({ action: 'ping' })
+    })
   }, 60000)
 }
 ```
@@ -63,34 +99,10 @@ Rails 端处理：
 ```ruby
 # app/channels/bot_channel.rb
 def ping(data)
-  @bot.ping!  # 自动恢复 online 状态
+  @bot.ping!  # 自动恢复 online 状态 + 广播事件
   transmit({ type: 'pong', timestamp: Time.current.iso8601 })
 end
 ```
-
-## 部署最佳实践
-
-### 推荐部署流程
-
-1. **使用 Puma tmp_restart** (已启用)
-
-   ```ruby
-   # config/puma.rb
-   plugin :tmp_restart  # 已配置
-   ```
-
-2. **Railway/Render 等平台**
-
-   平台会自动发送 SIGTERM，Puma 会优雅处理：
-   - 新请求不再发送到旧进程
-   - 等待现有连接完成
-
-3. **健康检查配置**
-
-   确保负载均衡器的健康检查正确：
-   - 间隔: 10-30 秒
-   - 超时: 5 秒
-   - 不健康阈值: 3 次
 
 ## 监控
 
@@ -108,5 +120,6 @@ BotSession.active
 ## 注意事项
 
 1. **断连立即显示 offline**: 这是预期行为，不是 bug
-2. **部署后自动恢复**: SDK 会在几秒内重连，状态恢复 online
+2. **部署后自动恢复**: SDK 会在 100ms-2s 内重连，状态自动恢复 online
 3. **真正断开保持 offline**: 电脑关机等真正断连会保持 offline
+4. **健康检查辅助**: 重连前会先检查服务器健康状态，提高成功率
