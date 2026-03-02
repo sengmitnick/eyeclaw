@@ -927,6 +927,16 @@ class RokidSseController < ApplicationController
     # 获取关联的 Bot
     bot = binding_token.bot
     
+    # 预检查：用户是否已绑定到其他Bot
+    existing_bot_by_user = Bot.find_by(rokid_user_id: user_id)
+    if existing_bot_by_user && existing_bot_by_user.id != bot.id
+      @@pending_binding_photos.delete(message_id)
+      error_message = "您已绑定到其他Bot，请先在该Bot上解绑后再试。"
+      stream_response(message_id, agent_id, error_message, {})
+      send_done_event(message_id, agent_id)
+      return
+    end
+    
     # 检查 Bot 是否已绑定其他用户（通过 user_id 判断）
     if bot.rokid_user_id.present? && bot.rokid_user_id != user_id
       @@pending_binding_photos.delete(message_id)
@@ -938,18 +948,36 @@ class RokidSseController < ApplicationController
     
     # 绑定 agent_id 和 user_id 到 Bot
     # 这样每个用户的眼镜只能绑定到一个 Bot
-    if bot.update(rokid_device_id: agent_id, rokid_user_id: user_id)
-      # 标记令牌为已使用
-      binding_token.mark_as_used!(agent_id)
-      
-      # 清除绑定状态
+    begin
+      if bot.update(rokid_device_id: agent_id, rokid_user_id: user_id)
+        # 标记令牌为已使用
+        binding_token.mark_as_used!(agent_id)
+        
+        # 清除绑定状态
+        @@pending_binding_photos.delete(message_id)
+        Rails.logger.info "[RokidSSE] Successfully bound agent_id #{agent_id} and user_id #{user_id} to Bot #{bot.id} using token #{binding_token.token}"
+        success_message = "绑定成功！您现在可以使用 #{bot.name} 了。"
+        stream_response(message_id, agent_id, success_message, {})
+        send_done_event(message_id, agent_id)
+      else
+        @@pending_binding_photos.delete(message_id)
+        # 提供更详细的错误信息
+        error_details = bot.errors.full_messages.join(', ')
+        Rails.logger.error "[RokidSSE] Binding failed for Bot #{bot.id}: #{error_details}"
+        
+        # 检查是否是唯一性冲突
+        if bot.errors[:rokid_device_id].any? || bot.errors[:rokid_user_id].any?
+          error_message = "绑定失败：该设备或用户已绑定到其他Bot，请先解绑后再试。"
+        else
+          error_message = "绑定失败，请稍后重试。"
+        end
+        stream_response(message_id, agent_id, error_message, {})
+        send_done_event(message_id, agent_id)
+      end
+    rescue => e
       @@pending_binding_photos.delete(message_id)
-      Rails.logger.info "[RokidSSE] Successfully bound agent_id #{agent_id} and user_id #{user_id} to Bot #{bot.id} using token #{binding_token.token}"
-      success_message = "绑定成功！您现在可以使用 #{bot.name} 了。"
-      stream_response(message_id, agent_id, success_message, {})
-      send_done_event(message_id, agent_id)
-    else
-      @@pending_binding_photos.delete(message_id)
+      Rails.logger.error "[RokidSSE] Binding exception for Bot #{bot.id}: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
       error_message = "绑定失败，请稍后重试。"
       stream_response(message_id, agent_id, error_message, {})
       send_done_event(message_id, agent_id)
@@ -1210,6 +1238,60 @@ class RokidSseController < ApplicationController
     # 获取关联的 Bot
     bot = binding_token.bot
     
+    # 预检查：用户是否已绑定到其他Bot
+    existing_bot_by_user = Bot.find_by(rokid_user_id: user_id)
+    if existing_bot_by_user && existing_bot_by_user.id != bot.id
+      @@pending_binding_photos.delete(message_id)
+      error_message = "您已绑定到其他Bot，请先在该Bot上解绑后再试。"
+      error_data = {
+        role: 'agent',
+        type: 'answer',
+        answer_stream: error_message,
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'message', error_data)
+      
+      done_data = {
+        role: 'agent',
+        type: 'answer',
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'done', done_data)
+      io.close
+      return
+    end
+    
+    # 预检查：设备是否已被其他Bot绑定（同一设备不能同时绑定到不同用户的不同Bot）
+    existing_bot_by_device = Bot.find_by(rokid_device_id: agent_id)
+    if existing_bot_by_device && existing_bot_by_device.id != bot.id
+      @@pending_binding_photos.delete(message_id)
+      error_message = "该设备已绑定到其他Bot，请先在设备上解绑后再试。"
+      error_data = {
+        role: 'agent',
+        type: 'answer',
+        answer_stream: error_message,
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'message', error_data)
+      
+      done_data = {
+        role: 'agent',
+        type: 'answer',
+        message_id: message_id,
+        agent_id: agent_id,
+        is_finish: true
+      }
+      write_sse_event_direct(io, 'done', done_data)
+      io.close
+      return
+    end
+    
     # 检查 Bot 是否已绑定其他用户（通过 user_id 判断）
     if bot.rokid_user_id.present? && bot.rokid_user_id != user_id
       @@pending_binding_photos.delete(message_id)
@@ -1238,34 +1320,68 @@ class RokidSseController < ApplicationController
     
     # 绑定 agent_id 和 user_id 到 Bot
     # 这样每个用户的眼镜只能绑定到一个 Bot
-    if bot.update(rokid_device_id: agent_id, rokid_user_id: user_id)
-      # 标记令牌为已使用
-      binding_token.mark_as_used!(agent_id)
-      
-      # 清除绑定状态
+    begin
+      if bot.update(rokid_device_id: agent_id, rokid_user_id: user_id)
+        # 标记令牌为已使用
+        binding_token.mark_as_used!(agent_id)
+        
+        # 清除绑定状态
+        @@pending_binding_photos.delete(message_id)
+        Rails.logger.info "[RokidSSE] Successfully bound agent_id #{agent_id} and user_id #{user_id} to Bot #{bot.id} using token #{binding_token.token}"
+        success_message = "绑定成功！您现在可以使用 #{bot.name} 了。请刷新页面查看绑定状态。"
+        success_data = {
+          role: 'agent',
+          type: 'answer',
+          answer_stream: success_message,
+          message_id: message_id,
+          agent_id: agent_id,
+          is_finish: true
+        }
+        write_sse_event_direct(io, 'message', success_data)
+        
+        done_data = {
+          role: 'agent',
+          type: 'answer',
+          message_id: message_id,
+          agent_id: agent_id,
+          is_finish: true
+        }
+        write_sse_event_direct(io, 'done', done_data)
+      else
+        @@pending_binding_photos.delete(message_id)
+        # 提供更详细的错误信息
+        error_details = bot.errors.full_messages.join(', ')
+        Rails.logger.error "[RokidSSE] Binding failed for Bot #{bot.id}: #{error_details}"
+        
+        # 检查是否是唯一性冲突
+        if bot.errors[:rokid_device_id].any? || bot.errors[:rokid_user_id].any?
+          error_message = "绑定失败：该设备或用户已绑定到其他Bot，请先解绑后再试。"
+        else
+          error_message = "绑定失败，请稍后重试。"
+        end
+        error_data = {
+          role: 'agent',
+          type: 'answer',
+          answer_stream: error_message,
+          message_id: message_id,
+          agent_id: agent_id,
+          is_finish: true
+        }
+        write_sse_event_direct(io, 'message', error_data)
+        
+        done_data = {
+          role: 'agent',
+          type: 'answer',
+          message_id: message_id,
+          agent_id: agent_id,
+          is_finish: true
+        }
+        write_sse_event_direct(io, 'done', done_data)
+      end
+    rescue => e
       @@pending_binding_photos.delete(message_id)
-      Rails.logger.info "[RokidSSE] Successfully bound agent_id #{agent_id} and user_id #{user_id} to Bot #{bot.id} using token #{binding_token.token}"
-      success_message = "绑定成功！您现在可以使用 #{bot.name} 了。请刷新页面查看绑定状态。"
-      success_data = {
-        role: 'agent',
-        type: 'answer',
-        answer_stream: success_message,
-        message_id: message_id,
-        agent_id: agent_id,
-        is_finish: true
-      }
-      write_sse_event_direct(io, 'message', success_data)
-      
-      done_data = {
-        role: 'agent',
-        type: 'answer',
-        message_id: message_id,
-        agent_id: agent_id,
-        is_finish: true
-      }
-      write_sse_event_direct(io, 'done', done_data)
-    else
-      @@pending_binding_photos.delete(message_id)
+      Rails.logger.error "[RokidSSE] Binding exception for Bot #{bot.id}: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
       error_message = "绑定失败，请稍后重试。"
       error_data = {
         role: 'agent',

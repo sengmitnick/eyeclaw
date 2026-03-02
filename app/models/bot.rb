@@ -10,8 +10,8 @@ class Bot < ApplicationRecord
   validates :api_key, presence: true, uniqueness: true
   validates :sdk_token, presence: true, uniqueness: true
   validates :webhook_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true }
-  validates :rokid_device_id, uniqueness: true, allow_blank: true
   validates :rokid_user_id, uniqueness: true, allow_blank: true
+  validates :rokid_device_id, uniqueness: { scope: :rokid_user_id }, allow_blank: true
 
   # Callbacks
   before_validation :generate_api_key, on: :create, unless: :api_key?
