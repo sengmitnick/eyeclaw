@@ -15,3 +15,9 @@ production:
       writing: cable
   polling_interval: 0.1.seconds
   message_retention: 1.day
+  # 优化：增加超时时间以适应负载均衡器
+  # 默认 3 秒，生产环境建议 30 秒以配合负载均衡器的健康检查
+  read_timeout: 30.seconds
+  # 优化：设置更长的消息TTL，减少数据库写入频率
+  # 但要确保消息不会丢失
+  heartbeat_interval: 15.seconds

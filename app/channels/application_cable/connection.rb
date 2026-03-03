@@ -4,10 +4,19 @@ module ApplicationCable
     identified_by :current_user
     identified_by :current_bot
     identified_by :current_access_key
+    identified_by :connection_id
+
+    # 连接生命周期追踪
+    attr_reader :connection_id
 
     def connect
-      Rails.logger.info "[ActionCable] New WebSocket connection attempt"
-      Rails.logger.info "[ActionCable] Query string: #{request.query_string}"
+      # 生成唯一连接 ID 用于追踪
+      @connection_id = SecureRandom.hex(8)
+      
+      Rails.logger.info "[ActionCable][#{@connection_id}] New WebSocket connection attempt"
+      Rails.logger.info "[ActionCable][#{@connection_id}] Query string: #{request.query_string}"
+      Rails.logger.info "[ActionCable][#{@connection_id}] Remote IP: #{request.remote_ip}"
+      Rails.logger.info "[ActionCable][#{@connection_id}] User-Agent: #{request.user_agent&.slice(0..100)}"
       
       # ActionCable stores query parameters in request.query_parameters, not request.params
       sdk_token = request.query_parameters['sdk_token'] || request.params['sdk_token']
@@ -15,38 +24,44 @@ module ApplicationCable
       
       # Try access_key authentication first (Worker clients)
       if access_key_value.present?
-        Rails.logger.info "[ActionCable] Access key authentication attempt"
+        Rails.logger.info "[ActionCable][#{@connection_id}] Access key authentication attempt"
         self.current_access_key = AccessKey.find_and_touch(access_key_value)
         
         if current_access_key
-          Rails.logger.info "[ActionCable] ✅ Access key authenticated: #{current_access_key.name}"
+          Rails.logger.info "[ActionCable][#{@connection_id}] ✅ Access key authenticated: #{current_access_key.name}"
           self.current_user = nil
           self.current_bot = nil
         else
-          Rails.logger.warn "[ActionCable] ❌ Access key authentication failed: Invalid key"
+          Rails.logger.warn "[ActionCable][#{@connection_id}] ❌ Access key authentication failed: Invalid key"
           reject_unauthorized_connection
         end
       # Try bot authentication (SDK clients)
       elsif sdk_token.present?
-        Rails.logger.info "[ActionCable] Bot authentication attempt with token: #{sdk_token[0...8]}..."
+        Rails.logger.info "[ActionCable][#{@connection_id}] Bot authentication attempt with token: #{sdk_token[0...8]}..."
         self.current_bot = Bot.find_by(sdk_token: sdk_token)
         
         if current_bot
-          Rails.logger.info "[ActionCable] ✅ Bot authenticated: Bot##{current_bot.id} - #{current_bot.name}"
+          Rails.logger.info "[ActionCable][#{@connection_id}] ✅ Bot authenticated: Bot##{current_bot.id} - #{current_bot.name}"
           self.current_user = nil
           self.current_access_key = nil
         else
-          Rails.logger.warn "[ActionCable] ❌ Bot authentication failed: Invalid sdk_token"
+          Rails.logger.warn "[ActionCable][#{@connection_id}] ❌ Bot authentication failed: Invalid sdk_token"
           reject_unauthorized_connection
         end
       else
-        Rails.logger.info "[ActionCable] User authentication attempt"
+        Rails.logger.info "[ActionCable][#{@connection_id}] User authentication attempt"
         # User authentication (dashboard clients)
         self.current_user = find_verified_user
         self.current_bot = nil
         self.current_access_key = nil
-        Rails.logger.info "[ActionCable] ✅ User authenticated: User##{current_user.id}" if current_user
+        Rails.logger.info "[ActionCable][#{@connection_id}] ✅ User authenticated: User##{current_user.id}" if current_user
       end
+    end
+
+    def disconnect
+      # 记录断开连接
+      Rails.logger.info "[ActionCable][#{@connection_id}] WebSocket disconnected"
+      Rails.logger.info "[ActionCable][#{@connection_id}] Disconnected - current_bot: #{current_bot&.id}, current_user: #{current_user&.id}, current_access_key: #{current_access_key&.name}"
     end
 
     private

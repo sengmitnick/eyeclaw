@@ -1,4 +1,7 @@
 class BotChannel < ApplicationCable::Channel
+  # 心跳间隔配置（秒）
+  HEARTBEAT_INTERVAL = 30
+  
   def subscribed
     # Bot is already authenticated at connection level
     reject unless current_bot
@@ -15,14 +18,17 @@ class BotChannel < ApplicationCable::Channel
     # Commands stream for web dashboard (external integration, no frontend controller needed)
     stream_from "#{@stream_name}_commands"
     
-    Rails.logger.info "[BotChannel] Bot #{@bot.id} subscribed to #{@stream_name} and #{@stream_name}_commands"
+    # 记录连接信息
+    Rails.logger.info "[BotChannel][#{connection_id}] Bot #{@bot.id} subscribed to #{@stream_name} and #{@stream_name}_commands"
+    Rails.logger.info "[BotChannel][#{connection_id}] Session ID: #{@session_id}, Remote IP: #{connection.remote_ip}"
 
     # Send confirmation
     transmit({
       type: 'connected',
       bot_id: @bot.id,
       session_id: @session_id,
-      message: 'Successfully connected to EyeClaw'
+      message: 'Successfully connected to EyeClaw',
+      timestamp: Time.current.iso8601
     })
   rescue StandardError => e
     handle_channel_error(e)
@@ -30,6 +36,7 @@ class BotChannel < ApplicationCable::Channel
   end
 
   def unsubscribed
+    Rails.logger.info "[BotChannel][#{connection_id}] Unsubscribing bot #{@bot&.id}"
     @bot&.disconnect!
   rescue StandardError => e
     handle_channel_error(e)
@@ -39,9 +46,12 @@ class BotChannel < ApplicationCable::Channel
   def ping(data)
     @bot.ping!
     
+    Rails.logger.debug "[BotChannel][#{connection_id}] Received ping from bot #{@bot.id}"
+    
     transmit({
       type: 'pong',
-      timestamp: Time.current.iso8601
+      timestamp: Time.current.iso8601,
+      server_time: Time.current.iso8601
     })
   end
 

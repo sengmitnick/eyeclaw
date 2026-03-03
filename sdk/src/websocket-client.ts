@@ -29,14 +29,16 @@ export class EyeClawWebSocketClient {
   private reconnecting = false
   private subscribed = false
   private pingInterval: any = null
+  private connectionHealthCheckTimer: any = null
   private chunkSequence = 0 // 每个会话的 chunk 序号
   private accumulatedContent = '' // 累积完整内容用于兜底
   private lastConnectedAt = 0 // 上次连接成功时间戳
   private deploymentDetected = false // 是否检测到部署重启
   private wasConnected = false // 之前是否连接成功过
   private reconnectTimer: any = null // 重连定时器引用
-  private healthCheckInterval: any = null // 健康检查定时器
   private serverVersion = '' // 服务器版本（用于检测部署）
+  private consecutiveFailures = 0 // 连续失败次数
+  private lastCloseCode = 0 // 上次关闭码
   
   // 🔥 ACK 机制：追踪已发送和已确认的 chunks
   private sentChunks = 0 // 已发送的 chunks 数量
@@ -69,6 +71,7 @@ export class EyeClawWebSocketClient {
       this.ws.onopen = () => {
         this.api.logger.info('[EyeClaw] WebSocket connected')
         this.reconnectAttempts = 0
+        this.consecutiveFailures = 0 // 重置连续失败计数
         this.lastConnectedAt = Date.now()
         this.wasConnected = true
         
@@ -90,14 +93,33 @@ export class EyeClawWebSocketClient {
       }
 
       this.ws.onclose = () => {
-        this.api.logger.warn('[EyeClaw] WebSocket disconnected')
+        const closeCode = this.ws?.closeCode || 0
+        const wasClean = closeCode === 1000 || closeCode === 1001
+        
+        this.api.logger.warn(`[EyeClaw] WebSocket closed (code: ${closeCode}, clean: ${wasClean})`)
+        
         this.subscribed = false
         this.stopPing()
+        this.lastCloseCode = closeCode
         
-        // 检测是否是部署导致的断连（之前已成功连接过）
+        // 统计连续失败
+        this.consecutiveFailures++
+        
+        // 检测是否是部署导致的断连（之前已成功连接过，且断开时间 > 5 秒）
+        // 或者关闭码为 1000/1001（正常关闭）但之前已连接
         if (this.wasConnected && Date.now() - this.lastConnectedAt > 5000) {
-          this.deploymentDetected = true
-          this.api.logger.info('[EyeClaw] 🔄 Deployment detected, will reconnect immediately')
+          // 正常关闭或部署重启
+          if (wasClean) {
+            this.deploymentDetected = true
+            this.api.logger.info('[EyeClaw] 🔄 Deployment or clean close detected, will reconnect immediately')
+          } else {
+            // 非正常关闭但之前已连接，很可能是服务器重启
+            this.deploymentDetected = true
+            this.api.logger.info('[EyeClaw] 🔄 Server restart detected (unclean close), will reconnect immediately')
+          }
+        } else if (!this.wasConnected && !wasClean) {
+          // 首次连接失败，增加重试延迟
+          this.api.logger.warn('[EyeClaw] Initial connection failed, increasing delay...')
         }
         
         this.scheduleReconnect()
@@ -122,10 +144,7 @@ export class EyeClawWebSocketClient {
       clearTimeout(this.reconnectTimer)
       this.reconnectTimer = null
     }
-    if (this.healthCheckInterval) {
-      clearInterval(this.healthCheckInterval)
-      this.healthCheckInterval = null
-    }
+    // 注意：不再需要清理 healthCheckInterval，因为已合并到 connectionHealthCheckTimer
     
     if (this.ws) {
       this.ws.close()
@@ -141,18 +160,29 @@ export class EyeClawWebSocketClient {
   private resetReconnectDelay() {
     this.currentReconnectDelay = this.baseReconnectDelay
     this.reconnectAttempts = 0
+    // 注意：不重置 consecutiveFailures，因为这是跨会话的统计
   }
 
   /**
-   * 计算下一次重连延迟（指数退避 + 随机抖动）
+   * 计算下一次重连延迟（指数退避 + 随机抖动 + 智能调整）
    */
   private calculateReconnectDelay(): number {
-    // 指数增长: 1s, 2s, 4s, 8s, 16s, 30s (cap)
-    const delay = Math.min(
+    // 基础延迟：1s, 2s, 4s, 8s, 16s, 30s (cap)
+    let delay = Math.min(
       this.currentReconnectDelay * 2,
       this.maxReconnectDelay
     )
     this.currentReconnectDelay = delay
+    
+    // 如果连续失败多次，增加额外延迟
+    if (this.consecutiveFailures > 3) {
+      delay = Math.min(delay * 1.5, this.maxReconnectDelay)
+    }
+    
+    // 如果上次关闭码不是正常关闭（1000/1001），增加延迟
+    if (this.lastCloseCode !== 0 && this.lastCloseCode !== 1000 && this.lastCloseCode !== 1001) {
+      delay = Math.min(delay * 1.5, this.maxReconnectDelay)
+    }
     
     // 添加随机抖动 (±25%)
     const jitter = delay * 0.25 * (Math.random() * 2 - 1)
@@ -533,8 +563,12 @@ export class EyeClawWebSocketClient {
 
   /**
    * 启动心跳
+   * 心跳间隔设置为 30 秒，比负载均衡器的超时时间短
    */
   private startPing() {
+    this.stopPing() // 先清理旧的心跳定时器
+    
+    // 主心跳：每 30 秒发送一次（比负载均衡器超时短）
     this.pingInterval = setInterval(() => {
       // 调用 Rails BotChannel 的 ping 方法（使用 ActionCable 标准协议）
       const channelIdentifier = JSON.stringify({
@@ -550,7 +584,58 @@ export class EyeClawWebSocketClient {
           timestamp: new Date().toISOString(),
         }),
       })
-    }, 60000) // 60秒心跳一次
+      
+      this.api.logger?.debug?.('[EyeClaw] 🔔 Heartbeat sent')
+    }, 30000) // 30 秒心跳 - 适合负载均衡器
+    
+    // 连接健康检查：每 10 秒检查一次 WebSocket 状态
+    this.connectionHealthCheckTimer = setInterval(() => {
+      this.checkConnectionHealth()
+    }, 10000)
+  }
+
+  /**
+   * 检查 WebSocket 连接健康状态
+   * 如果连接异常，自动触发重连
+   */
+  private checkConnectionHealth() {
+    if (!this.ws) {
+      this.api.logger?.warn?.('[EyeClaw] ⚠️ No WebSocket instance')
+      this.scheduleReconnect()
+      return
+    }
+    
+    const state = this.ws.readyState
+    
+    if (state === WebSocket.CLOSED || state === WebSocket.CLOSING) {
+      this.api.logger?.warn?.(`[EyeClaw] ⚠️ WebSocket state: ${state} (${this.getStateName(state)}), scheduling reconnect`)
+      this.scheduleReconnect()
+      return
+    }
+    
+    // WebSocket.CONNECTING 状态可能持续太久，也需要处理
+    if (state === WebSocket.CONNECTING) {
+      this.api.logger?.warn?.('[EyeClaw] ⚠️ WebSocket stuck in CONNECTING state for too long')
+      // 不立即重连，等待 onclose 触发
+    }
+    
+    // CONNECTED 状态正常
+    if (state === WebSocket.OPEN) {
+      this.api.logger?.debug?.('[EyeClaw] ✅ WebSocket connection healthy')
+    }
+  }
+
+  /**
+   * 获取 WebSocket 状态名称
+   */
+  private getStateName(state: number): string {
+    switch (state) {
+      case WebSocket.CONNECTING: return 'CONNECTING'
+      case WebSocket.OPEN: return 'OPEN'
+      case WebSocket.CLOSING: return 'CLOSING'
+      case WebSocket.CLOSED: return 'CLOSED'
+      default: return 'UNKNOWN'
+    }
   }
 
   /**
@@ -560,6 +645,10 @@ export class EyeClawWebSocketClient {
     if (this.pingInterval) {
       clearInterval(this.pingInterval)
       this.pingInterval = null
+    }
+    if (this.connectionHealthCheckTimer) {
+      clearInterval(this.connectionHealthCheckTimer)
+      this.connectionHealthCheckTimer = null
     }
   }
 
