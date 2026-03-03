@@ -8,6 +8,11 @@ module ApplicationCable
 
     # 连接生命周期追踪
     attr_reader :connection_id
+    
+    # 暴露 remote_ip 供 Channel 使用
+    def remote_ip
+      request.remote_ip
+    end
 
     def connect
       # 生成唯一连接 ID 用于追踪
@@ -20,6 +25,7 @@ module ApplicationCable
       
       # ActionCable stores query parameters in request.query_parameters, not request.params
       sdk_token = request.query_parameters['sdk_token'] || request.params['sdk_token']
+      bot_id_param = request.query_parameters['bot_id'] || request.params['bot_id']
       access_key_value = request.query_parameters['access_key'] || request.params['access_key']
       
       # Try access_key authentication first (Worker clients)
@@ -36,16 +42,26 @@ module ApplicationCable
           reject_unauthorized_connection
         end
       # Try bot authentication (SDK clients)
-      elsif sdk_token.present?
-        Rails.logger.info "[ActionCable][#{@connection_id}] Bot authentication attempt with token: #{sdk_token[0...8]}..."
-        self.current_bot = Bot.find_by(sdk_token: sdk_token)
+      elsif sdk_token.present? || bot_id_param.present?
+        Rails.logger.info "[ActionCable][#{@connection_id}] Bot authentication attempt (sdk_token: #{sdk_token&.slice(0, 8)}..., bot_id: #{bot_id_param})"
+        
+        # 尝试通过 bot_id + sdk_token 组合查找，或者单独使用 sdk_token
+        if bot_id_param.present? && sdk_token.present?
+          # SDK 2.4+ 版本：同时提供 bot_id 和 sdk_token
+          self.current_bot = Bot.find_by(id: bot_id_param, sdk_token: sdk_token)
+          Rails.logger.info "[ActionCable][#{@connection_id}] Trying bot_id + sdk_token lookup"
+        elsif sdk_token.present?
+          # SDK 2.3 及以下版本：只提供 sdk_token
+          self.current_bot = Bot.find_by(sdk_token: sdk_token)
+          Rails.logger.info "[ActionCable][#{@connection_id}] Trying sdk_token only lookup"
+        end
         
         if current_bot
           Rails.logger.info "[ActionCable][#{@connection_id}] ✅ Bot authenticated: Bot##{current_bot.id} - #{current_bot.name}"
           self.current_user = nil
           self.current_access_key = nil
         else
-          Rails.logger.warn "[ActionCable][#{@connection_id}] ❌ Bot authentication failed: Invalid sdk_token"
+          Rails.logger.warn "[ActionCable][#{@connection_id}] ❌ Bot authentication failed: Invalid credentials (bot_id=#{bot_id_param}, sdk_token=#{sdk_token&.slice(0, 8)}...)"
           reject_unauthorized_connection
         end
       else
