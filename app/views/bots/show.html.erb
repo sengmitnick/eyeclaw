@@ -199,39 +199,86 @@
           <div>
             <label class="form-label">快速开始</label>
             <% 
-              # 获取或创建有效的绑定 token
-              @skill_binding_token = @bot.binding_tokens.where('expires_at > ?', Time.current).where(used_at: nil).first
-              @skill_binding_token ||= @bot.binding_tokens.create!
-              @skill_url = skill_md_bot_url(@bot, token: @skill_binding_token.token)
+              server_url = request.base_url
+              install_prompt = <<~PROMPT.strip
+                请帮我安装 eyeclaw 插件：
+
+                1. 安装插件
+                openclaw plugins install @eyeclaw/eyeclaw
+
+                2. 配置 Bot 凭证
+                openclaw config set plugins.entries.eyeclaw.config.sdkToken "#{@bot.sdk_token}"
+                openclaw config set plugins.entries.eyeclaw.config.botId "#{@bot.id}"
+                openclaw config set plugins.entries.eyeclaw.config.serverUrl "#{server_url}"
+
+                3. 启用网关 chat completions 端点
+                openclaw config set gateway.http.endpoints.chatCompletions.enabled true
+
+                4. 重启网关
+                openclaw gateway restart
+              PROMPT
             %>
             <div class="card p-4 bg-surface-elevated" data-controller="clipboard">
-              <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start justify-between gap-3 mb-3">
                 <div class="flex-1">
-                  <p class="text-sm text-secondary mb-3">
-                    告诉 OpenClaw：「<span class="font-mono text-primary">帮我安装 skill: <%= @skill_url %></span>」
-                  </p>
-                  <p class="text-xs text-muted">
-                    OpenClaw 会自动读取 SKILL.md 并执行安装命令
+                  <p class="text-sm text-secondary mb-2">
+                    只需复制以下提示词，发送给 OpenClaw，它会自动完成全部安装！
                   </p>
                 </div>
                 <button 
                   data-action="click->clipboard#copy" 
                   class="btn-ghost btn-sm flex items-center gap-1.5 shrink-0"
-                  title="复制命令">
+                  title="复制提示词">
                   <%= lucide_icon "copy", class: "w-4 h-4" %>
                   <span>复制</span>
                 </button>
               </div>
+              <div class="bg-surface rounded-lg p-3 border border-border">
+                <pre class="text-xs text-secondary font-mono whitespace-pre-wrap"><%= install_prompt %></pre>
+              </div>
               <input 
                 type="hidden" 
                 data-clipboard-target="source" 
-                value="帮我安装 skill: <%= @skill_url %>">
-              <div class="flex items-center gap-3 mt-3">
-                <span class="badge-warning text-xs">
-                  <%= lucide_icon "shield-check", class: "w-3 h-3 inline" %>
-                  链接有效期 <%= distance_of_time_in_words_to_now(@skill_binding_token.expires_at) %>
-                </span>
+                value="<%= install_prompt %>">
+            </div>
+          </div>
+
+          <!-- Update Plugin -->
+          <div>
+            <label class="form-label">更新插件</label>
+            <% 
+              update_prompt = <<~PROMPT.strip
+                请帮我更新 eyeclaw 插件：
+
+                1. 更新插件到最新版本
+                openclaw plugins update eyeclaw
+
+                2. 重启网关
+                openclaw gateway restart
+              PROMPT
+            %>
+            <div class="card p-4 bg-surface-elevated" data-controller="clipboard">
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <div class="flex-1">
+                  <p class="text-sm text-secondary mb-2">
+                    已安装插件？复制此提示词更新到最新版本
+                  </p>
+                </div>
+                <button 
+                  data-action="click->clipboard#copy" 
+                  class="btn-ghost btn-sm flex items-center gap-1.5 shrink-0"
+                  title="复制提示词">
+                  <%= lucide_icon "copy", class: "w-4 h-4" %>
+                  <span>复制</span>
+                </button>
               </div>
+              <div class="bg-surface rounded-lg p-3 border border-border">
+                <pre class="text-xs text-secondary font-mono whitespace-pre-wrap"><%= update_prompt %></pre>
+              </div>
+              <input 
+                type="hidden" 
+                data-clipboard-target="source" 
+                value="<%= update_prompt %>">
             </div>
           </div>
         </div>
