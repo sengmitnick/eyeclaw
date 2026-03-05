@@ -45,6 +45,6 @@ class Admin::BotsController < Admin::BaseController
   end
 
   def bot_params
-    params.require(:bot).permit(:name, :description, :status, :webhook_url, :rokid_device_id, :config, :user_id)
+    params.require(:bot).permit(:name, :description, :status, :rokid_device_id, :config, :user_id)
   end
 end

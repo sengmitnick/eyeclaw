@@ -9,7 +9,6 @@ class Bot < ApplicationRecord
   validates :status, inclusion: { in: %w[offline online connecting error] }
   validates :api_key, presence: true, uniqueness: true
   validates :sdk_token, presence: true, uniqueness: true
-  validates :webhook_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true }
   validates :rokid_user_id, uniqueness: true, allow_blank: true
   # rokid_device_id (agent_id) 是灵珠平台分配的固定值，不做唯一性验证
   # 只通过 rokid_user_id 来保证一个灵珠用户只能绑定一个 Bot

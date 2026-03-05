@@ -100,6 +100,6 @@ class BotsController < ApplicationController
   end
 
   def bot_params
-    params.require(:bot).permit(:name, :description, :webhook_url, :rokid_device_id, :config)
+    params.require(:bot).permit(:name, :description, :rokid_device_id, :config)
   end
 end

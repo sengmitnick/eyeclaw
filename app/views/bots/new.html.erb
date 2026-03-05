@@ -41,19 +41,6 @@
           <% end %>
         </div>
 
-        <!-- Webhook URL Field -->
-        <div>
-          <%= f.label :webhook_url, "Webhook 地址（可选）", class: "form-label" %>
-          <%= f.text_field :webhook_url, 
-              placeholder: "https://your-server.com/webhooks/bot",
-              class: "form-input font-mono #{'border-danger' if @bot.errors[:webhook_url].any?}" %>
-          <% if @bot.errors[:webhook_url].any? %>
-            <p class="form-error"><%= @bot.errors[:webhook_url].first %></p>
-          <% else %>
-            <p class="form-help">可选：在此地址接收事件通知</p>
-          <% end %>
-        </div>
-
         <!-- Info Box -->
         <div class="alert-info">
           <div class="flex gap-3">

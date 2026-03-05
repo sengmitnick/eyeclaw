@@ -40,19 +40,6 @@
           <% end %>
         </div>
 
-        <!-- Webhook URL Field -->
-        <div>
-          <%= f.label :webhook_url, "Webhook URL (Optional)", class: "form-label" %>
-          <%= f.text_field :webhook_url, 
-              placeholder: "https://your-server.com/webhooks/bot",
-              class: "form-input font-mono #{'border-danger' if @bot.errors[:webhook_url].any?}" %>
-          <% if @bot.errors[:webhook_url].any? %>
-            <p class="form-error"><%= @bot.errors[:webhook_url].first %></p>
-          <% else %>
-            <p class="form-help">Optional: Receive event notifications at this URL</p>
-          <% end %>
-        </div>
-
         <!-- Rokid Device ID Field -->
         <div>
           <%= f.label :rokid_device_id, "Rokid Device ID (Optional)", class: "form-label" %>

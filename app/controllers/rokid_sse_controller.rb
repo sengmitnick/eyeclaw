@@ -221,7 +221,9 @@ class RokidSseController < ApplicationController
       accumulated_content = ""
       streaming_active = false
       idle_timeout = 60
+      heartbeat_interval = 8  # 每 8 秒如果没有新 chunk，给眼镜发心跳防止超时
       last_message_time = Time.current
+      last_heartbeat_time = Time.current
       
       # 用于按序号输出的状态
       next_expected_sequence = 0  # 下一个期望的序号
@@ -229,6 +231,23 @@ class RokidSseController < ApplicationController
       
       begin
         loop do
+          # 检查是否需要发送心跳（8 秒无新数据时）
+          if streaming_active && (Time.current - last_heartbeat_time) > heartbeat_interval
+            Rails.logger.info "[RokidSSE] No chunk for #{heartbeat_interval}s, sending heartbeat to keep connection alive"
+            # 发送心跳：空字符的 message 事件，is_finish: false
+            heartbeat_data = {
+              role: 'agent',
+              type: 'answer',
+              answer_stream: '',
+              message_id: message_id,
+              agent_id: agent_id,
+              is_finish: false
+            }
+            write_sse_event_direct(io, 'message', heartbeat_data)
+            io.flush
+            last_heartbeat_time = Time.current
+          end
+          
           if Time.current - last_message_time > idle_timeout
             Rails.logger.warn "[RokidSSE] Idle timeout: no response from Bot after #{idle_timeout} seconds"
             
@@ -270,6 +289,9 @@ class RokidSseController < ApplicationController
             
             # 记录 SDK 收到的 chunk
             stream_trace.record_sdk_chunk(content, sequence) if stream_trace
+            
+            # 每次收到 chunk 都更新心跳时间
+            last_heartbeat_time = Time.current
             
             if chunk_session_id == message_id && content.present?
               Rails.logger.debug "[RokidSSE] Received stream chunk ##{sequence}: #{content[0..50]}"
