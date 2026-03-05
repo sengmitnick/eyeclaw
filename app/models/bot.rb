@@ -37,8 +37,8 @@ class Bot < ApplicationRecord
   end
   
   def online?
-    # Bot 在线 = 状态为 online AND 有活跃会话
-    status == 'online' && active_session.present?
+    # Bot 在线 = 状态为 online AND 有活跃会话（5分钟内有心跳）
+    status == 'online' && bot_sessions.where('last_ping_at > ?', 5.minutes.ago).exists?
   end
 
   def offline?
@@ -54,6 +54,10 @@ class Bot < ApplicationRecord
         last_ping_at: Time.current
       )
     end
+    Rails.logger.info "[Bot] connect! status=#{status} session_id=#{session_id}"
+  rescue StandardError => e
+    Rails.logger.error "[Bot] connect! failed: #{e.message}"
+    raise
   end
 
   # Called when WebSocket disconnects (deployment or network issue)
@@ -67,6 +71,8 @@ class Bot < ApplicationRecord
   # This handles the case where SDK reconnects after deployment
   def ping!
     session = active_session
+    Rails.logger.info "[Bot] ping! status=#{status} session=#{session ? 'exists' : 'nil'}"
+    
     if session
       # Normal ping - just update timestamp
       session.update!(last_ping_at: Time.current)

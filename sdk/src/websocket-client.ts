@@ -39,6 +39,8 @@ export class EyeClawWebSocketClient {
   private serverVersion = '' // 服务器版本（用于检测部署）
   private consecutiveFailures = 0 // 连续失败次数
   private lastCloseCode = 0 // 上次关闭码
+  private networkOnline = true // 网络在线状态
+  private networkCheckTimer: any = null // 网络检测定时器
   
   // 🔥 ACK 机制：追踪已发送和已确认的 chunks
   private sentChunks = 0 // 已发送的 chunks 数量
@@ -61,6 +63,26 @@ export class EyeClawWebSocketClient {
       return
     }
 
+    // 如果已经有活跃的 WebSocket，不重复创建
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.api.logger?.debug?.('[EyeClaw] WebSocket already connected, skipping')
+      return
+    }
+    
+    // 清理旧的 WebSocket 实例
+    if (this.ws) {
+      this.api.logger?.debug?.('[EyeClaw] Cleaning up old WebSocket instance')
+      try {
+        this.ws.close()
+      } catch (e) {
+        // 忽略关闭错误
+      }
+      this.ws = null
+    }
+
+    // 启动网络状态监控
+    this.startNetworkMonitoring()
+
     const wsUrl = serverUrl.replace(/^http/, 'ws') + `/cable?sdk_token=${sdkToken}&bot_id=${botId}`
     this.api.logger.info(`[EyeClaw] WebSocket connecting to: ${wsUrl}`)
 
@@ -74,6 +96,7 @@ export class EyeClawWebSocketClient {
         this.consecutiveFailures = 0 // 重置连续失败计数
         this.lastConnectedAt = Date.now()
         this.wasConnected = true
+        this.lastCloseCode = 0 // 重置关闭码
         
         // 如果检测到部署重启（之前已连接过），立即触发一次快速心跳
         if (this.deploymentDetected) {
@@ -88,8 +111,24 @@ export class EyeClawWebSocketClient {
         this.handleMessage(event.data)
       }
 
-      this.ws.onerror = (error) => {
-        this.api.logger.error(`[EyeClaw] WebSocket error: ${error}`)
+      this.ws.onerror = (error: any) => {
+        // 尝试提取更详细的错误信息
+        let errorMsg = 'Unknown WebSocket error'
+        
+        // 浏览器环境
+        if (error && typeof error === 'object' && 'message' in error) {
+          errorMsg = (error as any).message || 'ErrorEvent without message'
+          if ((error as any).error) {
+            errorMsg += ` | Error: ${(error as any).error}`
+          }
+        } else if (error) {
+          // Node.js 环境或其他错误
+          errorMsg = String(error)
+        }
+        
+        this.api.logger.error(`[EyeClaw] WebSocket error: ${errorMsg}`)
+        // 网络错误也应该触发重连，而不是等待 onclose
+        // 这样可以更快地从网络中断中恢复
       }
 
       this.ws.onclose = () => {
@@ -102,12 +141,19 @@ export class EyeClawWebSocketClient {
         this.stopPing()
         this.lastCloseCode = closeCode
         
+        // 保存之前的连接状态用于检测部署
+        const previouslyConnected = this.wasConnected
+        const lastConnected = this.lastConnectedAt
+        
+        // 标记为未连接状态，防止死循环
+        this.wasConnected = false
+        
         // 统计连续失败
         this.consecutiveFailures++
         
         // 检测是否是部署导致的断连（之前已成功连接过，且断开时间 > 5 秒）
         // 或者关闭码为 1000/1001（正常关闭）但之前已连接
-        if (this.wasConnected && Date.now() - this.lastConnectedAt > 5000) {
+        if (previouslyConnected && Date.now() - lastConnected > 5000) {
           // 正常关闭或部署重启
           if (wasClean) {
             this.deploymentDetected = true
@@ -117,9 +163,15 @@ export class EyeClawWebSocketClient {
             this.deploymentDetected = true
             this.api.logger.info('[EyeClaw] 🔄 Server restart detected (unclean close), will reconnect immediately')
           }
-        } else if (!this.wasConnected && !wasClean) {
+        } else if (!previouslyConnected && !wasClean) {
           // 首次连接失败，增加重试延迟
           this.api.logger.warn('[EyeClaw] Initial connection failed, increasing delay...')
+        }
+        
+        // 网络断开也会导致 onclose 被调用（code 0）
+        // 检测是否是网络断开（code 0 且非部署场景）
+        if (closeCode === 0 && !this.deploymentDetected) {
+          this.api.logger.info('[EyeClaw] 🌐 Network disconnection detected, will retry with backoff')
         }
         
         this.scheduleReconnect()
@@ -127,7 +179,90 @@ export class EyeClawWebSocketClient {
 
     } catch (error) {
       this.api.logger.error(`[EyeClaw] WebSocket connection failed: ${error}`)
+      // 连接失败也应该触发重连
       this.scheduleReconnect()
+    }
+  }
+
+  /**
+   * 启动网络状态监控
+   * 定期检测网络是否恢复，以便在网络中断后自动重连
+   */
+  private startNetworkMonitoring() {
+    // 防止重复启动
+    if (this.networkCheckTimer) {
+      return
+    }
+    
+    // 每 5 秒检测一次网络状态
+    this.networkCheckTimer = setInterval(() => {
+      this.checkNetworkAndReconnectIfNeeded()
+    }, 5000)
+    
+    // 尝试立即检测一次
+    this.checkNetworkAndReconnectIfNeeded()
+  }
+
+  /**
+   * 检测网络状态并在需要时触发重连
+   */
+  private async checkNetworkAndReconnectIfNeeded() {
+    // 如果正在重连中，跳过（防止重复调度）
+    if (this.reconnecting) {
+      return
+    }
+    
+    // 如果 WebSocket 已经连接，跳过（不需要重连）
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      return
+    }
+    
+    try {
+      // 尝试一个简单的 HTTP 请求来检测网络是否可用
+      // 直接使用配置的 serverUrl，不需要转换
+      const serverUrl = this.config.serverUrl
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 3000)
+      
+      const response = await fetch(`${serverUrl}/api/v1/health`, {
+        method: 'GET',
+        signal: controller.signal,
+      })
+      
+      clearTimeout(timeoutId)
+      
+      const wasOnline = this.networkOnline
+      this.networkOnline = response.ok
+      
+      if (!wasOnline && this.networkOnline) {
+        // 网络从离线变为在线，触发重连
+        this.api.logger.info('[EyeClaw] 🌐 Network restored, triggering reconnect')
+        this.deploymentDetected = true // 使用快速重连模式
+        this.scheduleReconnect()
+      } else if (this.networkOnline && !this.wasConnected) {
+        // 网络在线但未连接过，触发连接
+        this.api.logger.info('[EyeClaw] 🌐 Network available, connecting...')
+        this.scheduleReconnect()
+      }
+    } catch (error) {
+      // 网络请求失败，说明网络不可用
+      const wasOnline = this.networkOnline
+      this.networkOnline = false
+      
+      if (wasOnline) {
+        this.api.logger.warn('[EyeClaw] 🌐 Network became unavailable')
+      }
+      // 网络不可用时，不触发重连，等待下次检测
+    }
+  }
+
+  /**
+   * 停止网络状态监控
+   */
+  private stopNetworkMonitoring() {
+    if (this.networkCheckTimer) {
+      clearInterval(this.networkCheckTimer)
+      this.networkCheckTimer = null
     }
   }
 
@@ -136,6 +271,7 @@ export class EyeClawWebSocketClient {
    */
   stop() {
     this.stopPing()
+    this.stopNetworkMonitoring() // 停止网络监控
     this.reconnecting = false
     this.resetReconnectDelay()
     
@@ -599,6 +735,11 @@ export class EyeClawWebSocketClient {
    * 如果连接异常，自动触发重连
    */
   private checkConnectionHealth() {
+    // 如果已经在重连中，跳过
+    if (this.reconnecting) {
+      return
+    }
+    
     if (!this.ws) {
       this.api.logger?.warn?.('[EyeClaw] ⚠️ No WebSocket instance')
       this.scheduleReconnect()
@@ -662,9 +803,12 @@ export class EyeClawWebSocketClient {
       this.reconnectTimer = null
     }
     
+    // 如果已经在重连中，不要重复调度
     if (this.reconnecting) {
+      this.api.logger?.debug?.('[EyeClaw] Already reconnecting, skipping duplicate schedule')
       return
     }
+    
     this.reconnecting = true
     
     // 如果超过最大重试次数，继续重试
@@ -679,14 +823,37 @@ export class EyeClawWebSocketClient {
       return
     }
 
-    // 🚀 部署恢复场景：立即重连（无延迟）
+    // 🚀 部署恢复场景或网络恢复：立即重连（无延迟）
+    // 但需要限制次数，防止无限立即重连失败导致死循环
     if (this.deploymentDetected) {
-      this.api.logger.info('[EyeClaw] ⚡ Deployment recovery mode: immediate reconnect')
+      // 如果连续 3 次立即重连都失败，说明可能是网络问题，不再使用立即重连
+      if (this.consecutiveFailures > 3) {
+        this.api.logger.warn('[EyeClaw] ⚠️ Too many immediate reconnects failed, switching to backoff mode')
+        this.deploymentDetected = false
+        // 继续使用正常重连逻辑
+      } else {
+        this.api.logger.info('[EyeClaw] ⚡ Deployment recovery or network restored: immediate reconnect')
+        this.reconnectTimer = setTimeout(() => {
+          this.reconnecting = false
+          this.start()
+        }, 100) // 100ms 延迟（给服务器一点启动时间）
+        this.deploymentDetected = false // 重置标志
+        return
+      }
+    }
+
+    // 检测是否是网络断开导致的失败（code 0）
+    // 如果是网络断开，不要使用指数退避，而是使用固定间隔重试
+    if (this.lastCloseCode === 0) {
+      // 网络断开场景：每 3 秒尝试一次（有网络后能快速恢复）
+      const networkRetryDelay = 3000
+      this.reconnectAttempts++
+      this.api.logger.info(`[EyeClaw] 🌐 Network disconnection scenario: retrying in ${networkRetryDelay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`)
+      
       this.reconnectTimer = setTimeout(() => {
         this.reconnecting = false
-        this.start()
-      }, 100) // 100ms 延迟（给服务器一点启动时间）
-      this.deploymentDetected = false // 重置标志
+        this.performHealthCheckAndReconnect()
+      }, networkRetryDelay)
       return
     }
 
@@ -704,9 +871,16 @@ export class EyeClawWebSocketClient {
    * 健康检查后重连
    */
   private async performHealthCheckAndReconnect() {
+    // 如果 WebSocket 已经连接，不需要重连
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.api.logger?.debug?.('[EyeClaw] ✅ WebSocket already connected, skipping reconnect')
+      return
+    }
+    
     try {
       // 尝试 HTTP 健康检查
-      const serverUrl = this.config.serverUrl.replace(/^http/, 'http') // 使用 http 而非 ws
+      // 直接使用配置的 serverUrl，不需要转换
+      const serverUrl = this.config.serverUrl
       const healthUrl = `${serverUrl}/api/v1/health`
       
       const controller = new AbortController()
@@ -720,7 +894,7 @@ export class EyeClawWebSocketClient {
       clearTimeout(timeoutId)
       
       if (response.ok) {
-        this.api.logger.info('[EyeClaw] ✅ Health check passed, proceeding with reconnect')
+        this.api.logger.info('[EyeClaw] ✅ Health check passed, connecting...')
         this.start()
       } else {
         this.api.logger.warn(`[EyeClaw] ⚠️ Health check failed (${response.status}), retrying soon...`)
@@ -731,9 +905,12 @@ export class EyeClawWebSocketClient {
         }, 2000)
       }
     } catch (error) {
-      this.api.logger.warn(`[EyeClaw] ⚠️ Health check error: ${error}, proceeding with reconnect anyway`)
-      // 即使健康检查失败也尝试重连
-      this.start()
+      this.api.logger.warn(`[EyeClaw] ⚠️ Health check error: ${error}, retrying soon...`)
+      // 健康检查失败，稍后重试
+      this.reconnectTimer = setTimeout(() => {
+        this.reconnecting = false
+        this.scheduleReconnect()
+      }, 2000)
     }
   }
   
